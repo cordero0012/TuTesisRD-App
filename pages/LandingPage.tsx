@@ -7,69 +7,103 @@ const LandingPage: React.FC = () => {
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             {/* Header */}
-            <header className="bg-white dark:bg-surface-dark shadow-md sticky top-0 z-50 transition-colors duration-200">
+            <header className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <Link to="/" className="text-2xl font-extrabold text-brand-orange tracking-tight flex items-center">
-                        <span className="material-icons mr-2 text-gray-800 dark:text-white">school</span>Tu Tesis RD
+                    <Link to="/" className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center group">
+                        <span className="material-icons mr-2 text-brand-orange group-hover:rotate-12 transition-transform duration-300">school</span>
+                        TuTesis<span className="text-brand-orange">RD</span>
                     </Link>
                     {/* Mobile Menu Button */}
                     <button
-                        className="md:hidden text-gray-800 dark:text-gray-200 focus:outline-none"
+                        className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
-                        <span className="material-icons text-2xl">menu</span>
+                        <span className="material-icons text-2xl text-slate-800 dark:text-white">menu</span>
                     </button>
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex space-x-8 items-center font-medium">
-                        <a href="#inicio" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Inicio</a>
-                        <a href="#nosotros" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Nosotros</a>
-                        <a href="#servicios" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Servicios</a>
-                        <a href="#universidades" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Universidades</a>
-                        <a href="#blog" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Blog</a>
-                        <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="px-5 py-2 bg-brand-orange text-white rounded-full hover:bg-orange-600 transition duration-300 shadow-md flex items-center gap-2">
-                            <i className="fab fa-whatsapp"></i> Contactar por WhatsApp
+                    <nav className="hidden md:flex space-x-1 items-center font-medium text-sm">
+                        <a href="#inicio" className="px-4 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800 transition-all duration-300">Inicio</a>
+                        <a href="#nosotros" className="px-4 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800 transition-all duration-300">Nosotros</a>
+                        <a href="#servicios" className="px-4 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800 transition-all duration-300">Servicios</a>
+                        <a href="#universidades" className="px-4 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800 transition-all duration-300">Universidades</a>
+                        <a href="#blog" className="px-4 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800 transition-all duration-300">Blog</a>
+                        <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="ml-4 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
+                            <i className="fab fa-whatsapp text-lg"></i> Contactar
                         </a>
                     </nav>
                 </div>
                 {/* Mobile Nav */}
-                <div className={`md:hidden bg-white dark:bg-surface-dark border-t border-gray-100 dark:border-gray-700 ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-                    <a href="#inicio" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Inicio</a>
-                    <a href="#nosotros" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Nosotros</a>
-                    <a href="#servicios" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Servicios</a>
-                    <a href="#universidades" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Universidades</a>
-                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 text-brand-orange font-bold border-b border-gray-100 dark:border-gray-700">
+                <div className={`md:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 absolute w-full ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
+                    <a href="#inicio" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Inicio</a>
+                    <a href="#nosotros" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Nosotros</a>
+                    <a href="#servicios" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Servicios</a>
+                    <a href="#universidades" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Universidades</a>
+                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-brand-orange font-bold bg-orange-50/50 dark:bg-orange-900/10">
                         <i className="fab fa-whatsapp mr-2"></i> Contactar por WhatsApp
                     </a>
                 </div>
             </header>
 
             {/* Hero Section */}
-            <section id="inicio" className="relative pt-20 pb-32 flex items-center bg-white dark:bg-background-dark overflow-hidden transition-colors duration-200">
+            <section id="inicio" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-background-light dark:bg-background-dark">
+                {/* Abstract Background Shapes */}
+                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-brand-orange/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl"></div>
+
                 <div className="container mx-auto px-6 relative z-10">
-                    <div className="flex flex-col md:flex-row items-center">
-                        <div className="md:w-1/2 mb-12 md:mb-0 animate-fade-in-up">
-                            <span className="inline-block py-1 px-3 rounded-full bg-orange-100 dark:bg-orange-900/30 text-brand-orange text-sm font-bold mb-6">
-                                Expertos en Tesis y Monográficos
-                            </span>
-                            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
-                                Aprobamos tu Tesis, <br /> <span className="text-brand-orange">tú celebras tu graduación</span>
+                    <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                        <div className="md:w-1/2 animate-fade-in-up text-center md:text-left">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 shadow-sm mb-8">
+                                <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span className="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-200">Disponible para nuevos proyectos</span>
+                            </div>
+
+                            <h1 className="text-5xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
+                                Tu Tesis Aprobada,<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">Sin Estrés.</span>
                             </h1>
-                            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed max-w-lg">
-                                Somos un equipo de expertos apasionados y con una vasta experiencia en la creación de tesis,
-                                monografías, informes y presentaciones impactantes.
+
+                            <p className="text-lg lg:text-xl text-slate-500 dark:text-slate-400 mb-10 leading-relaxed max-w-lg mx-auto md:mx-0">
+                                Expertos en redacción académica y metodología. Te acompañamos desde el anteproyecto hasta la defensa final.
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-lg hover:bg-orange-600 transform hover:scale-105 transition duration-300">
-                                    <span className="material-icons mr-2 text-xl">chat</span> Contactar Ahora
+
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
+                                    <span className="material-icons mr-2">chat</span> Contactar Asesor
                                 </a>
-                                <a href="#servicios" className="inline-flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-bold py-4 px-8 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300">
+                                <a href="#servicios" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
                                     Ver Servicios
                                 </a>
                             </div>
+
+                            <div className="mt-12 flex items-center justify-center md:justify-start gap-4 text-sm font-medium text-slate-500 dark:text-slate-400">
+                                <div className="flex -space-x-3">
+                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-gray-200"></div>
+                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-gray-300"></div>
+                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-gray-400 flex items-center justify-center text-xs text-white font-bold">+300</div>
+                                </div>
+                                <p>Estudiantes graduados</p>
+                            </div>
                         </div>
-                        <div className="md:w-1/2 relative animate-fade-in">
-                            <div className="absolute inset-0 bg-brand-orange rounded-full opacity-10 filter blur-3xl transform translate-x-10 translate-y-10"></div>
-                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Estudiantes Graduados" className="relative rounded-2xl shadow-2xl transform -rotate-2 hover:rotate-0 transition duration-500" />
+
+                        <div className="md:w-1/2 relative animate-fade-in group perspective-1000">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-yellow-400 rounded-[2rem] transform rotate-3 scale-105 opacity-20 blur-2xl group-hover:rotate-6 transition-transform duration-500"></div>
+                            <img
+                                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                                alt="Estudiante celebrando"
+                                className="relative rounded-[2rem] shadow-2xl transform transition-transform duration-500 group-hover:scale-[1.02] border border-white/20"
+                            />
+
+                            {/* Floating Badge */}
+                            <div className="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-slow border border-gray-100 dark:border-gray-700">
+                                <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full text-green-600">
+                                    <span className="material-icons">check_circle</span>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Resultado</p>
+                                    <p className="text-lg font-bold text-slate-900 dark:text-white">100% Aprobado</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,37 +117,21 @@ const LandingPage: React.FC = () => {
                         <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Más de 7 años de experiencia y 300+ tesis trabajadas nos respaldan.</p>
                     </div>
 
-                    <div className="bg-white dark:bg-background-dark rounded-3xl shadow-xl p-8 md:p-12 mb-20 border border-gray-100 dark:border-gray-800">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            <div className="text-center p-4">
-                                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange">
-                                    <span className="material-icons text-3xl">check_circle</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+                        {[
+                            { icon: 'history_edu', title: '+7 Años', desc: 'Experiencia' },
+                            { icon: 'groups', title: '300+', desc: 'Tesis Asesoradas' },
+                            { icon: 'verified', title: '100%', desc: 'Tasa de Aprobación' },
+                            { icon: 'language', title: 'Nacional', desc: 'Cobertura en todo el país' }
+                        ].map((stat, idx) => (
+                            <div key={idx} className="bg-white dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-md transition-all text-center group">
+                                <div className="w-12 h-12 bg-orange-50 dark:bg-orange-900/20 rounded-xl flex items-center justify-center mx-auto mb-4 text-brand-orange group-hover:scale-110 transition-transform">
+                                    <span className="material-icons">{stat.icon}</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-2">Asesoría Personalizada</h4>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm">Acompañamiento humano en cada paso.</p>
+                                <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-1">{stat.title}</h4>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{stat.desc}</p>
                             </div>
-                            <div className="text-center p-4">
-                                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange">
-                                    <span className="material-icons text-3xl">edit_note</span>
-                                </div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-2">Corrección Profesional</h4>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm">Calidad y precisión garantizada.</p>
-                            </div>
-                            <div className="text-center p-4">
-                                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange">
-                                    <span className="material-icons text-3xl">map</span>
-                                </div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-2">Cobertura Nacional</h4>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm">Servicio a todo el país desde Higüey.</p>
-                            </div>
-                            <div className="text-center p-4">
-                                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange">
-                                    <span className="material-icons text-3xl">psychology</span>
-                                </div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-2">Innovación & IA</h4>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm">Integración de herramientas digitales.</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
 
                     {/* Specialist Profile */}
@@ -185,12 +203,12 @@ const LandingPage: React.FC = () => {
                             { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos con SPSS/Excel e interpretación de resultados.' },
                             { icon: 'science', title: 'Investigación y Desarrollo', desc: 'Soporte en la búsqueda de información, marco teórico y desarrollo de contenido.' }
                         ].map((service, idx) => (
-                            <div key={idx} className="bg-white dark:bg-background-dark p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 hover:-translate-y-2 border-b-4 border-brand-orange">
-                                <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-6 text-brand-orange">
+                            <div key={idx} className="bg-white dark:bg-white/5 p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 dark:border-white/5 group">
+                                <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-900/40 dark:to-orange-900/10 rounded-2xl flex items-center justify-center mb-6 text-brand-orange group-hover:scale-110 transition-transform shadow-inner">
                                     <span className="material-icons text-2xl">{service.icon}</span>
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{service.title}</h3>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{service.desc}</p>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brand-orange transition-colors">{service.title}</h3>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{service.desc}</p>
                             </div>
                         ))}
                     </div>
