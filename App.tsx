@@ -82,7 +82,7 @@ const NavigationMenu = () => {
 const App = () => {
     return (
         <HashRouter>
-            <div className="pt-14 min-h-screen bg-background-light dark:bg-background-dark">
+            <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 {/* <NavigationMenu /> */}
                 <DarkModeToggle />
                 <Routes>
