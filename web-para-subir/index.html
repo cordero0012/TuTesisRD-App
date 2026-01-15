@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Tesis RD - Asesoría Académica Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ea9a23',
+                            dark: '#1a1a1a',
+                            gray: '#f7f7f7',
+                            light: '#ffffff',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .bg-pattern {
+            background-image: radial-gradient(#ea9a23 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-800 bg-brand-gray">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-extrabold text-brand-orange tracking-tight flex items-center">
+                <i class="fas fa-graduation-cap mr-2 text-gray-800"></i>Tu Tesis RD
+            </a>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-gray-800 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex space-x-8 items-center font-medium">
+                <a href="#inicio" class="hover:text-brand-orange transition duration-300">Inicio</a>
+                <a href="#nosotros" class="hover:text-brand-orange transition duration-300">Nosotros</a>
+                <a href="#servicios" class="hover:text-brand-orange transition duration-300">Servicios</a>
+                <a href="#universidades" class="hover:text-brand-orange transition duration-300">Universidades</a>
+                <a href="#blog" class="hover:text-brand-orange transition duration-300">Blog</a>
+                <a href="#contacto"
+                    class="px-5 py-2 bg-brand-orange text-white rounded-full hover:bg-orange-600 transition duration-300 shadow-md">Contacto</a>
+            </nav>
+        </div>
+        <!-- Mobile Nav -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <a href="#inicio" class="block py-3 px-6 hover:bg-gray-50 border-b border-gray-100">Inicio</a>
+            <a href="#nosotros" class="block py-3 px-6 hover:bg-gray-50 border-b border-gray-100">Nosotros</a>
+            <a href="#servicios" class="block py-3 px-6 hover:bg-gray-50 border-b border-gray-100">Servicios</a>
+            <a href="#universidades" class="block py-3 px-6 hover:bg-gray-50 border-b border-gray-100">Universidades</a>
+            <a href="#blog" class="block py-3 px-6 hover:bg-gray-50 border-b border-gray-100">Blog</a>
+            <a href="#contacto" class="block py-3 px-6 text-brand-orange font-bold">Contacto</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative pt-20 pb-32 flex items-center bg-white overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <span
+                        class="inline-block py-1 px-3 rounded-full bg-orange-100 text-brand-orange text-sm font-bold mb-6">Expertos
+                        en Tesis y Monográficos</span>
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+                        Aprobamos tu Tesis, <br> <span class="text-brand-orange">tú celebras tu graduación</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed max-w-lg">
+                        Somos un equipo de expertos apasionados y con una vasta experiencia en la creación de tesis,
+                        monografías, informes y presentaciones impactantes. 📚✍️
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank"
+                            class="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-lg hover:bg-orange-600 transform hover:scale-105 transition duration-300">
+                            <i class="fab fa-whatsapp mr-2 text-xl"></i> Empezar Ahora
+                        </a>
+                        <a href="#servicios"
+                            class="inline-flex items-center justify-center bg-gray-100 text-gray-800 font-bold py-4 px-8 rounded-full hover:bg-gray-200 transition duration-300">
+                            Ver Servicios
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative">
+                    <div
+                        class="absolute inset-0 bg-brand-orange rounded-full opacity-10 filter blur-3xl transform translate-x-10 translate-y-10">
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Estudiantes Graduados"
+                        class="relative rounded-2xl shadow-2xl transform -rotate-2 hover:rotate-0 transition duration-500">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specialist Section (Replaces generic About) -->
+    <section id="nosotros" class="py-20 bg-brand-gray">
+        <div class="container mx-auto px-6">
+            <!-- Why Choose Us Grid (Moved up slightly) -->
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">¿Por qué elegir Tu Tesis RD?</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Más de 7 años de experiencia y 300+ tesis trabajadas nos
+                    respaldan.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center p-4">
+                        <div
+                            class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange text-2xl">
+                            <i class="fas fa-check-circle"></i></div>
+                        <h4 class="font-bold text-gray-900 mb-2">Asesoría Personalizada</h4>
+                        <p class="text-gray-600 text-sm">Acompañamiento humano en cada paso.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div
+                            class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange text-2xl">
+                            <i class="fas fa-pen-nib"></i></div>
+                        <h4 class="font-bold text-gray-900 mb-2">Corrección Profesional</h4>
+                        <p class="text-gray-600 text-sm">Calidad y precisión garantizada.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div
+                            class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange text-2xl">
+                            <i class="fas fa-map-marked-alt"></i></div>
+                        <h4 class="font-bold text-gray-900 mb-2">Cobertura Nacional</h4>
+                        <p class="text-gray-600 text-sm">Servicio a todo el país desde Higüey.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div
+                            class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-orange text-2xl">
+                            <i class="fas fa-brain"></i></div>
+                        <h4 class="font-bold text-gray-900 mb-2">Innovación & IA</h4>
+                        <p class="text-gray-600 text-sm">Integración de herramientas digitales.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specialist Profile -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="flex flex-col lg:flex-row">
+                    <!-- Image Column -->
+                    <div class="lg:w-1/3 bg-gray-100 relative min-h-[400px]">
+                        <img src="miguel-cordero.jpg" alt="Miguel Ángel Cordero Trinidad"
+                            class="absolute inset-0 w-full h-full object-cover object-top">
+                        <div
+                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+                            <h3 class="text-2xl font-bold">Miguel Ángel Cordero</h3>
+                            <p class="text-brand-orange font-medium">CEO & Especialista Académico</p>
+                        </div>
+                    </div>
+
+                    <!-- Content Column -->
+                    <div class="lg:w-2/3 p-8 md:p-12">
+                        <span
+                            class="inline-block py-1 px-3 rounded-full bg-orange-100 text-brand-orange text-sm font-bold mb-4">Sobre
+                            el Especialista</span>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Pasión por la Educación y la Investigación
+                        </h2>
+
+                        <div class="prose prose-gray text-gray-600 mb-8">
+                            <p class="mb-4">
+                                Miguel Ángel Cordero Trinidad es un educador y asesor académico con más de cinco años de
+                                experiencia en el diseño, desarrollo y acompañamiento de investigaciones científicas en
+                                República Dominicana. Su labor se centra en la redacción de tesis, monográficos e
+                                informes técnicos, aplicando metodologías rigurosas y enfoques actualizados.
+                            </p>
+                            <p class="mb-4">
+                                Graduado <strong>Summa Cum Laude</strong> en Educación Primaria por la UCE, combina su
+                                perfil con formación avanzada en competencias digitales, innovación educativa e IA
+                                aplicada. Su experiencia docente le permite comprender profundamente las necesidades
+                                reales de los estudiantes.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3 border-b border-gray-200 pb-2"><i
+                                        class="fas fa-user-graduate mr-2 text-brand-orange"></i>Formación Académica</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li>• <strong>Máster en Dirección y Transformación Tecnológica</strong> (Nebrija,
+                                        España)</li>
+                                    <li>• <strong>Lic. Educación Primaria</strong> - Summa Cum Laude (UCE)</li>
+                                    <li>• <strong>Máster en Docencia Universitaria</strong> (En tesis - UNEATLANTICO)
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3 border-b border-gray-200 pb-2"><i
+                                        class="fas fa-laptop-code mr-2 text-brand-orange"></i>Habilidades Clave</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li>• Redacción científica y Normas APA/Vancouver</li>
+                                    <li>• Diseño metodológico y Marco Teórico</li>
+                                    <li>• IA aplicada a investigación y productividad</li>
+                                    <li>• Análisis de datos y herramientas digitales</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex flex-col sm:flex-row gap-4 items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Contacto Directo</p>
+                                <p class="text-gray-900 font-medium">Higüey, La Altagracia (Servicio Nacional)</p>
+                            </div>
+                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank"
+                                class="px-6 py-3 bg-brand-orange text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md">
+                                <i class="fab fa-whatsapp mr-2"></i> Contactar a Miguel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Universities Section -->
+    <section id="universidades" class="py-16 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Trabajamos con todas las universidades del país</h2>
+            <p class="text-gray-600 mb-12 max-w-2xl mx-auto">Conocemos los formatos y normativas específicas de cada
+                institución académica.</p>
+
+            <div
+                class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-70 grayscale hover:grayscale-0 transition duration-500">
+                <!-- Placeholder Logos -->
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UASD</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">PUCMM</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">O&M</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UAPA</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UNIBE</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UNPHU</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UTESA</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">INTEC</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UNAPEC</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UCNE</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UCATECI</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UFHEC</span>
+                </div>
+                <!-- New Universities -->
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UNICARIBE</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UNEV</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UTE</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UNIREMHOS</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">UTECO</span>
+                </div>
+                <div class="flex justify-center"><span
+                        class="text-xl font-bold text-gray-400 border-2 border-gray-200 p-4 rounded-lg w-full">ISFODOSU</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="py-20 bg-brand-gray relative">
+        <div class="absolute inset-0 bg-pattern opacity-5"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
+                <div class="w-20 h-1.5 bg-brand-orange mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Service 1 -->
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 hover:-translate-y-2 border-b-4 border-brand-orange">
+                    <div
+                        class="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6 text-brand-orange">
+                        <i class="fas fa-book-reader text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Asesoría de Tesis</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Acompañamiento metodológico completo desde el
+                        anteproyecto hasta la defensa final.</p>
+                </div>
+
+                <!-- Service 2 -->
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 hover:-translate-y-2 border-b-4 border-brand-orange">
+                    <div
+                        class="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6 text-brand-orange">
+                        <i class="fas fa-pen-fancy text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Corrección de Estilo</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Revisión ortotipográfica y gramatical. Adaptación a
+                        normas APA, Vancouver, etc.</p>
+                </div>
+
+                <!-- Service 3 -->
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 hover:-translate-y-2 border-b-4 border-brand-orange">
+                    <div
+                        class="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6 text-brand-orange">
+                        <i class="fas fa-chart-pie text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Análisis Estadístico</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Procesamiento de datos con SPSS/Excel e
+                        interpretación de resultados.</p>
+                </div>
+
+                <!-- Service 4 (NEW) -->
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 hover:-translate-y-2 border-b-4 border-brand-orange">
+                    <div
+                        class="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6 text-brand-orange">
+                        <i class="fas fa-microscope text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Investigación y Desarrollo</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Soporte en la búsqueda de información, marco
+                        teórico y desarrollo de contenido.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section (NEW) -->
+    <section id="blog" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Blog Académico</h2>
+                <p class="text-gray-600">Recursos e información valiosa para tu camino a la graduación.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Article 1 -->
+                <a href="blog-tesis.html" class="group cursor-pointer block">
+                    <div class="overflow-hidden rounded-xl mb-4">
+                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                            alt="Tesis"
+                            class="w-full h-48 object-cover transform group-hover:scale-110 transition duration-500">
+                    </div>
+                    <span class="text-brand-orange text-sm font-bold uppercase tracking-wider">Guía</span>
+                    <h3 class="text-xl font-bold text-gray-900 mt-2 mb-2 group-hover:text-brand-orange transition">¿Qué
+                        es una Tesis?</h3>
+                    <p class="text-gray-600 text-sm line-clamp-3">Una tesis es un trabajo de investigación original que
+                        presenta una hipótesis y la defiende con argumentos sólidos...</p>
+                </a>
+
+                <!-- Article 2 -->
+                <a href="blog-monografico.html" class="group cursor-pointer block">
+                    <div class="overflow-hidden rounded-xl mb-4">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                            alt="Monográfico"
+                            class="w-full h-48 object-cover transform group-hover:scale-110 transition duration-500">
+                    </div>
+                    <span class="text-brand-orange text-sm font-bold uppercase tracking-wider">Definiciones</span>
+                    <h3 class="text-xl font-bold text-gray-900 mt-2 mb-2 group-hover:text-brand-orange transition">¿Qué
+                        es un Monográfico?</h3>
+                    <p class="text-gray-600 text-sm line-clamp-3">El monográfico es un estudio detallado sobre un tema
+                        específico, menos extenso que una tesis pero igual de riguroso...</p>
+                </a>
+
+                <!-- Article 3 -->
+                <a href="blog-tips.html" class="group cursor-pointer block">
+                    <div class="overflow-hidden rounded-xl mb-4">
+                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                            alt="Tips"
+                            class="w-full h-48 object-cover transform group-hover:scale-110 transition duration-500">
+                    </div>
+                    <span class="text-brand-orange text-sm font-bold uppercase tracking-wider">Consejos</span>
+                    <h3 class="text-xl font-bold text-gray-900 mt-2 mb-2 group-hover:text-brand-orange transition">Tips
+                        para defender tu Tesis</h3>
+                    <p class="text-gray-600 text-sm line-clamp-3">La defensa es el momento cumbre. Aprende a controlar
+                        los nervios, preparar tu presentación y responder al jurado...</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-brand-orange relative overflow-hidden">
+        <div class="absolute inset-0 bg-pattern opacity-10"
+            style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">¡Únete a los cientos de estudiantes satisfechos!
+            </h2>
+            <p class="text-white text-xl mb-10 max-w-2xl mx-auto font-medium">Han alcanzado el éxito académico con
+                nuestra ayuda. ¿Qué esperas para ser el próximo?</p>
+            <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank"
+                class="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                <i class="fab fa-whatsapp mr-3 text-2xl"></i> <span class="text-lg">Contactar Expertos</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-gray-900 text-gray-400 py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Brand -->
+                <div>
+                    <a href="#" class="text-2xl font-bold text-white block mb-4 flex items-center">
+                        <i class="fas fa-graduation-cap mr-2 text-brand-orange"></i>Tu Tesis RD
+                    </a>
+                    <p class="text-sm mb-6">Tu aliado académico número uno en República Dominicana. Calidad, confianza y
+                        resultados garantizados.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/tutesis.rd/" target="_blank"
+                            class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-orange hover:text-white transition"><i
+                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/p/Tu-Tesis-RD-100067198140335/" target="_blank"
+                            class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-orange hover:text-white transition"><i
+                                class="fab fa-facebook-f"></i></a>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-6">Contacto</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-orange"></i>
+                            <span>Higüey, La Altagracia, Rep. Dom.<br><span class="text-xs text-gray-500">(Servicio a
+                                    todo el país)</span></span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-brand-orange"></i>
+                            <a href="mailto:ttesisrd@gmail.com"
+                                class="hover:text-white transition">ttesisrd@gmail.com</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fab fa-whatsapp mr-3 text-brand-orange"></i>
+                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank"
+                                class="hover:text-white transition">Chat WhatsApp</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-6">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#inicio" class="hover:text-brand-orange transition">Inicio</a></li>
+                        <li><a href="#servicios" class="hover:text-brand-orange transition">Servicios</a></li>
+                        <li><a href="#blog" class="hover:text-brand-orange transition">Blog Académico</a></li>
+                        <li><a href="#contacto" class="hover:text-brand-orange transition">Solicitar Cotización</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-gray-800 my-10">
+            <div class="text-center text-sm">
+                &copy; 2023 Tu Tesis RD. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close menu when clicking a link
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+
+</html>
