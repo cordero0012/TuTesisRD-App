@@ -233,9 +233,14 @@ const LandingPage: React.FC = () => {
                     <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
                         Puedes registrar tu proyecto directamente en nuestra plataforma y enviarnos tus archivos para una revisión inicial.
                     </p>
-                    <Link to="/student/register" className="inline-flex items-center px-8 py-3 border-2 border-brand-orange text-brand-orange font-bold rounded-full hover:bg-brand-orange hover:text-white transition duration-300">
-                        <span className="material-icons mr-2">edit_document</span> Registrar Proyecto
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Link to="/student/register" className="inline-flex items-center px-8 py-3 bg-brand-orange text-white font-bold rounded-full hover:bg-orange-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            <span className="material-icons mr-2">edit_document</span> Registrar Proyecto
+                        </Link>
+                        <Link to="/student/register?mode=monitor" className="inline-flex items-center px-8 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-white border-2 border-slate-200 dark:border-slate-700 font-bold rounded-full hover:border-brand-orange hover:text-brand-orange transition-all duration-300">
+                            <span className="material-icons mr-2">travel_explore</span> Monitorear
+                        </Link>
+                    </div>
                 </div>
             </section>
 

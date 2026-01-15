@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const RegisterWizard: React.FC = () => {
+    const location = useLocation();
     const [mode, setMode] = useState<'register' | 'monitor'>('register');
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('mode') === 'monitor') {
+            setMode('monitor');
+        }
+    }, [location]);
+
     const [trackingCode, setTrackingCode] = useState('');
     const [searchResult, setSearchResult] = useState<any>(null);
 
