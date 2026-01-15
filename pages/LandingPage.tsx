@@ -208,6 +208,19 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
+            {/* Registration CTA Section */}
+            <section className="py-16 bg-white dark:bg-background-dark border-t border-slate-100 dark:border-slate-800">
+                <div className="container mx-auto px-6 text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-6">¿Prefieres gestionar todo en línea?</h2>
+                    <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+                        Puedes registrar tu proyecto directamente en nuestra plataforma y enviarnos tus archivos para una revisión inicial.
+                    </p>
+                    <Link to="/student/register" className="inline-flex items-center px-8 py-3 border-2 border-brand-orange text-brand-orange font-bold rounded-full hover:bg-brand-orange hover:text-white transition duration-300">
+                        <span className="material-icons mr-2">edit_document</span> Registrar Proyecto
+                    </Link>
+                </div>
+            </section>
+
             {/* Footer */}
             <footer id="contacto" className="bg-gray-900 text-gray-400 py-16">
                 <div className="container mx-auto px-6">
@@ -240,6 +253,7 @@ const LandingPage: React.FC = () => {
                             <ul className="space-y-2">
                                 <li><a href="#inicio" className="hover:text-brand-orange transition">Inicio</a></li>
                                 <li><a href="#servicios" className="hover:text-brand-orange transition">Servicios</a></li>
+                                <li><Link to="/student/register" className="hover:text-brand-orange transition text-brand-orange font-medium">Registrar Proyecto</Link></li>
                             </ul>
                         </div>
                     </div>
