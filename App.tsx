@@ -21,7 +21,7 @@ const DarkModeToggle = () => {
         }
         return false;
     });
-    
+
     useEffect(() => {
         const root = window.document.documentElement;
         if (isDark) {
@@ -34,7 +34,7 @@ const DarkModeToggle = () => {
     }, [isDark]);
 
     return (
-        <button 
+        <button
             onClick={() => setIsDark(!isDark)}
             className="fixed bottom-4 right-20 z-[9999] bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 p-3 rounded-full shadow-lg hover:scale-110 transition-transform"
             title="Toggle Dark Mode"
@@ -66,11 +66,10 @@ const NavigationMenu = () => {
                     <button
                         key={screen.path}
                         onClick={() => navigate(screen.path)}
-                        className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
-                            location.pathname === screen.path 
-                            ? 'bg-primary text-white shadow-md shadow-primary/30' 
+                        className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${location.pathname === screen.path
+                            ? 'bg-primary text-white shadow-md shadow-primary/30'
                             : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                        }`}
+                            }`}
                     >
                         {screen.label}
                     </button>
@@ -93,9 +92,9 @@ const App = () => {
                     <Route path="/student/details" element={<AcademicDetails />} />
                     <Route path="/student/upload" element={<UploadDocuments />} />
                     <Route path="/student/success" element={<SuccessScreen />} />
-                    <Route path="/admin/dashboard" element={<AdminKanban />} />
+                    {/* <Route path="/admin/dashboard" element={<AdminKanban />} /> */}
                 </Routes>
-                <AIChat />
+                {/* <AIChat /> */}
             </div>
         </HashRouter>
     );
