@@ -25,9 +25,9 @@ const SuccessScreen: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-blue-50 dark:bg-[#101922] flex items-center justify-center p-4 font-display transition-colors duration-200">
-             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                 <Confetti active={isExploding} config={config} />
-             </div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                <Confetti active={isExploding} config={config} />
+            </div>
             <div className="bg-white dark:bg-[#1a2230] max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden text-center animate-slide-up border border-slate-100 dark:border-slate-800">
                 <div className="pt-10 pb-6 px-8 relative">
                     <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-primary"></div>
@@ -37,6 +37,19 @@ const SuccessScreen: React.FC = () => {
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">¡Registro Completado!</h1>
                     <p className="text-slate-500 dark:text-slate-400">Tu cuenta ha sido creada y tu proyecto registrado exitosamente en la plataforma.</p>
                 </div>
+                <div className="px-8 pb-4">
+                    <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
+                        <p className="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">Tu Código de Rastreo</p>
+                        <div className="flex items-center justify-center gap-2">
+                            <span className="text-2xl font-mono font-black text-brand-orange tracking-widest">TRX-8492</span>
+                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-white" title="Copiar">
+                                <span className="material-symbols-outlined text-lg">content_copy</span>
+                            </button>
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-2">Guarda este código para monitorear el estado de tu proyecto.</p>
+                    </div>
+                </div>
+
                 <div className="bg-slate-50 dark:bg-[#151e29] p-8 text-left space-y-6">
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2">Próximos Pasos</h3>
                     <div className="flex gap-4 group">
@@ -45,22 +58,22 @@ const SuccessScreen: React.FC = () => {
                             <div className="w-0.5 h-full bg-slate-200 dark:bg-slate-700 my-1"></div>
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-900 dark:text-white">Revisión Automática</h4>
-                            <p className="text-sm text-slate-500">Nuestro sistema de IA validará tus datos en 24h.</p>
+                            <h4 className="font-bold text-slate-900 dark:text-white">Asignación de Asesor</h4>
+                            <p className="text-sm text-slate-500">Un experto validará tu tema en 24h.</p>
                         </div>
                     </div>
-                        <div className="flex gap-4 group">
+                    <div className="flex gap-4 group">
                         <div className="flex flex-col items-center">
-                            <div className="size-8 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform"><span className="material-symbols-outlined text-sm">mail</span></div>
+                            <div className="size-8 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform"><span className="material-symbols-outlined text-sm">rocket_launch</span></div>
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-900 dark:text-white">Confirmación</h4>
-                            <p className="text-sm text-slate-500">Recibirás un email oficial con tus credenciales.</p>
+                            <h4 className="font-bold text-slate-900 dark:text-white">Inicio del Proyecto</h4>
+                            <p className="text-sm text-slate-500">Comenzaremos a trabajar según lo acordado.</p>
                         </div>
                     </div>
                 </div>
                 <div className="p-6">
-                    <Link to="/student/portal" className="block w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/30 transition-all">Ir a mi Perfil</Link>
+                    <Link to="/student/register" className="block w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/30 transition-all">Monitorear mi Proyecto</Link>
                 </div>
             </div>
         </div>
