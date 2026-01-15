@@ -13,7 +13,7 @@ const LandingPage: React.FC = () => {
                         <span className="material-icons mr-2 text-gray-800 dark:text-white">school</span>Tu Tesis RD
                     </Link>
                     {/* Mobile Menu Button */}
-                    <button 
+                    <button
                         className="md:hidden text-gray-800 dark:text-gray-200 focus:outline-none"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
@@ -26,12 +26,9 @@ const LandingPage: React.FC = () => {
                         <a href="#servicios" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Servicios</a>
                         <a href="#universidades" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Universidades</a>
                         <a href="#blog" className="hover:text-brand-orange dark:hover:text-brand-orange transition duration-300">Blog</a>
-                        <Link to="/student/register" className="px-5 py-2 bg-brand-orange text-white rounded-full hover:bg-orange-600 transition duration-300 shadow-md">
-                            Registrar Proyecto
-                        </Link>
-                        <Link to="/student/portal" className="text-gray-600 dark:text-gray-300 hover:text-brand-orange transition duration-300">
-                            Acceso Alumnos
-                        </Link>
+                        <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="px-5 py-2 bg-brand-orange text-white rounded-full hover:bg-orange-600 transition duration-300 shadow-md flex items-center gap-2">
+                            <i className="fab fa-whatsapp"></i> Contactar por WhatsApp
+                        </a>
                     </nav>
                 </div>
                 {/* Mobile Nav */}
@@ -40,8 +37,9 @@ const LandingPage: React.FC = () => {
                     <a href="#nosotros" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Nosotros</a>
                     <a href="#servicios" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Servicios</a>
                     <a href="#universidades" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Universidades</a>
-                    <Link to="/student/register" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 text-brand-orange font-bold border-b border-gray-100 dark:border-gray-700">Registrar Proyecto</Link>
-                    <Link to="/student/portal" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 text-gray-600 dark:text-gray-300 font-medium">Acceso Alumnos</Link>
+                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 px-6 text-brand-orange font-bold border-b border-gray-100 dark:border-gray-700">
+                        <i className="fab fa-whatsapp mr-2"></i> Contactar por WhatsApp
+                    </a>
                 </div>
             </header>
 
@@ -61,9 +59,9 @@ const LandingPage: React.FC = () => {
                                 monografías, informes y presentaciones impactantes. 📚✍️
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <Link to="/student/register" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-lg hover:bg-orange-600 transform hover:scale-105 transition duration-300">
-                                    <span className="material-icons mr-2 text-xl">play_arrow</span> Empezar Ahora
-                                </Link>
+                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-lg hover:bg-orange-600 transform hover:scale-105 transition duration-300">
+                                    <span className="material-icons mr-2 text-xl">chat</span> Contactar Ahora
+                                </a>
                                 <a href="#servicios" className="inline-flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-bold py-4 px-8 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300">
                                     Ver Servicios
                                 </a>
@@ -164,11 +162,11 @@ const LandingPage: React.FC = () => {
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Trabajamos con todas las universidades del país</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">Conocemos los formatos y normativas específicas de cada institución académica.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-70 grayscale hover:grayscale-0 transition duration-500">
-                         {['UASD', 'PUCMM', 'O&M', 'UAPA', 'UNIBE', 'UNPHU', 'UTESA', 'INTEC', 'UNAPEC', 'UCNE', 'UCATECI', 'UFHEC'].map((uni) => (
+                        {['UASD', 'PUCMM', 'O&M', 'UAPA', 'UNIBE', 'UNPHU', 'UTESA', 'INTEC', 'UNAPEC', 'UCNE', 'UCATECI', 'UFHEC'].map((uni) => (
                             <div key={uni} className="flex justify-center">
                                 <span className="text-xl font-bold text-gray-400 dark:text-gray-500 border-2 border-gray-200 dark:border-gray-700 p-4 rounded-lg w-full hover:border-brand-orange hover:text-brand-orange transition-colors cursor-default">{uni}</span>
                             </div>
-                         ))}
+                        ))}
                     </div>
                 </div>
             </section>
@@ -204,9 +202,9 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-6 text-center relative z-10">
                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">¡Únete a los cientos de estudiantes satisfechos!</h2>
                     <p className="text-white text-xl mb-10 max-w-2xl mx-auto font-medium">Han alcanzado el éxito académico con nuestra ayuda. ¿Qué esperas para ser el próximo?</p>
-                    <Link to="/student/register" className="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">
-                        <span className="material-icons mr-3 text-2xl">rocket_launch</span> <span className="text-lg">Registrar mi Proyecto</span>
-                    </Link>
+                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                        <span className="material-icons mr-3 text-2xl">chat</span> <span className="text-lg">Hablar con un Asesor</span>
+                    </a>
                 </div>
             </section>
 
@@ -242,8 +240,6 @@ const LandingPage: React.FC = () => {
                             <ul className="space-y-2">
                                 <li><a href="#inicio" className="hover:text-brand-orange transition">Inicio</a></li>
                                 <li><a href="#servicios" className="hover:text-brand-orange transition">Servicios</a></li>
-                                <li><Link to="/student/register" className="hover:text-brand-orange transition">Registrarse</Link></li>
-                                <li><Link to="/admin/dashboard" className="hover:text-brand-orange transition">Admin</Link></li>
                             </ul>
                         </div>
                     </div>

@@ -83,7 +83,7 @@ const App = () => {
     return (
         <HashRouter>
             <div className="pt-14 min-h-screen bg-background-light dark:bg-background-dark">
-                <NavigationMenu />
+                {/* <NavigationMenu /> */}
                 <DarkModeToggle />
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
