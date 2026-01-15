@@ -56,7 +56,7 @@ const LandingPage: React.FC = () => {
                             </h1>
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed max-w-lg">
                                 Somos un equipo de expertos apasionados y con una vasta experiencia en la creación de tesis,
-                                monografías, informes y presentaciones impactantes. 📚✍️
+                                monografías, informes y presentaciones impactantes.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-lg hover:bg-orange-600 transform hover:scale-105 transition duration-300">
