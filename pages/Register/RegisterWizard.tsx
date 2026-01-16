@@ -304,7 +304,50 @@ const RegisterWizard: React.FC = () => {
 
                                     <div className="mt-12 flex justify-between">
                                         <button onClick={prevStep} className="px-6 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"> Atrás</button>
-                                        <Link to="/student/details" className="px-8 py-3 bg-brand-orange text-white rounded-xl font-bold hover:shadow-lg hover:bg-orange-600 transition-all transform hover:-translate-y-1">Siguiente: Archivos</Link>
+                                        <button onClick={nextStep} className="px-8 py-3 bg-brand-orange text-white rounded-xl font-bold hover:shadow-lg hover:bg-orange-600 transition-all transform hover:-translate-y-1">Siguiente: Archivos</button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {step === 3 && (
+                                <div className="animate-fade-in-right">
+                                    <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Sube tus Archivos</h2>
+                                    <p className="text-slate-500 mb-8">Si tienes documentos previos, súbelos aquí. (Opcional)</p>
+
+                                    <div className="grid md:grid-cols-3 gap-6 mb-8">
+                                        <div className="space-y-3">
+                                            <h3 className="font-bold text-slate-700 dark:text-white flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs flex items-center justify-center">1</span> Anteproyecto</h3>
+                                            <div className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
+                                                <span className="material-icons text-4xl text-slate-400 group-hover:text-brand-orange mb-2 transition-colors">cloud_upload</span>
+                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-orange">Subir PDF</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <h3 className="font-bold text-slate-700 dark:text-white flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs flex items-center justify-center">2</span> Normativa</h3>
+                                            <div className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
+                                                <span className="material-icons text-4xl text-slate-400 group-hover:text-brand-orange mb-2 transition-colors">description</span>
+                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-orange">Subir PDF</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <h3 className="font-bold text-slate-700 dark:text-white flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs flex items-center justify-center">3</span> Otros</h3>
+                                            <div className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
+                                                <span className="material-icons text-4xl text-slate-400 group-hover:text-brand-orange mb-2 transition-colors">folder_zip</span>
+                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-orange">Subir Archivo</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl items-start gap-3 flex mb-8">
+                                        <span className="material-icons text-blue-500">info</span>
+                                        <p className="text-sm text-blue-700 dark:text-blue-300">Si no tienes los archivos a mano, puedes continuar y enviarlos luego por WhatsApp a tu asesor asignado.</p>
+                                    </div>
+
+                                    <div className="mt-12 flex justify-between">
+                                        <button onClick={prevStep} className="px-6 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"> Atrás</button>
+                                        <Link to="/student/success" className="px-8 py-3 bg-[#10b981] text-white rounded-xl font-bold hover:shadow-lg hover:bg-[#059669] transition-all transform hover:-translate-y-1 flex items-center gap-2">
+                                            Finalizar Registro <span className="material-icons">check_circle</span>
+                                        </Link>
                                     </div>
                                 </div>
                             )}
