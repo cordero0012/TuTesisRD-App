@@ -83,10 +83,10 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                 <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-3 text-white mb-12">
+                    <Link to="/" className="flex items-center gap-3 text-white mb-12 hover:opacity-80 transition-opacity">
                         <span className="material-symbols-outlined text-2xl">school</span>
                         <span className="font-bold text-xl">TuTesisRD</span>
-                    </div>
+                    </Link>
 
                     {mode === 'register' ? (
                         <div className="space-y-6">
