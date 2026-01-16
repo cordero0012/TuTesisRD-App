@@ -244,19 +244,26 @@ const RegisterWizard: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        {/* Nivel Académico */}
+                                        {/* Nivel Académico / Tipo de Trabajo */}
                                         <div>
                                             <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Tipo de Proyecto</label>
-                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                                {['Tesis de Grado', 'Monográfico', 'Postgrado/Doctoral'].map((type) => (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                {[
+                                                    { label: 'Tesis de Grado', icon: 'school' },
+                                                    { label: 'Monográfico', icon: 'article' },
+                                                    { label: 'Postgrado/Doctoral', icon: 'psychology' },
+                                                    { label: 'Tarea', icon: 'assignment' },
+                                                    { label: 'Artículo Científico', icon: 'science' },
+                                                    { label: 'Presentación', icon: 'co_present' }
+                                                ].map((item) => (
                                                     <div
-                                                        key={type}
-                                                        onClick={() => setFormData(prev => ({ ...prev, type: type }))}
-                                                        className={`p-3 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 ${formData.type === type ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
+                                                        key={item.label}
+                                                        onClick={() => setFormData(prev => ({ ...prev, type: item.label }))}
+                                                        className={`p-3 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 ${formData.type === item.label ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
                                                     >
-                                                        {formData.type === type && <div className="absolute top-2 right-2 text-primary"><span className="material-symbols-outlined text-base">check_circle</span></div>}
-                                                        <span className="material-icons text-2xl text-slate-400">{type.includes('Tesis') ? 'school' : type.includes('Mono') ? 'article' : 'psychology'}</span>
-                                                        <span className={`font-bold text-sm ${formData.type === type ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>{type}</span>
+                                                        {formData.type === item.label && <div className="absolute top-2 right-2 text-primary"><span className="material-symbols-outlined text-base">check_circle</span></div>}
+                                                        <span className="material-icons text-2xl text-slate-400">{item.icon}</span>
+                                                        <span className={`font-bold text-sm leading-tight ${formData.type === item.label ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>{item.label}</span>
                                                     </div>
                                                 ))}
                                             </div>
