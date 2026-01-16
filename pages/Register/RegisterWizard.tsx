@@ -56,26 +56,50 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
         }
     };
 
+    // Notification state
+    const [notification, setNotification] = useState<{ message: string, type: 'error' | 'success' } | null>(null);
+
+    const showNotification = (message: string, type: 'error' | 'success' = 'error') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+    };
+
     const nextStep = () => {
         // Validation Logic
         if (step === 1) {
             if (!formData.name || !formData.lastname || !formData.email || !formData.phone) {
-                alert("Por favor completa todos los campos personales para continuar.");
+                showNotification("Por favor completa todos los campos personales.");
                 return;
             }
         }
         if (step === 2) {
             if (!formData.university || !formData.career || !formData.amount) {
-                alert("Por favor completa los detalles del proyecto para continuar.");
+                showNotification("Por favor completa los detalles del proyecto.");
                 return;
             }
         }
         setStep(prev => prev + 1);
     };
+
     const prevStep = () => setStep(prev => prev - 1);
 
     return (
         <div className="flex h-screen w-full font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-white transition-colors duration-200">
+            {/* Custom Notification Toast */}
+            {notification && (
+                <div className="fixed top-20 right-4 z-[100] animate-fade-in-down">
+                    <div className={`px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md border ${notification.type === 'error'
+                            ? 'bg-red-500/90 text-white border-red-400'
+                            : 'bg-green-500/90 text-white border-green-400'
+                        }`}>
+                        <div className={`p-1 rounded-full ${notification.type === 'error' ? 'bg-white/20' : 'bg-white/20'}`}>
+                            <span className="material-symbols-outlined text-lg block">{notification.type === 'error' ? 'priority_high' : 'check'}</span>
+                        </div>
+                        <span className="font-bold text-sm shadow-sm">{notification.message}</span>
+                    </div>
+                </div>
+            )}
+
             {/* Sidebar */}
             <aside className="hidden md:flex w-80 lg:w-96 flex-col bg-blue-900 relative overflow-hidden shrink-0 z-20 shadow-2xl p-8 justify-between">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-indigo-900"></div>
