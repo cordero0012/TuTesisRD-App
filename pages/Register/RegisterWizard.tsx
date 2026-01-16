@@ -16,7 +16,8 @@ const RegisterWizard: React.FC = () => {
         normative: 'Normas APA (7ma)',
         amount: '',
         career: '',
-        type: 'Tesis de Grado'
+        type: 'Tesis de Grado',
+        plan: 'asesoria'
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -199,8 +200,8 @@ const RegisterWizard: React.FC = () => {
 
                             {step === 2 && (
                                 <div className="animate-fade-in-right">
-                                    <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Detalles Académicos</h2>
-                                    <p className="text-slate-500 mb-8">Cuéntanos sobre los requisitos de tu universidad.</p>
+                                    <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Detalles del Servicio</h2>
+                                    <p className="text-slate-500 mb-8">Selecciona el nivel y la modalidad de trabajo acordada.</p>
 
                                     <div className="space-y-6">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -216,6 +217,64 @@ const RegisterWizard: React.FC = () => {
                                                 />
                                             </div>
                                             <div>
+                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Carrera / Programa</label>
+                                                <input
+                                                    type="text"
+                                                    name="career"
+                                                    value={formData.career}
+                                                    onChange={handleInputChange}
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    placeholder="Ej. Derecho / Maestría en..."
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Nivel Académico */}
+                                        <div>
+                                            <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Tipo de Proyecto</label>
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                {['Tesis de Grado', 'Monográfico', 'Postgrado/Doctoral'].map((type) => (
+                                                    <div
+                                                        key={type}
+                                                        onClick={() => setFormData(prev => ({ ...prev, type: type }))}
+                                                        className={`p-3 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 ${formData.type === type ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
+                                                    >
+                                                        {formData.type === type && <div className="absolute top-2 right-2 text-primary"><span className="material-symbols-outlined text-base">check_circle</span></div>}
+                                                        <span className="material-icons text-2xl text-slate-400">{type.includes('Tesis') ? 'school' : type.includes('Mono') ? 'article' : 'psychology'}</span>
+                                                        <span className={`font-bold text-sm ${formData.type === type ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>{type}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Modalidad de Servicio */}
+                                        <div>
+                                            <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Modalidad de Servicio</label>
+                                            <div className="space-y-3">
+                                                {[
+                                                    { id: 'asesoria', title: 'Solo Asesoría', desc: 'Correcciones y guía metodológica.' },
+                                                    { id: 'parcial', title: 'Desarrollo Colaborativo', desc: 'Usted investiga, nosotros redactamos (50/50).' },
+                                                    { id: 'completo', title: 'Desarrollo Integral', desc: 'Elaboración completa desde cero.' }
+                                                ].map((mod) => (
+                                                    <div
+                                                        key={mod.id}
+                                                        onClick={() => setFormData(prev => ({ ...prev, plan: mod.id }))}
+                                                        className={`p-4 border-2 rounded-xl cursor-pointer flex items-center gap-4 transition-all ${formData.plan === mod.id ? 'border-brand-orange bg-orange-50 dark:bg-orange-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'}`}
+                                                    >
+                                                        <div className={`size-6 rounded-full border-2 flex items-center justify-center shrink-0 ${formData.plan === mod.id ? 'border-brand-orange' : 'border-slate-300'}`}>
+                                                            {formData.plan === mod.id && <div className="size-3 rounded-full bg-brand-orange" />}
+                                                        </div>
+                                                        <div>
+                                                            <div className={`font-bold ${formData.plan === mod.id ? 'text-brand-orange' : 'text-slate-800 dark:text-white'}`}>{mod.title}</div>
+                                                            <div className="text-xs text-slate-500 dark:text-slate-400">{mod.desc}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div>
                                                 <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Normativa</label>
                                                 <select
                                                     name="normative"
@@ -229,57 +288,20 @@ const RegisterWizard: React.FC = () => {
                                                     <option>Vancouver</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Monto Abonado (DOP)</label>
-                                                <div className="relative">
-                                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                                    <input
-                                                        type="number"
-                                                        name="amount"
-                                                        value={formData.amount}
-                                                        onChange={handleInputChange}
-                                                        className="w-full p-4 pl-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
-                                                        placeholder="0.00"
-                                                    />
-                                                </div>
-                                                <p className="text-xs text-slate-500 mt-1">Acordado previamente con el asesor.</p>
-                                            </div>
-                                            <div>
-                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Carrera</label>
+                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Monto Acordado (DOP)</label>
                                                 <input
-                                                    type="text"
-                                                    name="career"
-                                                    value={formData.career}
+                                                    type="number"
+                                                    name="amount"
+                                                    value={formData.amount}
                                                     onChange={handleInputChange}
                                                     className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
-                                                    placeholder="Ej. Derecho"
+                                                    placeholder="0.00"
                                                 />
                                             </div>
                                         </div>
-                                        <div>
-                                            <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Tipo de Trabajo</label>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div
-                                                    onClick={() => setFormData(prev => ({ ...prev, type: 'Tesis de Grado' }))}
-                                                    className={`p-4 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all ${formData.type === 'Tesis de Grado' ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
-                                                >
-                                                    {formData.type === 'Tesis de Grado' && <div className="absolute top-3 right-3 text-primary"><span className="material-symbols-outlined text-lg">check_circle</span></div>}
-                                                    <div className={`font-bold mb-1 ${formData.type === 'Tesis de Grado' ? 'text-primary' : 'text-slate-800 dark:text-white'}`}>Tesis de Grado</div>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">Investigación original y profunda.</p>
-                                                </div>
-                                                <div
-                                                    onClick={() => setFormData(prev => ({ ...prev, type: 'Monográfico' }))}
-                                                    className={`p-4 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all ${formData.type === 'Monográfico' ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
-                                                >
-                                                    {formData.type === 'Monográfico' && <div className="absolute top-3 right-3 text-primary"><span className="material-symbols-outlined text-lg">check_circle</span></div>}
-                                                    <div className={`font-bold mb-1 ${formData.type === 'Monográfico' ? 'text-primary' : 'text-slate-800 dark:text-white'}`}>Monográfico</div>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">Estudio descriptivo.</p>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
+
                                     <div className="mt-12 flex justify-between">
                                         <button onClick={prevStep} className="px-6 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"> Atrás</button>
                                         <Link to="/student/details" className="px-8 py-3 bg-brand-orange text-white rounded-xl font-bold hover:shadow-lg hover:bg-orange-600 transition-all transform hover:-translate-y-1">Siguiente: Archivos</Link>
