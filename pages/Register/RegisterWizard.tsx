@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const RegisterWizard: React.FC = () => {
+interface RegisterWizardProps {
+    initialMode?: 'register' | 'monitor';
+}
+
+const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
     const location = useLocation();
     const [mode, setMode] = useState<'register' | 'monitor'>('register');
     const [step, setStep] = useState(1);
@@ -27,10 +31,12 @@ const RegisterWizard: React.FC = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        if (params.get('mode') === 'monitor') {
+        if (initialMode) {
+            setMode(initialMode);
+        } else if (params.get('mode') === 'monitor') {
             setMode('monitor');
         }
-    }, [location]);
+    }, [location, initialMode]);
 
     const [trackingCode, setTrackingCode] = useState('');
     const [searchResult, setSearchResult] = useState<any>(null);

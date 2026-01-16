@@ -87,8 +87,10 @@ const App = () => {
                 <DarkModeToggle />
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
+                    <Route path="/registro" element={<RegisterWizard initialMode="register" />} />
+                    <Route path="/monitoreo" element={<RegisterWizard initialMode="monitor" />} />
                     <Route path="/student/portal" element={<StudentPortal />} />
-                    <Route path="/student/register" element={<RegisterWizard />} />
+                    <Route path="/student/register" element={<RegisterWizard />} /> {/* Legacy/Fallback */}
                     <Route path="/student/details" element={<AcademicDetails />} />
                     <Route path="/student/upload" element={<UploadDocuments />} />
                     <Route path="/student/success" element={<SuccessScreen />} />
