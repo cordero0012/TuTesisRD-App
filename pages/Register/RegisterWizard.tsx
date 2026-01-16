@@ -50,7 +50,22 @@ const RegisterWizard: React.FC = () => {
         }
     };
 
-    const nextStep = () => setStep(prev => prev + 1);
+    const nextStep = () => {
+        // Validation Logic
+        if (step === 1) {
+            if (!formData.name || !formData.lastname || !formData.email || !formData.phone) {
+                alert("Por favor completa todos los campos personales para continuar.");
+                return;
+            }
+        }
+        if (step === 2) {
+            if (!formData.university || !formData.career || !formData.amount) {
+                alert("Por favor completa los detalles del proyecto para continuar.");
+                return;
+            }
+        }
+        setStep(prev => prev + 1);
+    };
     const prevStep = () => setStep(prev => prev - 1);
 
     return (
