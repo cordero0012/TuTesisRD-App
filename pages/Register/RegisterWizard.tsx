@@ -14,7 +14,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // ... existing form data state ...
+    // ... existing    // Form handling
     const [formData, setFormData] = useState({
         name: '',
         lastname: '',
@@ -22,7 +22,9 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
         phone: '',
         university: '',
         normative: 'Normas APA (7ma)',
-        amount: '',
+        totalAmount: '',
+        paidAmount: '',
+        dueDate: '',
         career: '',
         type: 'Tesis de Grado',
         plan: 'asesoria'
@@ -56,7 +58,9 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                     student_id: studentData.id,
                     type: formData.type,
                     description: `Plan: ${formData.plan}, Normative: ${formData.normative}`,
-                    amount: formData.amount,
+                    total_amount: parseFloat(formData.totalAmount) || 0,
+                    paid_amount: parseFloat(formData.paidAmount) || 0,
+                    due_date: formData.dueDate || null,
                     status: 'pending' // Default
                 }])
                 .select('tracking_code')
@@ -426,17 +430,70 @@ return (
                                                 <option>Vancouver</option>
                                             </select>
                                         </div>
-                                        <div>
-                                            <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Monto Acordado (DOP)</label>
-                                            <input
-                                                type="number"
-                                                name="amount"
-                                                value={formData.amount}
-                                                onChange={handleInputChange}
-                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
-                                                placeholder="0.00"
-                                            />
+                                    </div>
+
+                                    {/* Financial Details Section */}
+                                    <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 space-y-6">
+                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                            <span className="material-icons text-green-500">payments</span> Detalles Financieros
+                                        </h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                            <div className="sm:col-span-2">
+                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Fecha Pautada de Entrega</label>
+                                                <input
+                                                    type="date"
+                                                    name="dueDate"
+                                                    value={formData.dueDate}
+                                                    onChange={handleInputChange}
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Monto Total Acordado (DOP)</label>
+                                                <input
+                                                    type="number"
+                                                    name="totalAmount"
+                                                    value={formData.totalAmount}
+                                                    onChange={handleInputChange}
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Monto Abonado (DOP)</label>
+                                                <input
+                                                    type="number"
+                                                    name="paidAmount"
+                                                    value={formData.paidAmount}
+                                                    onChange={handleInputChange}
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
                                         </div>
+
+                                        {/* Calculations */}
+                                        {formData.totalAmount && (
+                                            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700 animate-fade-in">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-sm text-slate-500">Monto Restante</span>
+                                                    <span className="text-xl font-black text-slate-800 dark:text-white">
+                                                        RD$ {((parseFloat(formData.totalAmount) || 0) - (parseFloat(formData.paidAmount) || 0)).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2.5">
+                                                    <div
+                                                        className="bg-brand-orange h-2.5 rounded-full transition-all duration-500"
+                                                        style={{ width: `${Math.min(100, Math.max(0, ((parseFloat(formData.paidAmount) || 0) / (parseFloat(formData.totalAmount) || 1)) * 100))}%` }}
+                                                    ></div>
+                                                </div>
+                                                <div className="flex justify-end mt-1">
+                                                    <span className="text-xs font-bold text-brand-orange">
+                                                        {Math.min(100, Math.max(0, ((parseFloat(formData.paidAmount) || 0) / (parseFloat(formData.totalAmount) || 1)) * 100)).toFixed(1)}% Abonado
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
