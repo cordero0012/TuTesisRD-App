@@ -640,6 +640,10 @@ video {
   top: -6rem;
 }
 
+.-top-8 {
+  top: -2rem;
+}
+
 .bottom-0 {
   bottom: 0px;
 }
@@ -1527,6 +1531,11 @@ video {
 .bg-background-light {
   --tw-bg-opacity: 1;
   background-color: rgb(246 247 248 / var(--tw-bg-opacity, 1));
+}
+
+.bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
 }
 
 .bg-blue-100 {

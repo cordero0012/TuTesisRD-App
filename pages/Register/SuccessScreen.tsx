@@ -9,6 +9,14 @@ const SuccessScreen: React.FC = () => {
         setIsExploding(true);
     }, []);
 
+    const [copied, setCopied] = React.useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText("TRX-8492");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     const config = {
         angle: 90,
         spread: 360,
@@ -42,8 +50,13 @@ const SuccessScreen: React.FC = () => {
                         <p className="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">Tu Código de Rastreo</p>
                         <div className="flex items-center justify-center gap-2">
                             <span className="text-2xl font-mono font-black text-brand-orange tracking-widest">TRX-8492</span>
-                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-white" title="Copiar">
-                                <span className="material-symbols-outlined text-lg">content_copy</span>
+                            <button
+                                onClick={handleCopy}
+                                className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors relative"
+                                title="Copiar"
+                            >
+                                <span className="material-symbols-outlined text-lg">{copied ? 'check' : 'content_copy'}</span>
+                                {copied && <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded shadow-lg">Copiado!</span>}
                             </button>
                         </div>
                         <p className="text-[10px] text-slate-400 mt-2">Guarda este código para monitorear el estado de tu proyecto.</p>
@@ -73,7 +86,9 @@ const SuccessScreen: React.FC = () => {
                     </div>
                 </div>
                 <div className="p-6">
-                    <Link to="/student/register" className="block w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/30 transition-all">Monitorear mi Proyecto</Link>
+                    <Link to="/monitoreo" className="block w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2">
+                        <span className="material-icons">travel_explore</span> Monitorear mi Proyecto
+                    </Link>
                 </div>
             </div>
         </div>
