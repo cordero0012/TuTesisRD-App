@@ -131,27 +131,40 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                 <div className="text-white/60 text-sm relative z-10">© 2023 TuTesisRD</div>
             </aside>
 
-            <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-16 animate-fade-in custom-scrollbar">
-                <div className="max-w-2xl mx-auto">
-                    {/* Mode Switcher */}
-                    <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-10 w-fit mx-auto md:mx-0">
+            <main className="flex-1 overflow-y-auto w-full bg-white dark:bg-slate-900 md:bg-transparent transition-colors custom-scrollbar relative">
+                {/* Mobile Header */}
+                <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm sticky top-0 z-30">
+                    <Link to="/" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold">
+                        <span className="material-symbols-outlined text-brand-orange">school</span>
+                        <span>TuTesis<span className="text-brand-orange">RD</span></span>
+                    </Link>
+                    {mode === 'register' && (
+                        <div className="text-xs font-bold px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400">
+                            Paso {step} de 3
+                        </div>
+                    )}
+                </div>
+
+                <div className="p-4 md:p-8 lg:p-16 max-w-2xl mx-auto">
+                    {/* Mode Switcher - Hide on mobile if deep linked, or keep consistent? Let's keep it but make it touch friendly */}
+                    <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-8 w-full md:w-fit mx-auto md:mx-0 shadow-inner">
                         <button
                             onClick={() => setMode('register')}
-                            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${mode === 'register'
+                            className={`flex-1 md:flex-none px-4 md:px-6 py-3 rounded-lg text-sm font-bold transition-all ${mode === 'register'
                                 ? 'bg-white dark:bg-slate-700 text-primary shadow-sm'
                                 : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                                 }`}
                         >
-                            Registrar Proyecto
+                            Registrar
                         </button>
                         <button
                             onClick={() => setMode('monitor')}
-                            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${mode === 'monitor'
+                            className={`flex-1 md:flex-none px-4 md:px-6 py-3 rounded-lg text-sm font-bold transition-all ${mode === 'monitor'
                                 ? 'bg-white dark:bg-slate-700 text-primary shadow-sm'
                                 : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                                 }`}
                         >
-                            Monitorear Proyecto
+                            Monitorear
                         </button>
                     </div>
 
@@ -159,11 +172,11 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                         <>
                             {step === 1 && (
                                 <div className="animate-fade-in-right">
-                                    <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Empecemos con tus datos</h2>
+                                    <h2 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Empecemos con tus datos</h2>
                                     <p className="text-slate-500 mb-8">Esta información nos permite contactarte directamente.</p>
 
-                                    <div className="space-y-6">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div className="space-y-5">
+                                        <div className="grid grid-cols-1 gap-5">
                                             <div>
                                                 <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Nombre</label>
                                                 <input
@@ -171,7 +184,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleInputChange}
-                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                     placeholder="Tu nombre"
                                                 />
                                             </div>
@@ -182,7 +195,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                     name="lastname"
                                                     value={formData.lastname}
                                                     onChange={handleInputChange}
-                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                     placeholder="Tu apellido"
                                                 />
                                             </div>
@@ -194,7 +207,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                 name="email"
                                                 value={formData.email}
                                                 onChange={handleInputChange}
-                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                 placeholder="ejemplo@correo.com"
                                             />
                                         </div>
@@ -205,14 +218,14 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                 name="phone"
                                                 value={formData.phone}
                                                 onChange={handleInputChange}
-                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                 placeholder="(809) 000-0000"
                                             />
                                         </div>
                                     </div>
-                                    <div className="mt-12 flex justify-between items-center">
-                                        <Link to="/" className="text-slate-500 hover:text-slate-800 font-medium">Cancelar</Link>
-                                        <button onClick={nextStep} className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:shadow-lg hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+                                    <div className="mt-10 flex flex-col-reverse md:flex-row justify-between items-center gap-4">
+                                        <Link to="/" className="w-full md:w-auto py-3 text-center text-slate-500 hover:text-slate-800 font-medium">Cancelar</Link>
+                                        <button onClick={nextStep} className="w-full md:w-auto px-8 py-4 bg-primary text-white rounded-xl font-bold hover:shadow-lg hover:bg-primary-dark transition-all transform hover:-translate-y-1 flex justify-center items-center">
                                             Continuar <span className="material-icons text-sm ml-1">arrow_forward</span>
                                         </button>
                                     </div>
@@ -221,11 +234,11 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
 
                             {step === 2 && (
                                 <div className="animate-fade-in-right">
-                                    <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Detalles del Servicio</h2>
+                                    <h2 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Detalles del Servicio</h2>
                                     <p className="text-slate-500 mb-8">Selecciona el nivel y la modalidad de trabajo acordada.</p>
 
                                     <div className="space-y-6">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 gap-5">
                                             <div>
                                                 <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Universidad</label>
                                                 <input
@@ -233,7 +246,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                     name="university"
                                                     value={formData.university}
                                                     onChange={handleInputChange}
-                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                     placeholder="Ej. UASD"
                                                 />
                                             </div>
@@ -244,7 +257,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                     name="career"
                                                     value={formData.career}
                                                     onChange={handleInputChange}
-                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                     placeholder="Ej. Derecho / Maestría en..."
                                                 />
                                             </div>
@@ -269,7 +282,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                     >
                                                         {formData.type === item.label && <div className="absolute top-2 right-2 text-primary"><span className="material-symbols-outlined text-base">check_circle</span></div>}
                                                         <span className="material-icons text-2xl text-slate-400">{item.icon}</span>
-                                                        <span className={`font-bold text-sm leading-tight ${formData.type === item.label ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>{item.label}</span>
+                                                        <span className={`font-bold text-xs sm:text-sm leading-tight ${formData.type === item.label ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>{item.label}</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -301,14 +314,14 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 gap-5">
                                             <div>
                                                 <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Normativa</label>
                                                 <select
                                                     name="normative"
                                                     value={formData.normative}
                                                     onChange={handleInputChange}
-                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                 >
                                                     <option>Normas APA (7ma)</option>
                                                     <option>Normas ISO</option>
@@ -323,57 +336,44 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                                     name="amount"
                                                     value={formData.amount}
                                                     onChange={handleInputChange}
-                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                                                    className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                                                     placeholder="0.00"
                                                 />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="mt-12 flex justify-between">
+                                    <div className="mt-10 flex justify-between gap-4">
                                         <button onClick={prevStep} className="px-6 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"> Atrás</button>
-                                        <button onClick={nextStep} className="px-8 py-3 bg-brand-orange text-white rounded-xl font-bold hover:shadow-lg hover:bg-orange-600 transition-all transform hover:-translate-y-1">Siguiente: Archivos</button>
+                                        <button onClick={nextStep} className="flex-1 md:flex-none px-8 py-3 bg-brand-orange text-white rounded-xl font-bold hover:shadow-lg hover:bg-orange-600 transition-all transform hover:-translate-y-1">Siguiente</button>
                                     </div>
                                 </div>
                             )}
 
                             {step === 3 && (
                                 <div className="animate-fade-in-right">
-                                    <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Sube tus Archivos</h2>
+                                    <h2 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Sube tus Archivos</h2>
                                     <p className="text-slate-500 mb-8">Si tienes documentos previos, súbelos aquí. (Opcional)</p>
 
-                                    <div className="grid md:grid-cols-3 gap-6 mb-8">
+                                    <div className="grid grid-cols-1 gap-4 mb-8">
                                         <div className="space-y-3">
                                             <h3 className="font-bold text-slate-700 dark:text-white flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs flex items-center justify-center">1</span> Anteproyecto</h3>
-                                            <div className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
-                                                <span className="material-icons text-4xl text-slate-400 group-hover:text-brand-orange mb-2 transition-colors">cloud_upload</span>
+                                            <div className="h-32 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
+                                                <span className="material-icons text-3xl text-slate-400 group-hover:text-brand-orange mb-1 transition-colors">cloud_upload</span>
                                                 <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-orange">Subir PDF</span>
                                             </div>
                                         </div>
-                                        <div className="space-y-3">
-                                            <h3 className="font-bold text-slate-700 dark:text-white flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs flex items-center justify-center">2</span> Normativa</h3>
-                                            <div className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
-                                                <span className="material-icons text-4xl text-slate-400 group-hover:text-brand-orange mb-2 transition-colors">description</span>
-                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-orange">Subir PDF</span>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-3">
-                                            <h3 className="font-bold text-slate-700 dark:text-white flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs flex items-center justify-center">3</span> Otros</h3>
-                                            <div className="h-48 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-brand-orange dark:hover:border-brand-orange transition-all group">
-                                                <span className="material-icons text-4xl text-slate-400 group-hover:text-brand-orange mb-2 transition-colors">folder_zip</span>
-                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-orange">Subir Archivo</span>
-                                            </div>
-                                        </div>
+                                        {/* More compact upload for mobile */}
                                     </div>
 
                                     <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl items-start gap-3 flex mb-8">
-                                        <span className="material-icons text-blue-500">info</span>
+                                        <span className="material-icons text-blue-500 shrink-0">info</span>
                                         <p className="text-sm text-blue-700 dark:text-blue-300">Si no tienes los archivos a mano, puedes continuar y enviarlos luego por WhatsApp a tu asesor asignado.</p>
                                     </div>
 
-                                    <div className="mt-12 flex justify-between">
-                                        <button onClick={prevStep} className="px-6 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"> Atrás</button>
-                                        <Link to="/student/success" className="px-8 py-3 bg-[#10b981] text-white rounded-xl font-bold hover:shadow-lg hover:bg-[#059669] transition-all transform hover:-translate-y-1 flex items-center gap-2">
+                                    <div className="mt-10 flex flex-col-reverse md:flex-row justify-between gap-4">
+                                        <button onClick={prevStep} className="w-full md:w-auto py-3 text-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium transition-colors"> Atrás</button>
+                                        <Link to="/student/success" className="w-full md:w-auto px-8 py-4 bg-[#10b981] text-white rounded-xl font-bold hover:shadow-lg hover:bg-[#059669] transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
                                             Finalizar Registro <span className="material-icons">check_circle</span>
                                         </Link>
                                     </div>
@@ -381,23 +381,23 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                             )}
                         </>
                     ) : (
-                        // MONITOR VIEW (Unchanged)
+                        // MONITOR VIEW
                         <div className="animate-fade-in-up">
-                            <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">Rastrea tu Proyecto</h2>
+                            <h2 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Rastrea tu Proyecto</h2>
                             <p className="text-slate-500 mb-8">Ingresa el código proporcionado al momento del registro.</p>
 
                             <form onSubmit={handleSearch} className="mb-10">
-                                <div className="flex gap-4">
+                                <div className="flex flex-col md:flex-row gap-4">
                                     <input
                                         type="text"
                                         value={trackingCode}
                                         onChange={(e) => setTrackingCode(e.target.value.toUpperCase())}
-                                        className="flex-1 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none uppercase tracking-widest font-bold placeholder:normal-case placeholder:tracking-normal"
+                                        className="flex-1 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none uppercase tracking-widest font-bold placeholder:normal-case placeholder:tracking-normal w-full"
                                         placeholder="Ej. TRX-8492"
                                     />
                                     <button
                                         type="submit"
-                                        className="bg-brand-orange text-white px-8 rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30"
+                                        className="bg-brand-orange text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30 w-full md:w-auto"
                                     >
                                         Buscar
                                     </button>
@@ -405,16 +405,16 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                             </form>
 
                             {searchResult && (
-                                <div className="bg-white dark:bg-[#1a2230] rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl animate-fade-in">
+                                <div className="bg-white dark:bg-[#1a2230] rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl animate-fade-in mb-8">
                                     <div className="flex justify-between items-start mb-6">
                                         <div>
                                             <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold mb-2">
                                                 {searchResult.status}
                                             </span>
-                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Tesis: {searchResult.university}</h3>
+                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white line-clamp-2">Tesis: {searchResult.university}</h3>
                                             <p className="text-sm text-slate-500">{searchResult.type}</p>
                                         </div>
-                                        <div className="text-right">
+                                        <div className="text-right shrink-0 ml-4">
                                             <div className="text-xs text-slate-400">Última actualización</div>
                                             <div className="font-medium text-slate-700 dark:text-slate-300">{searchResult.lastUpdate}</div>
                                         </div>
@@ -434,16 +434,23 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                                         <div className="grid grid-cols-2 gap-4 mt-6">
                                             <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
                                                 <div className="text-xs text-slate-400 mb-1">Asesor Asignado</div>
-                                                <div className="font-bold text-slate-800 dark:text-white">{searchResult.advisor}</div>
+                                                <div className="font-bold text-slate-800 dark:text-white truncate">{searchResult.advisor}</div>
                                             </div>
                                             <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
                                                 <div className="text-xs text-slate-400 mb-1">Próxima Entrega</div>
-                                                <div className="font-bold text-slate-800 dark:text-white">Capítulo 1</div>
+                                                <div className="font-bold text-slate-800 dark:text-white truncate">Capítulo 1</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
+
+                            {/* Back Button for Monitor Mode */}
+                            <div className="text-center">
+                                <Link to="/" className="inline-flex items-center text-slate-500 hover:text-brand-orange font-medium transition-colors">
+                                    <span className="material-icons mr-2">arrow_back</span> Volver al inicio
+                                </Link>
+                            </div>
                         </div>
                     )}
                 </div>
