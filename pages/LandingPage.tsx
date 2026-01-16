@@ -68,7 +68,7 @@ const LandingPage: React.FC = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
+                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
                                     <span className="material-icons mr-2">chat</span> Contactar Asesor
                                 </a>
                                 <a href="#servicios" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
@@ -76,13 +76,16 @@ const LandingPage: React.FC = () => {
                                 </a>
                             </div>
 
-                            <div className="mt-12 flex items-center justify-center md:justify-start gap-4 text-sm font-medium text-slate-500 dark:text-slate-400">
+                            <div className="mt-12 inline-flex items-center gap-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm p-3 pr-6 rounded-full border border-white/50 dark:border-slate-700/50 shadow-sm">
                                 <div className="flex -space-x-3">
-                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-gray-200"></div>
-                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-gray-300"></div>
-                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-gray-400 flex items-center justify-center text-xs text-white font-bold">+300</div>
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Student" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Student" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
+                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-brand-orange flex items-center justify-center text-xs text-white font-bold">+300</div>
                                 </div>
-                                <p>Estudiantes graduados</p>
+                                <div>
+                                    <p className="font-bold text-slate-900 dark:text-white leading-tight">Estudiantes</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Graduados exitosamente</p>
+                                </div>
                             </div>
                         </div>
 
@@ -233,13 +236,13 @@ const LandingPage: React.FC = () => {
                     <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
                         Puedes registrar tu proyecto directamente en nuestra plataforma y enviarnos tus archivos para una revisión inicial.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <Link to="/registro" className="px-8 py-4 bg-brand-orange text-white rounded-full font-bold text-lg hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <Link to="/registro" className="w-full sm:w-auto px-10 py-4 bg-brand-orange text-white rounded-full font-bold text-lg hover:shadow-xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
                             Registrar Proyecto <span className="material-icons">arrow_forward</span>
                         </Link>
 
-                        <Link to="/monitoreo" className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-white rounded-full font-bold text-lg border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
-                            <span className="material-icons text-brand-orange">search</span> Monitorear
+                        <Link to="/monitoreo" className="w-full sm:w-auto px-10 py-4 bg-transparent text-brand-orange border-2 border-brand-orange rounded-full font-bold text-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+                            <span className="material-icons">search</span> Monitorear
                         </Link>
                     </div>
                 </div>
