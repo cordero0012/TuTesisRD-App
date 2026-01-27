@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx tailwindcss -i ./input.css -o ./styles.css && vite build",
+    "build": "npx tailwindcss -i ./src/input.css -o ./src/styles.css && vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"

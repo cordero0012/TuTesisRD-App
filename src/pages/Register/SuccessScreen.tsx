@@ -1,9 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Confetti from 'react-dom-confetti';
 
 const SuccessScreen: React.FC = () => {
+    const location = useLocation();
     const [isExploding, setIsExploding] = React.useState(false);
+    const trackingCode = location.state?.trackingCode || "TRX-PENDING";
 
     React.useEffect(() => {
         setIsExploding(true);
@@ -12,7 +14,7 @@ const SuccessScreen: React.FC = () => {
     const [copied, setCopied] = React.useState(false);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText("TRX-8492");
+        navigator.clipboard.writeText(trackingCode);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -49,7 +51,7 @@ const SuccessScreen: React.FC = () => {
                     <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
                         <p className="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">Tu Código de Rastreo</p>
                         <div className="flex items-center justify-center gap-2">
-                            <span className="text-2xl font-mono font-black text-brand-orange tracking-widest">TRX-8492</span>
+                            <span className="text-2xl font-mono font-black text-brand-orange tracking-widest">{trackingCode}</span>
                             <button
                                 onClick={handleCopy}
                                 className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors relative"

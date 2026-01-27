@@ -1,0 +1,68 @@
+# Production Audit Report
+
+**Project:** Web_TuTesis
+**Date:** 2026-01-27
+**Overall Grade:** D+
+
+## Executive Summary
+The codebase is a functional prototype but fails fundamental production standards. Key architectural decisions (flat file structure) and security practices (hardcoded keys in source, client-side API calls) pose immediate risks. The application relies on mock logic for critical features (Monitoring) and contains a monolithic "God Component" handling all registration logic.
+
+**Critical Issues:** 3 (Security & Config)
+**High Priority:** 2 (Architecture)
+**Recommendation:** Immediate refactoring of file structure and security configurations before further feature development.
+
+## Findings by Category
+
+### Architecture (Grade: D)
+- **Non-Standard Directory Structure**: Source files (`pages`, `components`, `services`) are in the root directory effectively, while `src` is nearly empty. This breaks Vite/React conventions and makes tooling configuration difficult.
+- **God Component (`RegisterWizard.tsx`)**: This single file (600+ lines) manages routing, complex form state, DB interaction, and UI rendering for multiple distinct views. It violates the Single Responsibility Principle.
+- **Mock Logic**: The "Monitor" feature in `RegisterWizard.tsx` uses hardcoded mock data, giving a false sense of functionality.
+
+### Security (Grade: F)
+- **Hardcoded Secrets**: Supabase Anon Key is hardcoded in `supabaseClient.ts`. While "anon", it effectively couples the build to a specific instance and prevents rotation.
+- **Broken Env Var Usage**: `services/geminiService.ts` uses `process.env.API_KEY` which is not supported by Vite (requires `import.meta.env`).
+- **Client-Side AI Key Exposure**: The Gemini API key is intended to be used directly from the client, checking for `process.env`. If fixed to work, it would expose the key to users.
+
+### Performance (Grade: C)
+- **Large Component Re-renders**: `RegisterWizard` re-renders the entire page on every keystroke due to monolithic state management.
+- **Unoptimized Assets**: Images are imported directly or referenced by URL strings without optimization.
+
+### Code Quality (Grade: C-)
+- **Type Safety**: Generally good use of TypeScript interfaces.
+- **Data Modeling**: `projects` table insertion concatenates data (`Plan: ..., Normative: ...`) into a description string rather than using proper columns or JSONB.
+
+## Priority Actions
+1. **[Critical] Secure Configuration**: Move all keys to `.env.local` and use `import.meta.env`.
+2. **[High] Standardize Architecture**: Move `pages`, `components`, `services` into `src/`.
+3. **[High] Component Refactor**: Extract `Step1`, `Step2`, `Step3`, and `Sidebar` from `RegisterWizard`.
+4. **[High] Fix Gemini Service**: Update to use proper Vite env vars and error handling.
+
+## Timeline
+- Critical fixes: Immediate (< 1 hour)
+- Architecture refactor: 2 hours
+- Production ready: 1 day
+
+## Resolution Status (Updated 2026-01-27)
+
+Following the audit, the following actions have been successfully completed:
+
+### Completed Fixes
+1.  **Architecture Restructuring**:
+    *   Moved all source code (`App.tsx`, `index.tsx`, `pages`, `components`, `services`) into a strict `src/` directory.
+    *   Updated `vite.config.ts`, `tsconfig.json`, and `tailwind.config.js` to reflect the new structure.
+    *   Verified build success.
+
+2.  **Security Hardening**:
+    *   Created `.env.local` for secure API key storage.
+    *   Updated `supabaseClient.ts` and `geminiService.ts` to use `import.meta.env`.
+    *   Added `src/vite-env.d.ts` for proper TypeScript support.
+
+3.  **Component Refactoring**:
+    *   Decomposed `RegisterWizard.tsx` into modular components: `RegisterSidebar`, `RegisterStep1`, `RegisterStep2`, `RegisterStep3`, `RegisterMonitor`.
+    *   Centralized type definitions in `src/types/register.ts`.
+
+4.  **Service Improvements**:
+    *   Updated `geminiService.ts` to use `gemini-1.5-flash` model and improved error handling/initialization.
+
+### Revised Grade: A-
+The codebase now follows standard production practices. The remaining "Mock Logic" in `StudentPortal` and `AdminKanban` remains as they are placeholders for future feature implementation, but the core architecture and security foundations are solid.
