@@ -1,10 +1,15 @@
 import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
 
 const Universities: React.FC = () => {
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
+            <SEO
+                title="Universidades"
+                description="Trabajamos con todas las universidades de República Dominicana: UASD, PUCMM, O&M, UAPA y más. Adaptamos tu tesis a cualquier normativa."
+            />
             <Navbar />
 
             <section className="pt-32 pb-20 bg-white dark:bg-background-dark transition-colors duration-200">

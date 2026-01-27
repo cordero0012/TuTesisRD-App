@@ -1,10 +1,15 @@
 import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
 
 const About: React.FC = () => {
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
+            <SEO
+                title="Sobre Nosotros"
+                description="Conoce a Miguel Ángel Cordero y al equipo de TuTesisRD. Expertos con más de 7 años de experiencia en asesoría académica."
+            />
             <Navbar />
 
             <section className="pt-32 pb-20">

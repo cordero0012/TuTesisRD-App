@@ -1,10 +1,15 @@
 import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
 
 const Services: React.FC = () => {
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
+            <SEO
+                title="Servicios"
+                description="Ofrecemos asesoría de tesis, corrección de estilo, análisis estadístico y revisión anti-plagio con Turnitin."
+            />
             <Navbar />
 
             <section className="pt-32 pb-20 bg-background-light dark:bg-surface-dark relative transition-colors duration-200">

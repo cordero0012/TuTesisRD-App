@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -46,12 +46,9 @@ const DarkModeToggle = () => {
     );
 };
 
-// Removed old NavigationMenu as we have a new Navbar component used per page or layout
-// Ideally, we could wrap non-dashboard pages in a Layout, but for now we follow the plan of component composition.
-
 const App = () => {
     return (
-        <HashRouter>
+        <BrowserRouter>
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
                 <Routes>
@@ -66,14 +63,13 @@ const App = () => {
                     {/* App Flow */}
                     <Route path="/registro" element={<RegisterWizard initialMode="register" />} />
                     <Route path="/monitoreo" element={<RegisterWizard initialMode="monitor" />} />
-                    <Route path="/student/portal" element={<StudentPortal />} />
-                    <Route path="/student/register" element={<RegisterWizard />} /> {/* Legacy/Fallback */}
-                    <Route path="/student/success" element={<SuccessScreen />} />
+                    <Route path="/portal" element={<StudentPortal />} />
+                    <Route path="/exito" element={<SuccessScreen />} />
                     {/* <Route path="/admin/dashboard" element={<AdminKanban />} /> */}
                 </Routes>
                 {/* <AIChat /> */}
             </div>
-        </HashRouter>
+        </BrowserRouter>
     );
 };
 

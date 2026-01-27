@@ -2,10 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
 
 const LandingPage: React.FC = () => {
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
+            <SEO
+                title="Inicio"
+                description="Tu Tesis Aprobada, Sin Estrés. Expertos en redacción académica y metodología en República Dominicana."
+            />
             <Navbar />
 
             {/* Hero Section */}
