@@ -1,0 +1,121 @@
+[
+    {
+        "id": "uasd",
+        "name": "Universidad Autónoma de Santo Domingo (UASD)",
+        "shortName": "UASD",
+        "color": "#003366",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Escudo_de_la_UASD.svg/1200px-Escudo_de_la_UASD.svg.png",
+        "description": "Expertos en Monográficos, Tesis de Grado y Postgrado para la Primada de América.",
+        "regulations": {
+            "style": "APA 7ma Edición",
+            "minPages": 80,
+            "maxPages": 150
+        },
+        "tips": [
+            "Asegúrate de revisar el Reglamento de Tesis v2024 de la Facultad de Humanidades si eres de esa área.",
+            "El formato de márgenes en la UASD suele ser de 3cm a la izquierda y 2.5cm en los demás lados.",
+            "Recuerda que el índice debe generarse automáticamente."
+        ],
+        "programs": [
+            "Derecho",
+            "Psicología",
+            "Medicina",
+            "Ingeniería",
+            "Contabilidad"
+        ]
+    },
+    {
+        "id": "pucmm",
+        "name": "Pontificia Universidad Católica Madre y Maestra (PUCMM)",
+        "shortName": "PUCMM",
+        "color": "#00539B",
+        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/8/84/PUCMM_Logo.svg/1200px-PUCMM_Logo.svg.png",
+        "description": "Normativa rigurosa y calidad académica. Te ayudamos con tu Proyecto de Grado o Tesis Doctoral.",
+        "regulations": {
+            "style": "APA 7ma Edición (Adaptado)",
+            "minPages": 60,
+            "maxPages": 200
+        },
+        "tips": [
+            "La PUCMM es estricta con el anti-plagio (Turnitin). Mantén tu porcentaje por debajo del 20%.",
+            "Usa la plantilla oficial de la biblioteca para la portada y hoja de aprobación.",
+            "Las citas deben ser estrictas, sin parafraseo excesivo."
+        ],
+        "programs": [
+            "Negocios",
+            "Ingeniería Industrial",
+            "Arquitectura",
+            "Comunicación"
+        ]
+    },
+    {
+        "id": "intec",
+        "name": "Instituto Tecnológico de Santo Domingo (INTEC)",
+        "shortName": "INTEC",
+        "color": "#E31837",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/9/98/Logo_INTEC.png",
+        "description": "Innovación y Ciencia. Asesoría especializada para proyectos de ingeniería y técnicos.",
+        "regulations": {
+            "style": "IEEE / APA",
+            "minPages": 50,
+            "maxPages": 120
+        },
+        "tips": [
+            "Para Ingeniería, el formato IEEE es obligatorio en bibliografía.",
+            "Enfócate mucho en la metodología y los resultados empíricos.",
+            "La presentación final (PowerPoint) es tan importante como el documento."
+        ],
+        "programs": [
+            "Ingeniería de Software",
+            "Ciberseguridad",
+            "Ingeniería Civil",
+            "Medicina"
+        ]
+    },
+    {
+        "id": "unibe",
+        "name": "Universidad Iberoamericana (UNIBE)",
+        "shortName": "UNIBE",
+        "color": "#002855",
+        "logo": "https://www.unibe.edu.do/wp-content/uploads/2019/10/logo_unibe_web.png",
+        "description": "Liderazgo y Emprendimiento. Potencia tu trabajo final con nuestra asesoría personalizada.",
+        "regulations": {
+            "style": "APA 7ma",
+            "minPages": 70,
+            "maxPages": 150
+        },
+        "tips": [
+            "La creatividad en la defensa es valorada.",
+            "Revisa bien los requisitos de inglés si tu tesis es bilingüe."
+        ],
+        "programs": [
+            "Mercadeo",
+            "Odontología",
+            "Psicología",
+            "Derecho"
+        ]
+    },
+    {
+        "id": "oym",
+        "name": "Universidad O&M",
+        "shortName": "O&M",
+        "color": "#FFC72C",
+        "logo": "https://udoym.edu.do/wp-content/uploads/2020/07/Logo-OM-1.png",
+        "description": "Saber y Pensar. Asesoría práctica para monográficos y cursos de grado.",
+        "regulations": {
+            "style": "APA 6ta/7ma",
+            "minPages": 40,
+            "maxPages": 100
+        },
+        "tips": [
+            "Sigue al pie de la letra la estructura que te da el asesor metodológico.",
+            "La O&M suele requerir encuadernado en colores específicos por carrera."
+        ],
+        "programs": [
+            "Ingeniería de Sistemas",
+            "Contabilidad",
+            "Turismo",
+            "Educación"
+        ]
+    }
+]

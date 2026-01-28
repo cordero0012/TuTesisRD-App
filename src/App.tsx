@@ -12,6 +12,8 @@ import SuccessScreen from './pages/Register/SuccessScreen';
 import AIChat from './components/AIChat';
 import DesignSystem from './pages/DesignSystem';
 import DocumentAudit from './pages/Tools/DocumentAudit';
+import UniversityTemplate from './pages/Universities/UniversityTemplate';
+import UniversityDirectory from './pages/Universities/UniversityDirectory';
 
 const DarkModeToggle = () => {
     // Initialize state from localStorage or system preference
@@ -59,7 +61,8 @@ const App = () => {
                     {/* Public Content Pages */}
                     <Route path="/nosotros" element={<About />} />
                     <Route path="/servicios" element={<Services />} />
-                    <Route path="/universidades" element={<Universities />} />
+                    <Route path="/universidades" element={<UniversityDirectory />} />
+                    <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
                     <Route path="/blog" element={<Blog />} />
 
                     {/* App Flow */}
