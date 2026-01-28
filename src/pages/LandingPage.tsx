@@ -206,7 +206,82 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Specialist Section */}
+            {/* Tools Section */}
+            <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/20 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+
+                <div className="container mx-auto px-6 relative z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-16">
+                        <div className="lg:w-1/2">
+                            <span className="text-brand-orange font-black uppercase tracking-[0.2em] text-sm mb-4 block">Herramientas Gratuitas</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
+                                Auditoría de Tesis con <span className="text-brand-orange">IA</span> Pro
+                            </h2>
+                            <p className="text-lg text-slate-400 mb-10 leading-relaxed">
+                                Sube tu borrador y deja que nuestra inteligencia académica analice la coherencia de tu investigación, el cumplimiento de normas APA y la estructura lógica en segundos.
+                            </p>
+
+                            <ul className="space-y-6 mb-12">
+                                <li className="flex items-start gap-4">
+                                    <div className="bg-brand-orange/20 p-2 rounded-lg text-brand-orange">
+                                        <span className="material-icons">fact_check</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white">Validación de Coherencia</h4>
+                                        <p className="text-sm text-slate-400">Verificamos si tu problema, objetivos y metodología están alineados.</p>
+                                    </div>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                    <div className="bg-brand-orange/20 p-2 rounded-lg text-brand-orange">
+                                        <span className="material-icons">format_paint</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white">Revisión de Formato</h4>
+                                        <p className="text-sm text-slate-400">Detectamos errores comunes en portadas, índices y bibliografía.</p>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <Link to="/herramientas/auditor" className="inline-flex items-center bg-brand-orange text-white font-black py-4 px-10 rounded-full shadow-glow-orange hover:shadow-glow-orange-lg hover:scale-105 transition-all">
+                                Probar Auditor Gratis <span className="material-icons ml-2">rocket_launch</span>
+                            </Link>
+                        </div>
+
+                        <div className="lg:w-1/2 relative">
+                            <div className="bg-gradient-to-br from-slate-800 to-slate-950 p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative">
+                                <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-800">
+                                    <div className="flex gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                    </div>
+                                    <div className="text-xs font-mono text-slate-500 uppercase tracking-widest">Auditoría en proceso...</div>
+                                </div>
+                                <div className="space-y-6">
+                                    <div className="h-4 bg-slate-800 rounded-full w-3/4 animate-pulse"></div>
+                                    <div className="h-4 bg-slate-800 rounded-full w-1/2 animate-pulse delay-75"></div>
+                                    <div className="p-6 bg-brand-orange/10 border border-brand-orange/20 rounded-2xl">
+                                        <div className="flex items-center gap-3 text-brand-orange mb-2">
+                                            <span className="material-icons text-sm">warning</span>
+                                            <span className="font-bold text-sm tracking-wide uppercase">Hallazgo APA 7</span>
+                                        </div>
+                                        <p className="text-sm text-slate-300">Se detectó que el objetivo general no contiene el 'Para qué' de la investigación.</p>
+                                    </div>
+                                    <div className="h-4 bg-slate-800 rounded-full w-2/3 animate-pulse delay-150"></div>
+                                </div>
+
+                                {/* Floating Badge */}
+                                <div className="absolute -bottom-6 -right-6 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-6 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 animate-bounce-slow">
+                                    <div className="text-center">
+                                        <div className="text-3xl font-black text-brand-orange">94%</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest border-t border-slate-100 dark:border-slate-700 mt-1 pt-1 opacity-60">Puntaje Académico</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <section className="py-16 bg-brand-orange/5 dark:bg-black/20">
                 <div className="container mx-auto px-6">
                     <div className="bg-white dark:bg-background-dark rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">

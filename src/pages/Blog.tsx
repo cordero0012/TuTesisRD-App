@@ -1,6 +1,8 @@
 import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import blogData from '../data/blogPosts.json';
+import { Link } from 'react-router-dom';
 
 const Blog: React.FC = () => {
     return (
@@ -12,32 +14,44 @@ const Blog: React.FC = () => {
                     <div className="text-center mb-16">
                         <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-4">Blog Académico</h1>
                         <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                            Consejos, guías y recursos para estudiantes universitarios.
+                            Consejos, guías y recursos para estudiantes universitarios dominicanos.
                         </p>
                     </div>
 
-                    {/* Placeholder Content */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((item) => (
-                            <div key={item} className="bg-white dark:bg-surface-dark border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
+                        {blogData.map((post) => (
+                            <Link
+                                key={post.id}
+                                to={`/blog/${post.id}`}
+                                className="bg-white dark:bg-surface-dark border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow group flex flex-col h-full"
+                            >
                                 <div className="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
-                                    <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                                        <span className="material-icons text-4xl">image</span>
+                                    <img
+                                        src={`${import.meta.env.BASE_URL}blog/${post.image}`}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                    <div className="absolute top-4 left-4">
+                                        <span className="bg-brand-orange text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+                                            {post.category}
+                                        </span>
                                     </div>
-                                    {/* Overlay on hover */}
-                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 </div>
-                                <div className="p-6">
-                                    <span className="text-xs font-bold text-brand-orange uppercase tracking-wider mb-2 block">Metodología</span>
-                                    <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-brand-orange transition-colors">Cómo elegir el tema perfecto para tu tesis</h3>
+                                <div className="p-6 flex flex-col flex-grow">
+                                    <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-brand-orange transition-colors">
+                                        {post.title}
+                                    </h3>
                                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-3">
-                                        Descubre los criterios clave para seleccionar un tema de investigación que sea relevante, viable y apasionante para ti. Guía paso a paso para no equivocarte.
+                                        {post.excerpt}
                                     </p>
-                                    <div className="flex items-center text-xs text-slate-400">
-                                        <span className="material-icons text-sm mr-1">schedule</span> 5 min de lectura
+                                    <div className="mt-auto flex items-center justify-between text-xs text-slate-400">
+                                        <span className="flex items-center">
+                                            <span className="material-icons text-sm mr-1">schedule</span> {post.readTime}
+                                        </span>
+                                        <span>{post.date}</span>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
 

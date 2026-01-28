@@ -1,0 +1,32 @@
+[
+    {
+        "id": "estructura-anteproyecto-dom",
+        "title": "Cómo estructurar tu anteproyecto de tesis según normas dominicanas",
+        "excerpt": "Aprende los elementos clave que exigen las principales universidades de República Dominicana (UASD, PUCMM, UNPHU) para aprobar tu anteproyecto.",
+        "category": "Metodología",
+        "date": "2024-03-20",
+        "readTime": "8 min",
+        "image": "anteproyecto_guide.png",
+        "content": "<article><h2>Introducción</h2><p>El anteproyecto es el mapa de ruta de tu investigación. En República Dominicana, cada universidad tiene matices, pero todas coinciden en una estructura base que debes dominar para recibir el visto bueno de tu asesor.</p><h3>1. El Problema de Investigación</h3><p>No se trata simplemente de decir qué está mal. Debes delimitar el espacio, el tiempo y los sujetos. ¿Qué está ocurriendo? ¿A quiénes afecta? ¿Por qué es relevante investigarlo ahora?</p><h3>2. Objetivos y Justificación</h3><p>Tus objetivos deben ser alcanzables. Usa verbos en infinitivo (Analizar, Determinar, Evaluar). La justificación debe responder al '¿Para qué sirve?' desde un punto de vista social, metodológico y práctico.</p><h3>3. Metodología</h3><p>¿Será descriptiva, exploratoria o explicativa? Aquí es donde muchos fallan. Define claramente tu población y muestra.</p></article>"
+    },
+    {
+        "id": "errores-apa-7",
+        "title": "Los 5 errores más comunes en el uso de Normas APA 7ma Edición",
+        "excerpt": "Desde las citas en el texto hasta la lista de referencias. Evita estos errores para que tu tesis no sea rechazada por formato.",
+        "category": "Formato",
+        "date": "2024-03-22",
+        "readTime": "6 min",
+        "image": "apa_errors.png",
+        "content": "<article><h2>El formato APA no es tu enemigo</h2><p>La 7ma edición de APA trajo cambios significativos que simplifican la vida, pero el hábito nos hace cometer errores del pasado.</p><h3>1. Uso incorrecto de 'et al.'</h3><p>En APA 7, para tres o más autores, se usa 'et al.' desde la primera cita. Ya no hay que listar a todos la primera vez.</p><h3>2. Lugar de publicación</h3><p>¡Ya no es necesario! Solo nombre del autor, editorial y año. Si es digital, el DOI o URL.</p><h3>3. Formato de las referencias</h3><p>La sangría francesa es obligatoria. Muchos estudiantes usan tabulaciones manuales que se rompen al editar el documento.</p></article>"
+    },
+    {
+        "id": "gestion-tiempo-tesis",
+        "title": "Gestión del tiempo: Cómo terminar tu tesis en 3 meses",
+        "excerpt": "Estrategias de productividad realistas para estudiantes que trabajan. Organiza tu investigación sin morir en el intento.",
+        "category": "Productividad",
+        "date": "2024-03-25",
+        "readTime": "10 min",
+        "image": "time_management.png",
+        "content": "<article><h2>La tesis es una maratón, no un sprint</h2><p>Muchos dejan todo para el último mes. El secreto es la constancia dividida en bloques de tiempo de alta intensidad.</p><h3>La técnica Pomodoro aplicada al marco teórico</h3><p>Escribir el marco teórico es la parte más tediosa. Usa bloques de 50 minutos de escritura por 10 de descanso. No revises lo que escribes hasta completar el bloque.</p><h3>Define metas semanales, no semestrales</h3><p>En lugar de decir 'tengo que hacer el capítulo 1', di 'esta semana redactaré 5 páginas del planteamiento'.</p></article>"
+    }
+]

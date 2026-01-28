@@ -40,6 +40,17 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
                 </div>
+
+                <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="text-sm">
+                        © {new Date().getFullYear()} TuTesisRD. Todos los derechos reservados.
+                    </div>
+                    <div className="flex items-center gap-6">
+                        <a href="#" className="hover:text-white transition"><i className="fab fa-instagram text-xl"></i></a>
+                        <a href="#" className="hover:text-white transition"><i className="fab fa-facebook text-xl"></i></a>
+                        <a href="#" className="hover:text-white transition"><i className="fab fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
             </div>
         </footer>
     );

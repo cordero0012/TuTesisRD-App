@@ -71,6 +71,99 @@ const Services: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    {/* Pricing Section */}
+                    <div className="mt-32 text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4">Planes y Precios</h2>
+                        <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+                            Elige el nivel de acompañamiento que mejor se adapte a tus necesidades y presupuesto.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10">
+                        {/* Plan Básico */}
+                        <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-100 dark:border-slate-800 flex flex-col hover:shadow-2xl transition-all h-full">
+                            <h3 className="text-xl font-bold mb-2">Básico</h3>
+                            <div className="flex items-baseline gap-1 mb-6">
+                                <span className="text-3xl font-black text-slate-900 dark:text-white">RD$5,000</span>
+                                <span className="text-slate-500 text-sm">/ mes</span>
+                            </div>
+                            <ul className="space-y-4 mb-8 flex-grow">
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Asesoría Metodológica
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Corrección de Estilo
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Revisión de Normas APA
+                                </li>
+                            </ul>
+                            <button className="w-full py-3 rounded-xl border border-brand-orange text-brand-orange font-bold hover:bg-brand-orange hover:text-white transition-colors">
+                                Seleccionar Plan
+                            </button>
+                        </div>
+
+                        {/* Plan Pro */}
+                        <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border-2 border-brand-orange flex flex-col shadow-glow h-full relative transform scale-105">
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-orange text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full whitespace-nowrap">
+                                Más Popular
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">Profesional</h3>
+                            <div className="flex items-baseline gap-1 mb-6">
+                                <span className="text-3xl font-black text-slate-900 dark:text-white">RD$12,000</span>
+                                <span className="text-slate-500 text-sm">/ mes</span>
+                            </div>
+                            <ul className="space-y-4 mb-8 flex-grow">
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Todo lo del Plan Básico
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Reporte de Plagio (Turnitin)
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Análisis Estadístico
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Acceso a la Plataforma
+                                </li>
+                            </ul>
+                            <button className="w-full py-3 rounded-xl bg-brand-orange text-white font-black shadow-lg hover:shadow-glow transition-all">
+                                Empezar Ahora
+                            </button>
+                        </div>
+
+                        {/* Plan Premium */}
+                        <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-100 dark:border-slate-800 flex flex-col hover:shadow-2xl transition-all h-full">
+                            <h3 className="text-xl font-bold mb-2">Premium</h3>
+                            <div className="flex items-baseline gap-1 mb-6">
+                                <span className="text-3xl font-black text-slate-900 dark:text-white">Custom</span>
+                            </div>
+                            <ul className="space-y-4 mb-8 flex-grow">
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Tesis desde cero
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Investigación de campo
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="material-icons text-green-500 text-lg">check_circle</span>
+                                    Defensa simulada
+                                </li>
+                            </ul>
+                            <button className="w-full py-3 rounded-xl border border-brand-orange text-brand-orange font-bold hover:bg-brand-orange hover:text-white transition-colors">
+                                Contactar Expertos
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </section>
 

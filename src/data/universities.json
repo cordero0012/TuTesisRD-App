@@ -117,5 +117,28 @@
             "Turismo",
             "Educación"
         ]
+    },
+    {
+        "id": "unphu",
+        "name": "Universidad Nacional Pedro Henríquez Ureña (UNPHU)",
+        "shortName": "UNPHU",
+        "color": "#006837",
+        "logo": "https://unphu.edu.do/wp-content/uploads/2020/06/Logo-UNPHU-Vertical.png",
+        "description": "Excelencia Académica. Te apoyamos en tu tesis de Arquitectura, Medicina y más.",
+        "regulations": {
+            "style": "APA / Vancouver",
+            "minPages": 70,
+            "maxPages": 160
+        },
+        "tips": [
+            "En Medicina, el sistema Vancouver es el estándar. Consúltalo siempre.",
+            "La UNPHU tiene un manual de tesis propio que complementa a APA."
+        ],
+        "programs": [
+            "Arquitectura",
+            "Medicina",
+            "Veterinaria",
+            "Educación"
+        ]
     }
 ]

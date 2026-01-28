@@ -44,6 +44,19 @@ universities.forEach((uni) => {
     </url>`;
 });
 
+// Add Dynamic Blog Pages
+const blogDataPath = path.resolve(__dirname, '../src/data/blogPosts.json');
+const blogPosts = JSON.parse(fs.readFileSync(blogDataPath, 'utf8'));
+blogPosts.forEach((post) => {
+    sitemap += `
+    <url>
+        <loc>${BASE_URL}/blog/${post.id}</loc>
+        <lastmod>${TODAY}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>`;
+});
+
 sitemap += `
 </urlset>`;
 
@@ -54,4 +67,4 @@ if (!fs.existsSync(publicDir)) {
 
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap.trim());
 
-console.log(`✅ Sitemap generated at ${path.join(publicDir, 'sitemap.xml')} with ${staticPages.length + universities.length} URLs.`);
+console.log(`✅ Sitemap generated at ${path.join(publicDir, 'sitemap.xml')} with ${staticPages.length + universities.length + blogPosts.length} URLs.`);
