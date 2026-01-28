@@ -113,7 +113,7 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* Why Choose Us (Redesigned) */}
-            <section className="py-24 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden">
+            <section className="py-12 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                     <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-slate-200/50 dark:bg-slate-800/30 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
@@ -159,7 +159,7 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* Our Services (Redesigned) */}
-            <section id="servicios" className="py-24 bg-white dark:bg-black relative overflow-hidden">
+            <section id="servicios" className="py-12 bg-white dark:bg-black relative overflow-hidden">
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
                         <div className="md:w-2/3">
@@ -173,14 +173,14 @@ const LandingPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="md:w-1/3 flex justify-start md:justify-end">
-                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full font-bold transition-all hover:scale-105 active:scale-95">
-                                Ver Paquetes
-                                <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-orange to-red-500 text-white rounded-full font-bold shadow-lg shadow-brand-orange/30 hover:shadow-xl hover:shadow-brand-orange/40 hover:-translate-y-1 transition-all duration-300">
+                                <span className="uppercase tracking-wider text-sm">Ver Planes</span>
+                                <span className="material-icons group-hover:translate-x-1 transition-transform bg-white/20 rounded-full p-1 text-sm">arrow_forward</span>
                             </a>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
                         {[
                             { icon: 'school', title: 'Asesoría de Tesis', desc: 'Acompañamiento 1 a 1 metodología y contenido.', img: 'bg-gradient-to-br from-blue-500 to-indigo-600' },
                             { icon: 'fact_check', title: 'Corrección de Estilo', desc: 'Normas APA, ortografía y redacción académica.', img: 'bg-gradient-to-br from-emerald-500 to-teal-600' },
