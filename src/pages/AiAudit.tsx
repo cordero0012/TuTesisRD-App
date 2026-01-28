@@ -6,6 +6,7 @@ import { detectAiContent, detectAiContentBatch, AiDetectionResult } from '../ser
 import { generateAuditPDF } from '../services/reports/auditReport';
 import { exportAuditToWord } from '../services/wordExportService';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { generateText, GROQ_MODEL_FAST } from '../services/ai/client';
 
 /**
  * AI Audit Lab - Ultra-Premium Version
@@ -24,6 +25,8 @@ export const AiAudit = () => {
     const [auditMode, setAuditMode] = useState<'quick' | 'full'>('full'); // Default to full for better results
     const [progress, setProgress] = useState(0);
     const [progressStatus, setProgressStatus] = useState("");
+    const [executiveSummary, setExecutiveSummary] = useState("");
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
     // Sync with uploaded file or project content
     useEffect(() => {
@@ -80,6 +83,27 @@ export const AiAudit = () => {
         } finally {
             setLoading(false);
             setProgress(0);
+        }
+    };
+
+    const handleGroqSummary = async () => {
+        if (!text.trim()) return;
+        setIsSummaryLoading(true);
+        try {
+            const summary = await generateText({
+                prompt: `Genera un resumen ejecutivo de máximo 3 párrafos para el siguiente documento académico. Enfócate n los puntos clave, metodología y conclusiones principales. Texto:\n\n${text.substring(0, 30000)}`,
+                systemInstruction: "Eres un asistente académico experto que resume tesis de forma clara y profesional.",
+                provider: 'groq',
+                model: GROQ_MODEL_FAST,
+                temperature: 0.5
+            });
+            setExecutiveSummary(summary);
+            showNotification("Resumen instantáneo generado con Groq", "success");
+        } catch (e) {
+            console.error("Groq Summary Error:", e);
+            showNotification("Error al generar resumen con Groq", "error");
+        } finally {
+            setIsSummaryLoading(false);
         }
     };
 
@@ -271,11 +295,19 @@ export const AiAudit = () => {
                                 Limpiar
                             </button>
                             <button
+                                onClick={handleGroqSummary}
+                                disabled={isSummaryLoading || !text.trim()}
+                                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-primary text-primary text-sm font-bold hover:bg-primary/5 transition-all"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">{isSummaryLoading ? 'bolt' : 'speed'}</span>
+                                {isSummaryLoading ? 'Resumiendo...' : 'Resumen Groq'}
+                            </button>
+                            <button
                                 onClick={handleAnalyze}
                                 disabled={loading || !text.trim()}
                                 className="flex items-center gap-2 px-6 py-2 rounded-lg bg-primary text-white text-sm font-bold hover:bg-blue-600 shadow-lg shadow-primary/20 disabled:opacity-50 transition-all"
                             >
-                                <span className="material-symbols-outlined text-[18px]">{loading ? 'hourglass_empty' : 'troubleshoot'}</span>
+                                <span className="material-symbols-outlined text-[18px] text-white">{loading ? 'hourglass_empty' : 'troubleshoot'}</span>
                                 {loading ? 'Analizando...' : 'Ejecutar Auditoría'}
                             </button>
                         </div>
@@ -378,6 +410,22 @@ export const AiAudit = () => {
                                             {sig}
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Groq Executive Summary Section */}
+                        {executiveSummary && (
+                            <div className="flex flex-col gap-4">
+                                <h3 className="text-[10px] font-black uppercase tracking-widest text-primary">Resumen Instantáneo (Groq)</h3>
+                                <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20 text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed relative group">
+                                    <button
+                                        onClick={() => setExecutiveSummary("")}
+                                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                    {executiveSummary}
                                 </div>
                             </div>
                         )}

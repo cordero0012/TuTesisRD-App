@@ -3922,6 +3922,10 @@ body {
   background-color: rgb(217 138 18 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-primary\/5:hover {
+  background-color: rgb(234 154 35 / 0.05);
+}
+
 .hover\:bg-red-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
@@ -3977,6 +3981,11 @@ body {
 .hover\:text-primary:hover {
   --tw-text-opacity: 1;
   color: rgb(234 154 35 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-red-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-slate-600:hover {
