@@ -1,79 +1,43 @@
 <!DOCTYPE html>
-<html lang="es" class="">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="/TuTesisRD-App/favicon.png" />
     <title>TuTesisRD - Plataforma Integral de Gestión de Tesis</title>
 
-    <!-- Tailwind & Fonts -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
+
+    <!-- Material Design Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-    <script>
-        // Initialize dark mode before content loads
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "brand": {
-                            orange: '#ea9a23',
-                            dark: '#1a1a1a',
-                            gray: '#f7f7f8',
-                            light: '#ffffff',
-                        },
-                        "primary": "#ea9a23", // Brand Orange
-                        "primary-dark": "#d98a12", // Slightly darker orange
-                        "accent": "#FBBF24",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101822",
-                        "surface-light": "#ffffff",
-                        "surface-dark": "#1a2430",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "Lexend", "sans-serif"],
-                        "body": ["Inter", "Noto Sans", "sans-serif"],
-                        "sans": ["Inter", "sans-serif"],
-                    },
-                    boxShadow: {
-                        'neon': '0 0 5px theme("colors.primary"), 0 0 20px theme("colors.primary")',
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.3s ease-out forwards',
-                        'fade-in-up': 'fadeInUp 0.5s ease-out',
-                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
-                },
-            },
-        }
-    </script>
     <style>
+        /* Initial dark mode background to avoid flash */
+        :root {
+            --bg: #f6f7f8;
+        }
+
+        .dark {
+            --bg: #101822;
+        }
+
+        body {
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
@@ -82,57 +46,13 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-        .kanban-scroll::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
-
-        .kanban-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .kanban-scroll::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 20px;
-        }
-
-        .dark .kanban-scroll::-webkit-scrollbar-thumb {
-            background-color: #334155;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        .material-symbols-filled {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        /* Utility for step connector in wizard */
-        .step-connector::before {
-            content: '';
-            position: absolute;
-            left: 24px;
-            top: 48px;
-            bottom: -20px;
-            width: 2px;
-            background-color: rgba(255, 255, 255, 0.1);
-            z-index: 0;
-        }
-
-        .last-step::before {
-            display: none;
-        }
     </style>
-
-
-  <script type="module" crossorigin src="/TuTesisRD-App/assets/index-_s-3R3d_.js"></script>
-  <link rel="stylesheet" crossorigin href="/TuTesisRD-App/assets/index-DYLH2IXb.css">
+  <script type="module" crossorigin src="/TuTesisRD-App/assets/index-CsPta7fI.js"></script>
+  <link rel="stylesheet" crossorigin href="/TuTesisRD-App/assets/index-gui4m2fp.css">
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 font-display transition-colors duration-200">
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 font-sans transition-colors duration-200">
     <div id="root"></div>
 </body>
 
