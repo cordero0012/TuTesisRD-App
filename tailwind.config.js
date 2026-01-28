@@ -7,31 +7,26 @@ export default {
     theme: {
         extend: {
             colors: {
-                brand: {
-                    50: '#fff8ed',
-                    100: '#ffefd4',
-                    200: '#ffdaa8',
-                    300: '#ffbf71',
-                    400: '#ff9d33',
-                    500: '#ea9a23', // Primary Brand Color
-                    600: '#d98a12',
-                    700: '#b06a0e',
-                    800: '#8e5412',
-                    900: '#754613',
-                    950: '#422406',
-                },
-                accent: {
-                    50: '#f0fdf4',
-                    500: '#22c55e', // Success Green
-                },
-                background: {
-                    light: '#f8fafc', // Slate-50
-                    dark: '#0f172a',  // Slate-900
-                },
-                surface: {
+                "brand": {
+                    orange: '#ea9a23',
+                    dark: '#1a1a1a',
+                    gray: '#f7f7f8',
                     light: '#ffffff',
-                    dark: '#1e293b', // Slate-800
-                }
+                    // Compat for new components
+                    50: '#f7f7f8',
+                    100: '#ffdaa8',
+                    500: '#ea9a23',
+                    600: '#d98a12',
+                    900: '#1a1a1a',
+                    950: '#1a1a1a',
+                },
+                "primary": "#ea9a23",
+                "primary-dark": "#d98a12",
+                "accent": "#FBBF24",
+                "background-light": "#f6f7f8",
+                "background-dark": "#101822",
+                "surface-light": "#ffffff",
+                "surface-dark": "#1a2430",
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
