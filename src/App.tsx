@@ -52,7 +52,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
                 <Routes>
