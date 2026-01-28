@@ -11,7 +11,9 @@ const SEO: React.FC<SEOProps> = ({ title, description, canonical, schema }) => {
     const fullTitle = `${title} | TuTesisRD - Asesoría de Tesis en República Dominicana`;
     const defaultDescription = "Asesoría experta en tesis, anteproyectos y monográficos en República Dominicana. Más de 7 años ayudando a estudiantes a graduarse con éxito.";
     const currentDescription = description || defaultDescription;
-    const siteUrl = "https://www.tutesisrd.online";
+
+    // Canonical URL constant to ensure consistency across the app
+    const SITE_URL = "https://www.tutesisrd.online";
 
     useEffect(() => {
         document.title = fullTitle;
@@ -35,7 +37,7 @@ const SEO: React.FC<SEOProps> = ({ title, description, canonical, schema }) => {
         updateMeta('og:description', currentDescription, true);
         updateMeta('og:type', 'website', true);
         updateMeta('og:url', window.location.href, true);
-        updateMeta('og:image', `${siteUrl}/favicon.png`, true);
+        updateMeta('og:image', `${SITE_URL}/favicon.png`, true);
 
         // Twitter
         updateMeta('twitter:card', 'summary_large_image');
