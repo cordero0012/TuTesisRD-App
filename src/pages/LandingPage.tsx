@@ -138,21 +138,19 @@ const LandingPage: React.FC = () => {
                             { icon: 'verified', title: '100%', desc: 'Tasa de Aprobación', color: 'text-green-500', bg: 'bg-green-500/10' },
                             { icon: 'language', title: 'Nacional', desc: 'Cobertura Nacional', color: 'text-purple-500', bg: 'bg-purple-500/10' }
                         ].map((stat, idx) => (
-                        ].map((stat, idx) => (
-                        <div key={idx} className="group bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-brand-orange/30 dark:hover:border-brand-orange/30 transition-all duration-300 hover:-translate-y-1">
-                            <div className="relative z-10 text-center">
-                                <div className={`w-16 h-16 mx-auto ${stat.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                                    <span className={`material-icons text-3xl ${stat.color}`} aria-hidden="true">{stat.icon}</span>
+                            <div key={idx} className="group bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-brand-orange/30 dark:hover:border-brand-orange/30 transition-all duration-300 hover:-translate-y-1">
+                                <div className="relative z-10 text-center">
+                                    <div className={`w-16 h-16 mx-auto ${stat.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                        <span className={`material-icons text-3xl ${stat.color}`} aria-hidden="true">{stat.icon}</span>
+                                    </div>
+                                    <h4 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
+                                        {stat.title}
+                                    </h4>
+                                    <p className="text-slate-500 dark:text-slate-400 font-medium">
+                                        {stat.desc}
+                                    </p>
                                 </div>
-                                <h4 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
-                                    {stat.title}
-                                </h4>
-                                <p className="text-slate-500 dark:text-slate-400 font-medium">
-                                    {stat.desc}
-                                </p>
                             </div>
-                        </div>
-                        ))}
                         ))}
                     </div>
                 </div>
