@@ -377,56 +377,45 @@ export const ConsistencyMatrix = () => {
                     <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center gap-2">
                             <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                            <span className="text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-500 dark:text-slate-400">Análisis Metodológico en Progreso</span>
+                            {/* Main Content Area */}
+                            <main className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-[#0d1017]">
+                                {isAnalyzing ? (
+                                    <div className="h-full flex flex-col items-center justify-center animate-in fade-in duration-700">
+                                        <div className="relative mb-8">
+                                            <div className="size-24 rounded-full border-4 border-slate-100 dark:border-slate-800 border-t-brand-orange animate-spin"></div>
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-4xl text-brand-orange animate-pulse">neurology</span>
+                                            </div>
+                                        </div>
+                                        <h3 className="text-xl font-black uppercase tracking-tight text-slate-800 dark:text-white mb-2">Analizando Estructura Profunda</h3>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md text-center mb-8">
+                                            Nuestros agentes están evaluando la coherencia metodológica, normativa y argumentativa de tu tesis.
+                                        </p>
+                                        <div className="w-64 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                            <div className="h-full bg-brand-orange transition-all duration-300" style={{ width: `${analysisProgress}%` }}></div>
+                                        </div>
+                                        <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">{analysisProgress}% Completado</p>
+                                    </div>
+                                ) : result ? (
+                                    <div className="py-8 animate-fade-in pb-20">
+                                        {viewMode === 'dashboard' ? (
+                                            <ConsistencyDashboard result={result} />
+                                        ) : (
+                                            <div className="max-w-7xl mx-auto px-6">
+                                                <MatrixInteractive matrix={result.consistencyMatrix} />
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700">
+                                        <span className="material-symbols-outlined text-9xl mb-6 opacity-20">grid_on</span>
+                                        <h3 className="text-2xl font-black uppercase tracking-[0.2em] opacity-40">Sin Análisis Generado</h3>
+                                        <p className="text-sm font-bold mt-2 opacity-60">Sube tu tesis y ejecuta el análisis forense para ver resultados.</p>
+                                    </div>
+                                )}
+                            </main>
                         </div>
-                        <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{analysisProgress}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div className="bg-primary h-full transition-all duration-300" style={{ width: `${analysisProgress}%` }}></div>
-                    </div>
-                    <p className="mt-2 text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 italic">Evaluando coherencia estructural, metodológica y normativa...</p>
-                </div>
-            )}
-
-            {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-[#0d1017]">
-                {isAnalyzing ? (
-                    <div className="h-full flex flex-col items-center justify-center animate-in fade-in duration-700">
-                        <div className="relative mb-8">
-                            <div className="size-24 rounded-full border-4 border-slate-100 dark:border-slate-800 border-t-brand-orange animate-spin"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-4xl text-brand-orange animate-pulse">neurology</span>
-                            </div>
-                        </div>
-                        <h3 className="text-xl font-black uppercase tracking-tight text-slate-800 dark:text-white mb-2">Analizando Estructura Profunda</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md text-center mb-8">
-                            Nuestros agentes están evaluando la coherencia metodológica, normativa y argumentativa de tu tesis.
-                        </p>
-                        <div className="w-64 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-brand-orange transition-all duration-300" style={{ width: `${analysisProgress}%` }}></div>
-                        </div>
-                        <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">{analysisProgress}% Completado</p>
-                    </div>
-                ) : result ? (
-                    <div className="py-8 animate-fade-in pb-20">
-                        {viewMode === 'dashboard' ? (
-                            <ConsistencyDashboard result={result} />
-                        ) : (
-                            <div className="max-w-7xl mx-auto px-6">
-                                <MatrixInteractive matrix={result.consistencyMatrix} />
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700">
-                        <span className="material-symbols-outlined text-9xl mb-6 opacity-20">grid_on</span>
-                        <h3 className="text-2xl font-black uppercase tracking-[0.2em] opacity-40">Sin Análisis Generado</h3>
-                        <p className="text-sm font-bold mt-2 opacity-60">Sube tu tesis y ejecuta el análisis forense para ver resultados.</p>
-                    </div>
-                )}
-            </main>
-        </div>
-    );
+                        );
 };
 
-export default ConsistencyMatrix;
+                        export default ConsistencyMatrix;
