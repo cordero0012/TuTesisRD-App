@@ -2,7 +2,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // GLOBAL MODEL CONSTANTS
-export const GEMINI_MODEL = "gemini-1.5-flash";
+export const GEMINI_MODEL = "gemini-1.5-flash"; // Stable production model
+export const GEMINI_MODEL_PRO = "gemini-1.5-pro"; // For complex reasoning
 
 export type AiProvider = 'gemini';
 

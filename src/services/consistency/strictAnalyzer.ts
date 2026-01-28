@@ -149,7 +149,7 @@ export async function analyzeConsistencyStrict(
             prompt,
             systemInstruction: "Eres un auditor académico estricto. Analiza el documento buscando inconsistencias fatales y fallos normativos.",
             temperature: 0.1, // Very low temperature for strictness
-            model: 'gemini-2.0-flash-exp' // Explicitly use high capability model
+            model: 'gemini-1.5-flash' // Use stable flash model for high-priority analysis
         });
 
         // 4. Validate and Return
