@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // GLOBAL MODEL CONSTANTS
-export const GEMINI_MODEL = "gemini-2.0-flash-exp";
+export const GEMINI_MODEL = "gemini-1.5-flash";
 
 export type AiProvider = 'gemini';
 

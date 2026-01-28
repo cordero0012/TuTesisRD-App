@@ -174,14 +174,15 @@ export const ConsistencyMatrix = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3 bg-white dark:bg-surface-dark px-4 py-2 rounded-xl border border-slate-200 dark:border-surface-border">
+                    {/* Regulation Selector with updated design */}
+                    <div className="flex items-center gap-3 bg-white dark:bg-surface-dark px-4 py-2 rounded-full border border-slate-200 dark:border-surface-border">
                         <span className="material-symbols-outlined text-primary text-sm">account_balance</span>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Normativa</span>
                             <select
                                 value={selectedRegulationId}
                                 onChange={(e) => setSelectedRegulationId(e.target.value)}
-                                className="text-xs font-bold text-slate-900 dark:text-white bg-transparent border-none outline-none cursor-pointer min-w-[150px]"
+                                className="text-xs font-bold text-slate-900 dark:text-white bg-transparent border-none outline-none cursor-pointer min-w-[150px] focus:ring-0"
                                 disabled={availableRegulations.length === 0}
                             >
                                 <option value="">{availableRegulations.length === 0 ? "No hay guías cargadas" : "Sin normativa específica"}</option>
@@ -192,62 +193,62 @@ export const ConsistencyMatrix = () => {
                         </div>
                     </div>
 
-                    {/* Deep Scan Toggle */}
-                    <div
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all ${useDeepScan ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800' : 'bg-white border-slate-200 dark:bg-surface-dark dark:border-surface-border'}`}
+                    {/* Deep Scan Toggle - Minimalist pill */}
+                    <button
+                        className={`group relative flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 ${useDeepScan
+                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800 dark:text-indigo-400'
+                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 dark:bg-surface-dark dark:border-surface-border dark:text-slate-300'
+                            }`}
                         onClick={() => setUseDeepScan(!useDeepScan)}
                         title="Habilita OCR avanzado para documentos escaneados (Beta)"
                     >
-                        <span className={`material-symbols-outlined text-sm ${useDeepScan ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <span className={`material-symbols-outlined text-lg transition-transform group-hover:scale-110 ${useDeepScan ? 'fill-current' : ''}`}>
                             {useDeepScan ? 'view_comfy_alt' : 'crop_free'}
                         </span>
-                        <div className="flex flex-col">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Deep Scan</span>
-                            <span className={`text-[10px] font-bold ${useDeepScan ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>
-                                {useDeepScan ? 'Activado' : 'Desactivado'}
+                        <span className="text-xs font-bold uppercase tracking-wide">Deep Scan</span>
+                        {useDeepScan && (
+                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
                             </span>
-                        </div>
-                    </div>
+                        )}
+                    </button>
 
-                    {/* Document Upload Button */}
-                    <div className="relative">
+                    {/* Document Upload Button - Modernized */}
+                    <div className="relative group">
                         <input
                             type="file"
                             accept=".pdf,.docx,.doc"
                             onChange={handleFileUpload}
                             disabled={isUploading}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
                             id="doc-upload"
                         />
-                        <label
-                            htmlFor="doc-upload"
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-dashed font-bold text-sm transition-all cursor-pointer ${isUploading
-                                ? 'border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 cursor-wait'
+                        <div
+                            className={`flex items-center gap-3 px-6 py-2 rounded-full border-2 border-dashed font-bold text-sm transition-all duration-300 ${isUploading
+                                ? 'border-slate-300 bg-slate-50 text-slate-400 cursor-wait'
                                 : uploadedFile
-                                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'
-                                    : 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary'
+                                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-600'
+                                    : 'border-slate-300 hover:border-brand-orange hover:text-brand-orange hover:bg-orange-50/50 dark:border-slate-600 dark:text-slate-300'
                                 }`}
                         >
                             {isUploading ? (
                                 <>
-                                    <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                                     <span>Procesando...</span>
                                 </>
                             ) : uploadedFile ? (
                                 <>
-                                    <span className="material-symbols-outlined text-base">check_circle</span>
-                                    <span className="max-w-[150px] truncate">{uploadedFile.name}</span>
-                                    <span className="text-[9px] opacity-60">
-                                        ({Array.isArray(uploadedFile.content) ? uploadedFile.content.length + ' págs' : (uploadedFile.content as string).length + ' chars'})
-                                    </span>
+                                    <span className="material-symbols-outlined text-lg">check_circle</span>
+                                    <span className="max-w-[120px] truncate">{uploadedFile.name}</span>
                                 </>
                             ) : (
                                 <>
-                                    <span className="material-symbols-outlined text-base">upload_file</span>
+                                    <span className="material-symbols-outlined text-lg group-hover:-translate-y-0.5 transition-transform">upload_file</span>
                                     <span>Subir Tesis</span>
                                 </>
                             )}
-                        </label>
+                        </div>
                     </div>
 
                     {uploadedFile && (
@@ -256,27 +257,37 @@ export const ConsistencyMatrix = () => {
                                 setUploadedFile(null);
                                 showNotification("Documento eliminado", "info");
                             }}
-                            className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-all"
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors"
                             title="Eliminar documento"
                         >
-                            <span className="material-symbols-outlined text-base">delete</span>
+                            <span className="material-symbols-outlined text-lg">close</span>
                         </button>
                     )}
 
+                    {/* Execute Analysis Button - Premium Style */}
                     <button
                         onClick={handleAnalyze}
                         disabled={isAnalyzing || (!uploadedFile && !project.content)}
-                        className="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className={`
+                            relative overflow-hidden group px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-xl transition-all duration-300
+                            ${isAnalyzing
+                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600'
+                                : 'bg-slate-900 text-white hover:bg-brand-orange hover:shadow-brand-orange/30 hover:-translate-y-1 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200'
+                            }
+                        `}
                     >
                         {isAnalyzing ? (
                             <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Analizando...
+                                <div className="absolute inset-0 bg-slate-200/50 dark:bg-slate-700/50 w-full h-full transform origin-left" style={{ width: `${analysisProgress}%`, transition: 'width 0.5s ease' }}></div>
+                                <span className="relative z-10 flex items-center gap-2">
+                                    <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                    <span>{analysisProgress}%</span>
+                                </span>
                             </>
                         ) : (
                             <>
-                                <span className="material-symbols-outlined">analytics</span>
-                                Ejecutar Análisis
+                                <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">analytics</span>
+                                <span>Ejecutar Análisis</span>
                             </>
                         )}
                     </button>
