@@ -176,6 +176,75 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
                 </div>
             )}
 
+            {/* FASE 2.5: SUB-MATRIZ DE CONSISTENCIA DE FUENTES (NEW) */}
+            {result.sourceConsistencySubMatrix && (
+                <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
+                    <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-blue-500">menu_book</span>
+                        Sub-matriz de Consistencia de Fuentes (APA 7)
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Status Summary */}
+                        <div className="space-y-4">
+                            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Alineación de Citación</h4>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-600 dark:text-slate-400">Referencias Citadas</span>
+                                        <span className="font-bold text-slate-900 dark:text-white">{result.sourceConsistencySubMatrix.referencesCiting.length}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-600 dark:text-slate-400">Referencias NO Usadas</span>
+                                        <span className={`font-bold ${result.sourceConsistencySubMatrix.unusedReferences.length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                                            {result.sourceConsistencySubMatrix.unusedReferences.length}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-600 dark:text-slate-400">Citas sin Referencia</span>
+                                        <span className={`font-bold ${result.sourceConsistencySubMatrix.missingReferences.length > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                                            {result.sourceConsistencySubMatrix.missingReferences.length}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {result.sourceConsistencySubMatrix.missingReferences.length > 0 && (
+                                <div className="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl">
+                                    <h5 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-2">Citas Críticas (Faltan en Bibliografía)</h5>
+                                    <ul className="text-xs space-y-1 text-red-700 dark:text-red-400">
+                                        {result.sourceConsistencySubMatrix.missingReferences.map((ref, i) => (
+                                            <li key={i} className="flex gap-2">
+                                                <span className="material-symbols-outlined text-xs">close</span>
+                                                {ref}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Citations List */}
+                        <div className="bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+                            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Citas Encontradas en Texto</h4>
+                            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                {result.sourceConsistencySubMatrix.citationsFound.map((item, idx) => (
+                                    <div key={idx} className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                                        <div className="flex items-center gap-3">
+                                            <span className={`material-symbols-outlined text-sm ${item.inBibliography ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                {item.inBibliography ? 'check_circle' : 'cancel'}
+                                            </span>
+                                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{item.citation}</span>
+                                        </div>
+                                        <span className="text-[10px] font-mono text-slate-400">Pág. {item.page}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Diagnóstico Global */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className={`col-span-1 md:col-span-1 p-8 rounded-3xl border-2 ${result?.globalDiagnosis?.level === 'Excelente' ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-500/30' :
@@ -512,6 +581,45 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
                     ))}
                 </div>
             </div>
+
+            {/* FASE 4: FEEDBACK ACCIONABLE (OPERATIONAL MODEL) */}
+            {result.actionableFeedback && result.actionableFeedback.length > 0 && (
+                <div className="bg-slate-900 border-2 border-brand-orange/30 p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-32 bg-brand-orange/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+                    <h3 className="text-xl font-black uppercase tracking-tight text-white mb-8 flex items-center gap-2 relative z-10">
+                        <span className="material-symbols-outlined text-brand-orange text-3xl">lightbulb_circle</span>
+                        Feedback de Mejora Directa
+                    </h3>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
+                        {result.actionableFeedback.map((fb, idx) => (
+                            <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-white/15 transition-all">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h4 className="text-brand-orange font-black uppercase tracking-widest text-xs">Hallazgo #{idx + 1}</h4>
+                                    <span className="text-[10px] bg-white/20 text-white px-2 py-1 rounded-md font-mono">{fb.evidence}</span>
+                                </div>
+                                <p className="text-white font-bold mb-4">{fb.finding}</p>
+
+                                <div className="space-y-4">
+                                    <div className="text-xs">
+                                        <span className="text-brand-orange font-black uppercase tracking-tighter block mb-1">Por qué importa:</span>
+                                        <span className="text-slate-300 leading-relaxed">{fb.whyItMatters}</span>
+                                    </div>
+                                    <div className="text-xs bg-slate-800/50 p-3 rounded-lg border border-white/5">
+                                        <span className="text-emerald-400 font-black uppercase tracking-tighter block mb-1">Cómo corregir:</span>
+                                        <span className="text-slate-200">{fb.howToFix}</span>
+                                    </div>
+                                    <div className="text-xs italic text-slate-400 border-l-2 border-brand-orange/50 pl-3">
+                                        <span className="text-[10px] text-brand-orange font-black uppercase block mb-1">Ejemplo:</span>
+                                        "{fb.example}"
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Principales Riesgos */}
             {result.globalDiagnosis?.mainRisks && result.globalDiagnosis.mainRisks.length > 0 && (

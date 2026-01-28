@@ -29,6 +29,7 @@ export const ConsistencyMatrix = () => {
     const [analysisProgress, setAnalysisProgress] = useState(0);
     const [result, setResult] = useState<ConsistencyAnalysisResult | null>(null);
     const [viewMode, setViewMode] = useState<'dashboard' | 'matrix'>('dashboard');
+    const [academicLevel, setAcademicLevel] = useState<'Grado' | 'Maestría' | 'Doctorado'>('Grado');
 
     const [selectedRegulationId, setSelectedRegulationId] = useState<string>('');
 
@@ -148,6 +149,7 @@ export const ConsistencyMatrix = () => {
             const analysis = await analyzeConsistencyStrict(
                 textToProcess,
                 institutionalRules,
+                academicLevel,
                 selectedRegulation?.deepAnalysis
             );
 
@@ -342,6 +344,33 @@ export const ConsistencyMatrix = () => {
                                     </div>
                                 </div>
                             </button>
+
+                            {/* Academic Level Selector */}
+                            <div className="p-6 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700">
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 px-1">
+                                    Nivel Académico
+                                </label>
+                                <div className="grid grid-cols-1 gap-2">
+                                    {(['Grado', 'Maestría', 'Doctorado'] as const).map((level) => (
+                                        <button
+                                            key={level}
+                                            onClick={() => setAcademicLevel(level)}
+                                            className={`px-4 py-3 rounded-xl text-sm font-bold border-2 transition-all text-left flex items-center justify-between ${academicLevel === level
+                                                ? 'border-brand-orange bg-brand-orange/5 text-brand-orange'
+                                                : 'border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-200'
+                                                }`}
+                                        >
+                                            {level}
+                                            {academicLevel === level && (
+                                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                                <p className="mt-3 text-[10px] text-slate-400 leading-tight px-1">
+                                    * Ajusta la severidad de detección y pesos de evaluación según el rigor del nivel.
+                                </p>
+                            </div>
 
                             {/* Analyze Button */}
                             <button

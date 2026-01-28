@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { getGeminiResponse } from '../services/geminiService';
+import { generateText, GROQ_MODEL } from '../services/ai/client';
 
 interface Message {
     id: string;
@@ -36,7 +36,13 @@ const AIChat: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const responseText = await getGeminiResponse(inputValue);
+            const responseText = await generateText({
+                prompt: inputValue,
+                systemInstruction: "Eres TuTesis AI, un asistente experto en investigación académica, tesis y metodología. Responde de forma constructiva, profesional y en español.",
+                provider: 'groq',
+                model: GROQ_MODEL,
+                temperature: 0.7
+            });
             const aiMsg: Message = { id: (Date.now() + 1).toString(), text: responseText, sender: 'ai' };
             setMessages(prev => [...prev, aiMsg]);
         } catch (error) {
@@ -59,15 +65,14 @@ const AIChat: React.FC = () => {
                             <span className="material-symbols-outlined text-sm">close</span>
                         </button>
                     </div>
-                    
+
                     <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-[#151e29]">
                         {messages.map((msg) => (
                             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-                                    msg.sender === 'user' 
-                                    ? 'bg-primary text-white rounded-br-none' 
-                                    : 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-bl-none shadow-sm'
-                                }`}>
+                                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
+                                        ? 'bg-primary text-white rounded-br-none'
+                                        : 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-bl-none shadow-sm'
+                                    }`}>
                                     {msg.text}
                                 </div>
                             </div>
@@ -92,8 +97,8 @@ const AIChat: React.FC = () => {
                             placeholder="Escribe tu pregunta..."
                             className="flex-1 rounded-full border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                         />
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={isLoading || !inputValue.trim()}
                             className="bg-primary text-white p-2 rounded-full hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >

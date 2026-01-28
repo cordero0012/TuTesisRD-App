@@ -25,6 +25,20 @@ export interface GlobalDiagnosis {
     publishabilityLevel: number; // 0-100
 }
 
+export interface FeedbackItem {
+    finding: string;
+    evidence: string;
+    whyItMatters: string;
+    howToFix: string;
+    example: string;
+}
+
+export interface SourceAlignment {
+    citation: string;
+    inBibliography: boolean;
+    page: string;
+}
+
 export interface ConsistencyAnalysisResult {
     // Identificación inicial
     documentType: string;
@@ -104,6 +118,15 @@ export interface ConsistencyAnalysisResult {
         why: string;
         how: string;
     }[];
+
+    // NUEVO: Modelo Operativo APA 7
+    sourceConsistencySubMatrix?: {
+        citationsFound: SourceAlignment[];
+        referencesCiting: string[]; // List of references actually cited
+        unusedReferences: string[]; // List of references in bibliography but not in text
+        missingReferences: string[]; // List of citations not in bibliography
+    };
+    actionableFeedback: FeedbackItem[];
 
     rawAnalysis: string;
 }
@@ -191,6 +214,23 @@ const ConsistencyAnalysisResultSchema = z.object({
         what: z.string(),
         why: z.string(),
         how: z.string()
+    })),
+    sourceConsistencySubMatrix: z.object({
+        citationsFound: z.array(z.object({
+            citation: z.string(),
+            inBibliography: z.boolean(),
+            page: z.string()
+        })),
+        referencesCiting: z.array(z.string()),
+        unusedReferences: z.array(z.string()),
+        missingReferences: z.array(z.string())
+    }).optional(),
+    actionableFeedback: z.array(z.object({
+        finding: z.string(),
+        evidence: z.string(),
+        whyItMatters: z.string(),
+        howToFix: z.string(),
+        example: z.string()
     }))
 });
 

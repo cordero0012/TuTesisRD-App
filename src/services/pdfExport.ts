@@ -104,8 +104,9 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         };
 
         drawScore("Nivel General", result.globalDiagnosis.level, margin);
-        drawScore("Consistencia", `${result.globalDiagnosis.internalConsistencyDegree}%`, margin + 55);
-        drawScore("Publicabilidad", `${result.globalDiagnosis.publishabilityLevel}%`, margin + 110);
+        drawScore("Consistencia", `${result.globalDiagnosis.internalConsistencyDegree}%`, margin + 40);
+        drawScore("APA 7", `${result.normativeCompliance?.apa7Score || 0}%`, margin + 80);
+        drawScore("Publicabilidad", `${result.globalDiagnosis.publishabilityLevel}%`, margin + 120);
         yPos += 40;
 
         // 2. Matrix Table
@@ -137,6 +138,37 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         // @ts-ignore
         yPos = (doc as any).lastAutoTable.finalY + 15;
 
+        // 2.5 Source Consistency Sub-matrix
+        if (result.sourceConsistencySubMatrix) {
+            if (yPos > pageHeight - 60) { doc.addPage(); yPos = 30; }
+            doc.setFontSize(16); doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+            doc.text("2.5 SUB-MATRIZ DE FUENTES (APA 7)", margin, yPos);
+            yPos += 10;
+
+            autoTable(doc, {
+                startY: yPos,
+                head: [['Cita en Texto', 'En Bibliografía', 'Página']],
+                body: result.sourceConsistencySubMatrix.citationsFound.map(item => [
+                    item.citation,
+                    item.inBibliography ? 'SÍ' : 'NO',
+                    item.page
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [70, 70, 70], textColor: [255, 255, 255] },
+                styles: { fontSize: 8 },
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 1) {
+                        const text = data.cell.raw as string;
+                        data.cell.styles.textColor = (text === 'NO') ? COLORS.status.error as any : COLORS.status.success as any;
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                }
+            });
+
+            // @ts-ignore
+            yPos = (doc as any).lastAutoTable.finalY + 15;
+        }
+
         // 3. Recommendations
         if (yPos > pageHeight - 50) { doc.addPage(); yPos = 30; }
         doc.setFontSize(16); doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
@@ -146,10 +178,55 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         result.prioritizedRecommendations.forEach((rec, idx) => {
             if (yPos > pageHeight - 40) { doc.addPage(); yPos = 30; }
             const title = `${idx + 1}. ${rec.what} (${rec.priority})`;
-            doc.setFontSize(11); doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+            doc.setFontSize(11); doc.setFont(FONTS.primary, FONTS.style.bold);
+            doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
             doc.text(title, margin, yPos);
-            yPos += 8;
+            yPos += 6;
+            doc.setFont(FONTS.primary, FONTS.style.regular);
+            doc.setFontSize(9);
+            const whyText = doc.splitTextToSize(`Por qué: ${rec.why}`, pageWidth - margin * 2);
+            doc.text(whyText, margin, yPos);
+            yPos += (whyText.length * 5) + 2;
+            const howText = doc.splitTextToSize(`Cómo: ${rec.how}`, pageWidth - margin * 2);
+            doc.text(howText, margin, yPos);
+            yPos += (howText.length * 5) + 8;
         });
+
+        // 4. Actionable Feedback
+        if (result.actionableFeedback && result.actionableFeedback.length > 0) {
+            doc.addPage();
+            yPos = 30;
+            doc.setFontSize(16); doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+            doc.text("4. FEEDBACK DE MEJORA DIRECTA", margin, yPos);
+            yPos += 15;
+
+            result.actionableFeedback.forEach((fb, idx) => {
+                if (yPos > pageHeight - 50) { doc.addPage(); yPos = 30; }
+
+                doc.setFontSize(10); doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+                doc.text(`Hallazgo: ${fb.finding}`, margin, yPos);
+                yPos += 6;
+
+                doc.setFont(FONTS.primary, FONTS.style.regular);
+                doc.setFontSize(9);
+                doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+
+                const feedbackLines = [
+                    [`Evidencia:`, fb.evidence],
+                    [`Justificación:`, fb.whyItMatters],
+                    [`Corrección:`, fb.howToFix],
+                    [`Ejemplo:`, fb.example]
+                ];
+
+                feedbackLines.forEach(([label, value]) => {
+                    const lines = doc.splitTextToSize(`${label} ${value}`, pageWidth - margin * 2 - 5);
+                    doc.text(lines, margin + 5, yPos);
+                    yPos += (lines.length * 5);
+                });
+                yPos += 8;
+            });
+        }
     }
 }
 

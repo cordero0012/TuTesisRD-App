@@ -75,7 +75,25 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         how: z.string()
     })),
 
-    // NEW STRICT FIELDS
+    // NEW STRICT FIELDS (Operational Model)
+    sourceConsistencySubMatrix: z.object({
+        citationsFound: z.array(z.object({
+            citation: z.string(),
+            inBibliography: z.boolean(),
+            page: z.string()
+        })),
+        referencesCiting: z.array(z.string()),
+        unusedReferences: z.array(z.string()),
+        missingReferences: z.array(z.string())
+    }).optional(),
+    actionableFeedback: z.array(z.object({
+        finding: z.string(),
+        evidence: z.string(),
+        whyItMatters: z.string(),
+        howToFix: z.string(),
+        example: z.string()
+    })),
+
     structuralVerification: z.object({
         sectionsFound: z.record(z.string(), z.object({
             exists: z.boolean(),
@@ -134,6 +152,7 @@ function buildDetailedNormativeContext(
 export async function analyzeConsistencyStrict(
     documentText: string,
     institutionalRules: string | null,
+    academicLevel: 'Grado' | 'Maestría' | 'Doctorado' = 'Grado',
     regulationMetadata?: DeepNormativeAnalysis
 ): Promise<ConsistencyAnalysisResult> {
 
@@ -160,7 +179,7 @@ export async function analyzeConsistencyStrict(
     const normativeContext = buildDetailedNormativeContext(institutionalRules, regulationMetadata);
 
     // 2. Build prompt
-    const prompt = getStrictPrompt(normativeContext);
+    const prompt = getStrictPrompt(normativeContext, academicLevel);
 
     const finalPrompt = prompt + "\n\nDOCUMENTO A EVALUAR:\n" + textToProcess;
 
