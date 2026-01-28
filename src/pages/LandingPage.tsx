@@ -173,9 +173,9 @@ const LandingPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="md:w-1/3 flex justify-start md:justify-end">
-                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-orange to-red-500 text-white rounded-full font-bold shadow-lg shadow-brand-orange/30 hover:shadow-xl hover:shadow-brand-orange/40 hover:-translate-y-1 transition-all duration-300">
+                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-slate-900 rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-slate-200/50 dark:shadow-none">
                                 <span className="uppercase tracking-wider text-sm">Ver Planes</span>
-                                <span className="material-icons group-hover:translate-x-1 transition-transform bg-white/20 rounded-full p-1 text-sm">arrow_forward</span>
+                                <span className="material-icons group-hover:translate-x-1 transition-transform text-sm">arrow_forward</span>
                             </a>
                         </div>
                     </div>
