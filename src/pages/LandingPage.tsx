@@ -5,6 +5,11 @@ import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 
 const LandingPage: React.FC = () => {
+    const [expandedService, setExpandedService] = React.useState<number | null>(null);
+
+    const toggleService = (index: number) => {
+        setExpandedService(expandedService === index ? null : index);
+    };
     const mainSchema = {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
@@ -178,27 +183,77 @@ const LandingPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                         {[
-                            { icon: 'school', title: 'Asesoría de Tesis', desc: 'Acompañamiento 1 a 1 metodología y contenido.', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/10' },
-                            { icon: 'fact_check', title: 'Corrección de Estilo', desc: 'Normas APA, ortografía y redacción académica.', color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/10' },
-                            { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos (SPSS, Excel) y resultados.', color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-900/10' },
-                            { icon: 'menu_book', title: 'Investigación', desc: 'Marco teórico y búsqueda bibliográfica.', color: 'text-brand-orange', bg: 'bg-orange-50 dark:bg-orange-900/10' }
+                            {
+                                icon: 'school',
+                                title: 'Asesoría de Tesis',
+                                desc: 'Acompañamiento 1 a 1 metodología y contenido.',
+                                details: 'Sesiones personalizadas con expertos para definir tu tema, objetivos y estructura. Revisión capitular continua.',
+                                color: 'text-blue-600',
+                                bg: 'bg-blue-50 dark:bg-blue-900/10'
+                            },
+                            {
+                                icon: 'fact_check',
+                                title: 'Corrección de Estilo',
+                                desc: 'Normas APA, ortografía y redacción académica.',
+                                details: 'Eliminación de errores gramaticales, sintácticos y ortográficos. Ajuste riguroso a normas APA 7ma edición.',
+                                color: 'text-emerald-600',
+                                bg: 'bg-emerald-50 dark:bg-emerald-900/10'
+                            },
+                            {
+                                icon: 'analytics',
+                                title: 'Análisis Estadístico',
+                                desc: 'Procesamiento de datos (SPSS, Excel) y resultados.',
+                                details: 'Análisis descriptivo e inferencial. Creación de tablas y gráficos interpretados listos para tu informe.',
+                                color: 'text-violet-600',
+                                bg: 'bg-violet-50 dark:bg-violet-900/10'
+                            },
+                            {
+                                icon: 'menu_book',
+                                title: 'Investigación',
+                                desc: 'Marco teórico y búsqueda bibliográfica.',
+                                details: 'Búsqueda de fuentes de alto impacto (Scopus, WoS) para fundamentar tu marco teórico y estado del arte.',
+                                color: 'text-brand-orange',
+                                bg: 'bg-orange-50 dark:bg-orange-900/10'
+                            }
                         ].map((service, idx) => (
-                            <div key={idx} className="group relative p-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-brand-orange/30 dark:hover:border-brand-orange/30 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none hover:-translate-y-1">
+                            <div
+                                key={idx}
+                                className={`group relative p-6 rounded-[2rem] bg-white dark:bg-slate-900 border transition-all duration-300 hover:-translate-y-1 cursor-pointer
+                                    ${expandedService === idx
+                                        ? 'border-brand-orange shadow-xl shadow-brand-orange/10 ring-1 ring-brand-orange/20'
+                                        : 'border-slate-100 dark:border-slate-800 hover:border-brand-orange/30 dark:hover:border-brand-orange/30 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none'
+                                    }`}
+                                onClick={() => toggleService(idx)}
+                            >
                                 <div className="flex flex-col h-full justify-between">
                                     <div>
                                         <div className={`w-14 h-14 ${service.bg} ${service.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                                             <span className="material-icons text-3xl" aria-hidden="true">{service.icon}</span>
                                         </div>
-                                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-brand-orange transition-colors">{service.title}</h3>
-                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-brand-orange transition-colors">{service.title}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
                                             {service.desc}
                                         </p>
+
+                                        {/* Expanded Content with Animation */}
+                                        <div className={`grid transition-all duration-300 ease-in-out ${expandedService === idx ? 'grid-rows-[1fr] opacity-100 mt-4' : 'grid-rows-[0fr] opacity-0'}`}>
+                                            <div className="overflow-hidden">
+                                                <p className="text-sm text-slate-500 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3">
+                                                    {service.details}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="mt-8 flex items-center text-sm font-bold text-slate-900 dark:text-white group-hover:text-brand-orange transition-colors">
-                                        <span className="uppercase tracking-wider">Detalles</span>
-                                        <span className="material-icons text-sm ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+
+                                    <div className="mt-6 flex items-center text-sm font-bold text-slate-900 dark:text-white group-hover:text-brand-orange transition-colors">
+                                        <span className="uppercase tracking-wider text-xs">
+                                            {expandedService === idx ? 'Menos detalles' : 'Más detalles'}
+                                        </span>
+                                        <span className={`material-icons text-sm ml-2 transition-transform duration-300 ${expandedService === idx ? '-rotate-90' : 'group-hover:translate-x-1'}`}>
+                                            {expandedService === idx ? 'expand_less' : 'arrow_forward'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
