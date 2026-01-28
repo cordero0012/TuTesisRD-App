@@ -11,6 +11,7 @@ import RegisterWizard from './pages/Register/RegisterWizard';
 import SuccessScreen from './pages/Register/SuccessScreen';
 import AIChat from './components/AIChat';
 import DesignSystem from './pages/DesignSystem';
+import DocumentAudit from './pages/Tools/DocumentAudit';
 
 const DarkModeToggle = () => {
     // Initialize state from localStorage or system preference
@@ -67,6 +68,10 @@ const App = () => {
                     <Route path="/portal" element={<StudentPortal />} />
                     <Route path="/exito" element={<SuccessScreen />} />
                     <Route path="/design" element={<DesignSystem />} />
+
+                    {/* Tools */}
+                    <Route path="/herramientas/auditor" element={<DocumentAudit />} />
+
                     {/* <Route path="/admin/dashboard" element={<AdminKanban />} /> */}
                 </Routes>
                 {/* <AIChat /> */}
