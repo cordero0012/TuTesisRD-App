@@ -164,258 +164,245 @@ export const ConsistencyMatrix = () => {
     };
 
     return (
-        <div className="h-full w-full bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-hidden flex flex-col">
-            {/* Header */}
-            <header className="h-20 border-b border-slate-200 dark:border-surface-border bg-white dark:bg-[#111318] flex items-center justify-between px-8 shrink-0 z-50">
-                <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 p-2 rounded-xl">
-                        <span className="material-symbols-outlined text-primary">grid_on</span>
+        <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 font-sans text-slate-700 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+            {/* Hidden File Input */}
+            <input
+                type="file"
+                className="hidden"
+                accept=".pdf,.docx"
+                onChange={handleFileUpload}
+                id="hidden-file-upload"
+            />
+
+            {/* BEGIN: Main Dashboard Container */}
+            <div className="w-full max-w-[1600px] h-[90vh] min-h-[700px] rounded-[2.5rem] flex overflow-hidden relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl shadow-2xl border border-white/50 dark:border-slate-800/50">
+
+                {/* BEGIN: Sidebar */}
+                <aside className="w-20 lg:w-64 flex flex-col p-6 border-r border-slate-200/50 dark:border-slate-700/50 hidden md:flex z-10 bg-white/50 dark:bg-slate-900/50">
+                    {/* Logo Section */}
+                    <div className="flex items-center gap-3 mb-10 pl-1">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-brand-orange/20">
+                            <span className="material-symbols-outlined text-xl">school</span>
+                        </div>
+                        <span className="text-lg font-black tracking-tight text-slate-800 dark:text-white hidden lg:block">TuTesisRD</span>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold tracking-tight">Matriz de Consistencia Académica</h2>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Evaluación Metodológica Integral · Revisor Académico Senior</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-4">
-                    {/* Regulation Selector with updated design */}
-                    <div className="flex items-center gap-3 bg-white dark:bg-surface-dark px-4 py-2 rounded-full border border-slate-200 dark:border-surface-border">
-                        <span className="material-symbols-outlined text-primary text-sm">account_balance</span>
-                        <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Normativa</span>
-                            <select
-                                value={selectedRegulationId}
-                                onChange={(e) => setSelectedRegulationId(e.target.value)}
-                                className="text-xs font-bold text-slate-900 dark:text-white bg-transparent border-none outline-none cursor-pointer min-w-[150px] focus:ring-0"
-                                disabled={availableRegulations.length === 0}
-                            >
-                                <option value="">{availableRegulations.length === 0 ? "No hay guías cargadas" : "Sin normativa específica"}</option>
-                                {availableRegulations.map(reg => (
-                                    <option key={reg.id} value={reg.id}>{reg.name}</option>
-                                ))}
-                            </select>
+
+                    {/* Navigation Links */}
+                    <nav className="flex-1 space-y-2">
+                        <a className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-bold shadow-sm transition-all" href="#">
+                            <span className="material-symbols-outlined">grid_view</span>
+                            <span className="hidden lg:block">Matriz</span>
+                        </a>
+                        {/* Disabled/Hidden Links as per request */}
+                        <div className="opacity-40 pointer-events-none hidden lg:block">
+                            <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mt-6 mb-2">Próximamente</p>
+                            <div className="flex items-center gap-3 px-4 py-3 text-slate-500">
+                                <span className="material-symbols-outlined">folder</span>
+                                <span>Mis Proyectos</span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Bottom Settings */}
+                    <div className="mt-auto pt-6 border-t border-slate-200 dark:border-slate-700 space-y-4">
+                        <div className="flex items-center gap-3 px-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer">
+                            <span className="material-symbols-outlined">settings</span>
+                            <span className="text-sm font-medium hidden lg:block">Configuración</span>
                         </div>
                     </div>
+                </aside>
 
-                    {/* Deep Scan Toggle - Minimalist pill */}
-                    <button
-                        className={`group relative flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 ${useDeepScan
-                            ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800 dark:text-indigo-400'
-                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 dark:bg-surface-dark dark:border-surface-border dark:text-slate-300'
-                            }`}
-                        onClick={() => setUseDeepScan(!useDeepScan)}
-                        title="Habilita OCR avanzado para documentos escaneados (Beta)"
-                    >
-                        <span className={`material-symbols-outlined text-lg transition-transform group-hover:scale-110 ${useDeepScan ? 'fill-current' : ''}`}>
-                            {useDeepScan ? 'view_comfy_alt' : 'crop_free'}
-                        </span>
-                        <span className="text-xs font-bold uppercase tracking-wide">Deep Scan</span>
-                        {useDeepScan && (
-                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
-                            </span>
-                        )}
-                    </button>
+                {/* BEGIN: Main Content Area */}
+                <main className="flex-1 flex flex-col p-4 md:p-8 relative overflow-hidden">
 
-                    {/* Document Upload Button - Modernized */}
-                    <div className="relative group">
-                        <input
-                            type="file"
-                            accept=".pdf,.docx,.doc"
-                            onChange={handleFileUpload}
-                            disabled={isUploading}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
-                            id="doc-upload"
-                        />
-                        <div
-                            className={`flex items-center gap-3 px-6 py-2 rounded-full border-2 border-dashed font-bold text-sm transition-all duration-300 ${isUploading
-                                ? 'border-slate-300 bg-slate-50 text-slate-400 cursor-wait'
-                                : uploadedFile
-                                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-600'
-                                    : 'border-slate-300 hover:border-brand-orange hover:text-brand-orange hover:bg-orange-50/50 dark:border-slate-600 dark:text-slate-300'
-                                }`}
-                        >
-                            {isUploading ? (
-                                <>
-                                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                                    <span>Procesando...</span>
-                                </>
-                            ) : uploadedFile ? (
-                                <>
-                                    <span className="material-symbols-outlined text-lg">check_circle</span>
-                                    <span className="max-w-[120px] truncate">{uploadedFile.name}</span>
-                                </>
-                            ) : (
-                                <>
-                                    <span className="material-symbols-outlined text-lg group-hover:-translate-y-0.5 transition-transform">upload_file</span>
-                                    <span>Subir Tesis</span>
-                                </>
+                    {/* Header Section */}
+                    <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 shrink-0">
+                        <div>
+                            <h1 className="text-3xl md:text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                                Matriz de Consistencia
+                            </h1>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                                {project.content
+                                    ? `Analizando: ${project.title || 'Proyecto Actual'}`
+                                    : uploadedFile
+                                        ? `Archivo: ${uploadedFile.name}`
+                                        : 'Auditoría Forense con IA'
+                                }
+                            </p>
+                        </div>
+
+                        {/* View Toggles & Export Actions */}
+                        <div className="flex items-center gap-4">
+                            {result && (
+                                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                                    <button
+                                        onClick={() => setViewMode('dashboard')}
+                                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'dashboard'
+                                            ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                                            }`}
+                                    >
+                                        Dashboard
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('matrix')}
+                                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'matrix'
+                                            ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                                            }`}
+                                    >
+                                        Matriz
+                                    </button>
+                                </div>
+                            )}
+
+                            {result && (
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const { generateConsistencyMatrixPDF } = await import('../services/pdfExport');
+                                            generateConsistencyMatrixPDF(result, 'Informe_Consistencia_ScholarAI');
+                                            showNotification("Informe PDF generado", "success");
+                                        } catch (err) {
+                                            showNotification("Error al generar PDF", "error");
+                                        }
+                                    }}
+                                    className="px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold flex items-center gap-2 hover:scale-105 transition-transform"
+                                >
+                                    <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
+                                    PDF
+                                </button>
                             )}
                         </div>
-                    </div>
+                    </header>
 
-                    {uploadedFile && (
-                        <button
-                            onClick={() => {
-                                setUploadedFile(null);
-                                showNotification("Documento eliminado", "info");
-                            }}
-                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors"
-                            title="Eliminar documento"
-                        >
-                            <span className="material-symbols-outlined text-lg">close</span>
-                        </button>
-                    )}
+                    {/* Dashboard Body */}
+                    <div className="flex-1 flex flex-col xl:flex-row gap-6 h-full overflow-hidden">
 
-                    {/* Execute Analysis Button - Premium Style */}
-                    <button
-                        onClick={handleAnalyze}
-                        disabled={isAnalyzing || (!uploadedFile && !project.content)}
-                        className={`
-                            relative overflow-hidden group px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-xl transition-all duration-300
-                            ${isAnalyzing
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600'
-                                : 'bg-slate-900 text-white hover:bg-brand-orange hover:shadow-brand-orange/30 hover:-translate-y-1 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200'
-                            }
-                        `}
-                    >
-                        {isAnalyzing ? (
-                            <>
-                                <div className="absolute inset-0 bg-slate-200/50 dark:bg-slate-700/50 w-full h-full transform origin-left" style={{ width: `${analysisProgress}%`, transition: 'width 0.5s ease' }}></div>
-                                <span className="relative z-10 flex items-center gap-2">
-                                    <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                                    <span>{analysisProgress}%</span>
-                                </span>
-                            </>
-                        ) : (
-                            <>
-                                <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">analytics</span>
-                                <span>Ejecutar Análisis</span>
-                            </>
-                        )}
-                    </button>
+                        {/* Central Card Area */}
+                        <section className="flex-1 bg-white/60 dark:bg-slate-800/60 rounded-[2rem] border border-white/60 dark:border-slate-700/60 backdrop-blur-xl shadow-sm flex flex-col relative overflow-hidden">
 
-                    {result && (
-                        <div className="flex bg-slate-100 dark:bg-surface-border p-1 rounded-xl ml-4">
-                            <button
-                                onClick={() => setViewMode('dashboard')}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'dashboard'
-                                    ? 'bg-white dark:bg-surface-dark shadow-sm text-slate-900 dark:text-white'
-                                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
-                                    }`}
-                            >
-                                Dashboard
-                            </button>
-                            <button
-                                onClick={() => setViewMode('matrix')}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'matrix'
-                                    ? 'bg-white dark:bg-surface-dark shadow-sm text-slate-900 dark:text-white'
-                                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
-                                    }`}
-                            >
-                                Matriz Interactiva
-                            </button>
-                        </div>
-                    )}
-
-                    {result && (
-                        <button
-                            onClick={async () => {
-                                try {
-                                    if (result) {
-                                        const { generateConsistencyMatrixPDF } = await import('../services/pdfExport');
-                                        generateConsistencyMatrixPDF(result, 'Informe_Consistencia_ScholarAI');
-                                        showNotification("Informe PDF de alta calidad generado", "success");
-                                    }
-                                } catch (err) {
-                                    console.error("PDF Generation Error", err);
-                                    showNotification("Error al generar el PDF", "error");
-                                }
-                            }}
-                            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0 ml-auto text-sm"
-                        >
-                            <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
-                            Exportar PDF
-                        </button>
-                    )}
-                    {result && (
-                        <button
-                            onClick={async () => {
-                                try {
-                                    const { exportMatrixToWord } = await import('../services/wordExportService');
-
-                                    const matrixData = {
-                                        globalDiagnosis: {
-                                            score: result.globalDiagnosis?.internalConsistencyDegree || 0,
-                                            summary: result.globalDiagnosis?.mainRisks?.join('. ') || 'Sin observaciones'
-                                        },
-                                        consistencyMatrix: result.consistencyMatrix?.map(item => ({
-                                            element: item.element,
-                                            status: item.coherenceLevel,
-                                            observations: item.technicalObservation
-                                        })) || []
-                                    };
-
-                                    await exportMatrixToWord(matrixData, result.documentType);
-                                    showNotification('Exportado a Word exitosamente', 'success');
-                                } catch (error: any) {
-                                    showNotification(error.message || 'Error al exportar', 'error');
-                                }
-                            }}
-                            className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-blue-500 transition-all active:scale-95 ml-2"
-                        >
-                            <span className="material-symbols-outlined">description</span>
-                            Exportar Word
-                        </button>
-                    )}
-                </div>
-            </header>
-
-            {/* Progress Bar */}
-            {isAnalyzing && (
-                <div className="p-6 border-b border-slate-200 dark:border-surface-border bg-slate-50 dark:bg-[#0b0e14]">
-                    <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center gap-2">
-                            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                            {/* Main Content Area */}
-                            <main className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-[#0d1017]">
+                            {/* Scrollable Content */}
+                            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
                                 {isAnalyzing ? (
                                     <div className="h-full flex flex-col items-center justify-center animate-in fade-in duration-700">
                                         <div className="relative mb-8">
-                                            <div className="size-24 rounded-full border-4 border-slate-100 dark:border-slate-800 border-t-brand-orange animate-spin"></div>
+                                            <div className="size-24 rounded-full border-4 border-slate-200 dark:border-slate-700 border-t-brand-orange animate-spin"></div>
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <span className="material-symbols-outlined text-4xl text-brand-orange animate-pulse">neurology</span>
                                             </div>
                                         </div>
                                         <h3 className="text-xl font-black uppercase tracking-tight text-slate-800 dark:text-white mb-2">Analizando Estructura Profunda</h3>
                                         <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md text-center mb-8">
-                                            Nuestros agentes están evaluando la coherencia metodológica, normativa y argumentativa de tu tesis.
+                                            Evaluando coherencia metodológica y normativa...
                                         </p>
-                                        <div className="w-64 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                        <div className="w-64 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                                             <div className="h-full bg-brand-orange transition-all duration-300" style={{ width: `${analysisProgress}%` }}></div>
                                         </div>
-                                        <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">{analysisProgress}% Completado</p>
                                     </div>
                                 ) : result ? (
-                                    <div className="py-8 animate-fade-in pb-20">
+                                    <div className="animate-fade-in pb-10">
                                         {viewMode === 'dashboard' ? (
                                             <ConsistencyDashboard result={result} />
                                         ) : (
-                                            <div className="max-w-7xl mx-auto px-6">
-                                                <MatrixInteractive matrix={result.consistencyMatrix} />
-                                            </div>
+                                            <MatrixInteractive matrix={result.consistencyMatrix} />
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700">
-                                        <span className="material-symbols-outlined text-9xl mb-6 opacity-20">grid_on</span>
-                                        <h3 className="text-2xl font-black uppercase tracking-[0.2em] opacity-40">Sin Análisis Generado</h3>
-                                        <p className="text-sm font-bold mt-2 opacity-60">Sube tu tesis y ejecuta el análisis forense para ver resultados.</p>
+                                    <div className="h-full flex flex-col items-center justify-center text-center">
+                                        <div className="mb-8 w-48 md:w-64 opacity-80 mix-blend-multiply dark:mix-blend-normal">
+                                            <span className="material-symbols-outlined text-9xl text-slate-200 dark:text-slate-700">grid_on</span>
+                                        </div>
+                                        <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-wide mb-2 opacity-60">
+                                            No Matrix Generated
+                                        </h2>
+                                        <p className="text-slate-500 dark:text-slate-400 max-w-sm text-sm leading-relaxed">
+                                            Carga tu tesis y espera a que nuestros agentes forenses generen tu reporte de consistencia.
+                                        </p>
                                     </div>
                                 )}
-                            </main>
-                        </div>
-                        );
+                            </div>
+                        </section>
+
+                        {/* Right Action Column */}
+                        <section className="flex flex-col gap-4 w-full xl:w-80 shrink-0">
+
+                            {/* Upload Button */}
+                            <button
+                                onClick={() => document.getElementById('hidden-file-upload')?.click()}
+                                className="w-full py-6 px-6 rounded-[2rem] font-bold transition-all hover:shadow-xl bg-white dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-brand-orange dark:hover:border-brand-orange group text-left relative overflow-hidden"
+                            >
+                                <div className="relative z-10 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-brand-orange/10 transition-colors">
+                                        <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 group-hover:text-brand-orange">upload_file</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-slate-800 dark:text-white text-sm">Cargar Documento</span>
+                                        <span className="block text-slate-400 text-xs font-normal">PDF o DOCX</span>
+                                    </div>
+                                </div>
+                            </button>
+
+                            {/* Analyze Button */}
+                            <button
+                                onClick={handleAnalyze}
+                                disabled={isAnalyzing || (!uploadedFile && !project.content)}
+                                className={`
+                                    w-full py-6 px-6 rounded-[2rem] font-bold text-left transition-all relative overflow-hidden shadow-xl
+                                    ${isAnalyzing || (!uploadedFile && !project.content)
+                                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600'
+                                        : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:translate-y-[-2px] hover:shadow-2xl hover:shadow-brand-orange/20'
+                                    }
+                                `}
+                            >
+                                <div className="relative z-10 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-full bg-white/20 dark:bg-slate-200/20 flex items-center justify-center backdrop-blur-sm">
+                                            {isAnalyzing ? (
+                                                <span className="material-symbols-outlined animate-spin">sync</span>
+                                            ) : (
+                                                <span className="material-symbols-outlined">neurology</span>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <span className="block text-lg">Ejecutar Análisis</span>
+                                            <span className="block text-white/60 dark:text-slate-500 text-xs font-normal">
+                                                {isAnalyzing ? 'Procesando...' : 'Modo Forense Activo'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </div>
+                                {isAnalyzing && (
+                                    <div className="absolute inset-0 bg-brand-orange/20" style={{ width: `${analysisProgress}%`, transition: 'width 0.5s ease' }}></div>
+                                )}
+                            </button>
+
+                            {/* Info Card / Extra Actions */}
+                            <div className="mt-auto bg-slate-100 dark:bg-slate-800 p-6 rounded-[2rem] hidden xl:block">
+                                <h4 className="font-bold text-slate-800 dark:text-white mb-2 text-sm">¿Cómo funciona?</h4>
+                                <ul className="space-y-3">
+                                    <li className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                        <span className="text-brand-orange">•</span>
+                                        <span>Sube tu borrador de tesis o anteproyecto.</span>
+                                    </li>
+                                    <li className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                        <span className="text-brand-orange">•</span>
+                                        <span>Nuestra IA audita la coherencia lógica interna.</span>
+                                    </li>
+                                    <li className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                        <span className="text-brand-orange">•</span>
+                                        <span>Recibe un reporte de consistencia detallado.</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </section>
+                    </div>
+                </main>
+            </div>
+        </div>
+    );
 };
 
-                        export default ConsistencyMatrix;
+export default ConsistencyMatrix;

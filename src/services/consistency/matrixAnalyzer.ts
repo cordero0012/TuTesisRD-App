@@ -58,8 +58,9 @@ export interface ConsistencyAnalysisResult {
         techniquesAppropriate: boolean;
         resultsDeriveFromMethod: boolean;
         conclusionsSupportedByResults: boolean;
+        forensicReasoning?: string; // New
         criticalAlerts: string[];
-        invalidatingIssues?: string[]; // NUEVO: Problemas que invalidan la tesis
+        invalidatingIssues?: string[]; // New
     };
 
     // Normativa y estilo
@@ -88,7 +89,13 @@ export interface ConsistencyAnalysisResult {
     };
 
     // Diagnóstico global
-    globalDiagnosis: GlobalDiagnosis;
+    globalDiagnosis: {
+        level: 'Excelente' | 'Aceptable' | 'Débil' | 'Crítico';
+        auditSummary?: string; // New
+        mainRisks: string[];
+        internalConsistencyDegree: number; // 0-100
+        publishabilityLevel: number; // 0-100
+    };
 
     // Recomendaciones priorizadas
     prioritizedRecommendations: {

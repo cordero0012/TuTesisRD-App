@@ -46,6 +46,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         techniquesAppropriate: z.boolean(),
         resultsDeriveFromMethod: z.boolean(),
         conclusionsSupportedByResults: z.boolean(),
+        forensicReasoning: z.string().describe("Explanation of the forensic analysis logic"),
         criticalAlerts: z.array(z.string()),
         invalidatingIssues: z.array(z.string()).optional() // New strict field
     }),
@@ -59,7 +60,13 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         styleIssues: z.array(z.string())
     }),
 
-    globalDiagnosis: GlobalDiagnosisSchema,
+    globalDiagnosis: z.object({
+        level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']),
+        auditSummary: z.string().describe("Executive summary of the forensic audit"),
+        mainRisks: z.array(z.string()),
+        internalConsistencyDegree: z.number().min(0).max(100),
+        publishabilityLevel: z.number().min(0).max(100)
+    }),
 
     prioritizedRecommendations: z.array(z.object({
         priority: z.enum(['Crítica', 'Alta', 'Media', 'Baja']),

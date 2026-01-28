@@ -92,13 +92,13 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
 
             {/* 3. Forensic Reasoning Box */}
             {result.methodologicalAnalysis.forensicReasoning && (
-                <div className="bg-slate-900 text-slate-300 p-8 rounded-[2rem] relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <div className="bg-slate-900 border-2 border-brand-orange/30 text-slate-300 p-8 rounded-[2rem] relative overflow-hidden shadow-2xl shadow-brand-orange/5">
+                    <div className="absolute top-0 right-0 p-32 bg-brand-orange/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
                     <div className="flex items-center gap-3 mb-4 relative z-10">
-                        <span className="material-symbols-outlined text-indigo-400">psychology</span>
-                        <h3 className="font-bold text-white uppercase tracking-wider text-sm">Razonamiento Forense de IA</h3>
+                        <span className="material-symbols-outlined text-brand-orange text-3xl">psychology</span>
+                        <h3 className="font-black text-white uppercase tracking-[0.2em] text-sm">Dictamen Forense de IA</h3>
                     </div>
-                    <p className="text-lg leading-relaxed relative z-10 font-medium text-slate-200">
+                    <p className="text-xl leading-relaxed relative z-10 font-medium text-slate-200">
                         {result.methodologicalAnalysis.forensicReasoning}
                     </p>
                 </div>
@@ -106,26 +106,28 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
 
             {/* 4. Recommendations List */}
             <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-brand-orange">app_registration</span>
-                    Plan de Acción Recomendado
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-8 flex items-center gap-4">
+                    <div className="size-10 rounded-xl bg-brand-orange/10 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-brand-orange">app_registration</span>
+                    </div>
+                    Acciones Correctivas Priorizadas
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {result.prioritizedRecommendations.map((rec, idx) => (
-                        <div key={idx} className="bg-white dark:bg-surface-dark p-6 rounded-3xl border border-slate-100 dark:border-surface-border hover:shadow-xl transition-all duration-300 group">
-                            <div className="flex justify-between items-start mb-4">
-                                <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${rec.priority === 'Crítica' ? 'bg-red-100 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+                        <div key={idx} className="bg-white dark:bg-slate-800/40 p-8 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:border-brand-orange/30 hover:shadow-2xl hover:shadow-brand-orange/5 transition-all duration-500 group">
+                            <div className="flex justify-between items-start mb-6">
+                                <span className={`text-[10px] font-black uppercase px-4 py-1.5 rounded-full tracking-widest ${rec.priority === 'Crítica' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-brand-orange/10 text-brand-orange'}`}>
                                     Prioridad {rec.priority}
                                 </span>
-                                <span className="text-slate-300 text-4xl font-black opacity-20 group-hover:opacity-40 transition-opacity">
+                                <span className="text-slate-200 dark:text-slate-700 text-5xl font-black opacity-40 group-hover:opacity-100 transition-opacity">
                                     {String(idx + 1).padStart(2, '0')}
                                 </span>
                             </div>
-                            <h4 className="font-bold text-slate-900 dark:text-white mb-2 leading-tight">{rec.what}</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-3">{rec.why}</p>
-                            <div className="bg-slate-50 dark:bg-[#0d1017] p-3 rounded-xl text-xs text-slate-600 dark:text-slate-300">
-                                <span className="font-bold block mb-1 text-slate-400 uppercase tracking-wider text-[9px]">Acción:</span>
-                                {rec.how}
+                            <h4 className="font-black text-slate-800 dark:text-white mb-3 text-lg leading-tight uppercase tracking-tight">{rec.what}</h4>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">{rec.why}</p>
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-white/5">
+                                <span className="font-black block mb-2 text-brand-orange uppercase tracking-widest text-[10px]">Hoja de Ruta:</span>
+                                <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{rec.how}</p>
                             </div>
                         </div>
                     ))}
@@ -138,8 +140,8 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
 
 // Subcomponent: Metric Card
 const MetricCard = ({ label, value, color }: { label: string, value: number, color: string }) => (
-    <div className={`p-4 rounded-2xl border border-transparent ${color.replace('text-', 'bg-').split(' ')[1].replace('/20', '/10')}`}>
-        <div className={`text-3xl font-black ${color.split(' ')[0]} mb-1`}>{value}%</div>
-        <div className="text-[10px] font-bold uppercase tracking-wider opacity-70">{label}</div>
+    <div className={`p-6 rounded-[2rem] border border-transparent shadow-sm ${color.split(' ')[1].replace('/20', '/5')}`}>
+        <div className={`text-4xl font-black ${color.split(' ')[0]} mb-2 tracking-tighter`}>{value}<span className="text-base ml-1 opacity-60">%</span></div>
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 text-slate-500 dark:text-slate-400">{label}</div>
     </div>
 );

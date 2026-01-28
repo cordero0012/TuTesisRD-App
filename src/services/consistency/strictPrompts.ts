@@ -144,10 +144,11 @@ Analiza CON LUPA la coherencia metodológica:
 - ¿Son coherentes con las variables/categorías?
 - Evidencia: [Pág. X]
 
-4.4 RESULTADOS VS MÉTODO:
+4.4 RESULTADOS VS MÉTODO (ANÁLISIS FORENSE):
 - ¿Los resultados reportados PODRÍAN haberse obtenido con el método descrito?
 - ¿Hay resultados "mágicos" (aparecen sin instrumentos que los capturen)?
 - ¿Los análisis estadísticos/cualitativos son apropiados?
+- DETECTA FABRICACIÓN: Busca patrones de datos perfectos o imposibles.
 - Evidencia: [Pág. X]
 
 4.5 CONCLUSIONES VS RESULTADOS:
@@ -156,12 +157,17 @@ Analiza CON LUPA la coherencia metodológica:
 - ¿Se respetan las limitaciones del método?
 - Evidencia: [Pág. X]
 
+4.6 RAZONAMIENTO FORENSE (OBLIGATORIO):
+- Debes explicar tu proceso deductivo.
+- ¿Por qué crees que el diseño es adecuado o no?
+- Cita los indicios que te llevaron a detectar fallos graves.
+
 ALERTAS CRÍTICAS:
 Marca como "INVALIDANTE" si:
 - El diseño no puede responder a los objetivos
 - Los instrumentos no capturan las variables
 - Las conclusiones no derivan de los resultados
-- Hay fabricación evidente de datos
+- Hay fabricación evidente de datos o resultados "mágicos"
 
 ═══════════════════════════════════════════════════════════════
 
@@ -235,10 +241,11 @@ FORMATO DE SALIDA (JSON ESTRICTO):
   "sectionEvaluations": [ ...análisis por sección... ],
   "methodologicalAnalysis": {
     ...análisis forense...
+    "forensicReasoning": string,
     "invalidatingIssues": string[]
   },
   "normativeCompliance": { ...scores y errores... },
-  "globalDiagnosis": { "level": string, "mainRisks": string[], "internalConsistencyDegree": number, "publishabilityLevel": number },
+  "globalDiagnosis": { "level": string, "auditSummary": string, "mainRisks": string[], "internalConsistencyDegree": number, "publishabilityLevel": number },
   "prioritizedRecommendations": [ ...recomendaciones ordenadas... ]
 }
 `;
