@@ -4,6 +4,8 @@ import { useNotification } from '../contexts/NotificationContext';
 import { analyzeConsistencyStrict } from '../services/consistency/strictAnalyzer';
 import { ConsistencyAnalysisResult } from '../services/consistency/matrixAnalyzer';
 import { ConsistencyAnalysisResults } from '../components/consistency/ConsistencyAnalysisResults';
+import { ConsistencyDashboard } from '../components/consistency/ConsistencyDashboard';
+import { MatrixInteractive } from '../components/consistency/MatrixInteractive';
 import * as pdfjsLib from 'pdfjs-dist';
 // @ts-ignore
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -26,6 +28,7 @@ export const ConsistencyMatrix = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisProgress, setAnalysisProgress] = useState(0);
     const [result, setResult] = useState<ConsistencyAnalysisResult | null>(null);
+    const [viewMode, setViewMode] = useState<'dashboard' | 'matrix'>('dashboard');
 
     const [selectedRegulationId, setSelectedRegulationId] = useState<string>('');
 
@@ -196,8 +199,8 @@ export const ConsistencyMatrix = () => {
                     {/* Deep Scan Toggle - Minimalist pill */}
                     <button
                         className={`group relative flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 ${useDeepScan
-                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800 dark:text-indigo-400'
-                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 dark:bg-surface-dark dark:border-surface-border dark:text-slate-300'
+                            ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800 dark:text-indigo-400'
+                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 dark:bg-surface-dark dark:border-surface-border dark:text-slate-300'
                             }`}
                         onClick={() => setUseDeepScan(!useDeepScan)}
                         title="Habilita OCR avanzado para documentos escaneados (Beta)"
@@ -293,6 +296,29 @@ export const ConsistencyMatrix = () => {
                     </button>
 
                     {result && (
+                        <div className="flex bg-slate-100 dark:bg-surface-border p-1 rounded-xl ml-4">
+                            <button
+                                onClick={() => setViewMode('dashboard')}
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'dashboard'
+                                    ? 'bg-white dark:bg-surface-dark shadow-sm text-slate-900 dark:text-white'
+                                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+                                    }`}
+                            >
+                                Dashboard
+                            </button>
+                            <button
+                                onClick={() => setViewMode('matrix')}
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'matrix'
+                                    ? 'bg-white dark:bg-surface-dark shadow-sm text-slate-900 dark:text-white'
+                                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+                                    }`}
+                            >
+                                Matriz Interactiva
+                            </button>
+                        </div>
+                    )}
+
+                    {result && (
                         <button
                             onClick={async () => {
                                 try {
@@ -306,9 +332,9 @@ export const ConsistencyMatrix = () => {
                                     showNotification("Error al generar el PDF", "error");
                                 }
                             }}
-                            className="bg-slate-800 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-slate-700 transition-all active:scale-95 ml-4"
+                            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0 ml-auto text-sm"
                         >
-                            <span className="material-symbols-outlined">picture_as_pdf</span>
+                            <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
                             Exportar PDF
                         </button>
                     )}
@@ -373,25 +399,16 @@ export const ConsistencyMatrix = () => {
                         </div>
                         <h3 className="text-xl font-black uppercase tracking-tight text-slate-800 dark:text-white mb-2">Analizando Estructura Profunda</h3>
                         <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md text-center mb-8">
-                            Nuestros agentes están evaluando la coherencia metodológica, normativa y argumentativa de tu tesis.
-                        </p>
-                        <div className="w-64 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary animate-progress" style={{ width: `${analysisProgress}%` }}></div>
-                        </div>
-                        <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">{analysisProgress}% Completado</p>
+                        )}
                     </div>
-                ) : result ? (
-                    <ConsistencyAnalysisResults result={result} />
                 ) : (
-                    <div className="h-full flex flex-col items-center justify-center gap-6 opacity-20 select-none">
-                        <span className="material-symbols-outlined text-[120px]">grid_on</span>
-                        <div className="text-center">
-                            <h3 className="text-xl font-black uppercase tracking-[0.2em] mb-2">No Matrix Generated</h3>
-                            <p className="text-xs font-bold uppercase tracking-widest">Click "Ejecutar Análisis" to evaluate your document</p>
-                        </div>
+                    <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700">
+                        <span className="material-symbols-outlined text-9xl mb-6 opacity-20">grid_on</span>
+                        <h3 className="text-2xl font-black uppercase tracking-[0.2em] opacity-40">Sin Análisis Generado</h3>
+                        <p className="text-sm font-bold mt-2 opacity-60">Sube tu tesis y ejecuta el análisis forense para ver resultados.</p>
                     </div>
                 )}
-            </div>
+            </main>
         </div>
     );
 };
