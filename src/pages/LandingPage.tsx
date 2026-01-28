@@ -182,33 +182,25 @@ const LandingPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
                         {[
-                            { icon: 'school', title: 'Asesoría de Tesis', desc: 'Acompañamiento 1 a 1 metodología y contenido.', img: 'bg-gradient-to-br from-blue-500 to-indigo-600' },
-                            { icon: 'fact_check', title: 'Corrección de Estilo', desc: 'Normas APA, ortografía y redacción académica.', img: 'bg-gradient-to-br from-emerald-500 to-teal-600' },
-                            { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos (SPSS, Excel) y resultados.', img: 'bg-gradient-to-br from-purple-500 to-violet-600' },
-                            { icon: 'menu_book', title: 'Investigación', desc: 'Marco teórico y búsqueda bibliográfica.', img: 'bg-gradient-to-br from-orange-400 to-red-500' }
+                            { icon: 'school', title: 'Asesoría de Tesis', desc: 'Acompañamiento 1 a 1 metodología y contenido.', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/10' },
+                            { icon: 'fact_check', title: 'Corrección de Estilo', desc: 'Normas APA, ortografía y redacción académica.', color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/10' },
+                            { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos (SPSS, Excel) y resultados.', color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-900/10' },
+                            { icon: 'menu_book', title: 'Investigación', desc: 'Marco teórico y búsqueda bibliográfica.', color: 'text-brand-orange', bg: 'bg-orange-50 dark:bg-orange-900/10' }
                         ].map((service, idx) => (
-                            <div key={idx} className="group relative h-[320px] rounded-[2rem] overflow-hidden cursor-pointer">
-                                {/* Background Gradient */}
-                                <div className={`absolute inset-0 ${service.img} opacity-90 group-hover:opacity-100 transition-opacity duration-500`}></div>
-
-                                {/* Pattern Overlay */}
-                                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat mix-blend-overlay"></div>
-
-                                {/* Content */}
-                                <div className="absolute inset-0 p-8 flex flex-col justify-between text-white z-10">
-                                    <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                                        <span className="material-icons text-2xl" aria-hidden="true">{service.icon}</span>
-                                    </div>
-
-                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                        <h3 className="text-2xl font-black mb-3 leading-tight">{service.title}</h3>
-                                        <p className="text-white/80 font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                            <div key={idx} className="group relative p-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-brand-orange/30 dark:hover:border-brand-orange/30 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none hover:-translate-y-1">
+                                <div className="flex flex-col h-full justify-between">
+                                    <div>
+                                        <div className={`w-14 h-14 ${service.bg} ${service.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                            <span className="material-icons text-3xl" aria-hidden="true">{service.icon}</span>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-brand-orange transition-colors">{service.title}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                                             {service.desc}
                                         </p>
-                                        <div className="mt-6 flex items-center gap-2 text-sm font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
-                                            Más información
-                                            <span className="material-icons text-sm">arrow_forward</span>
-                                        </div>
+                                    </div>
+                                    <div className="mt-8 flex items-center text-sm font-bold text-slate-900 dark:text-white group-hover:text-brand-orange transition-colors">
+                                        <span className="uppercase tracking-wider">Detalles</span>
+                                        <span className="material-icons text-sm ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                     </div>
                                 </div>
                             </div>
