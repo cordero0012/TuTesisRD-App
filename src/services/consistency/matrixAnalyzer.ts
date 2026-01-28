@@ -139,13 +139,24 @@ const ConsistencyAnalysisResultSchema = z.object({
     applicableStandards: z.array(z.string()),
     consistencyMatrix: z.array(ConsistencyMatrixRowSchema),
     sectionEvaluations: z.array(SectionEvaluationSchema),
+    structuralVerification: z.object({
+        sectionsFound: z.record(z.string(), z.object({
+            exists: z.boolean(),
+            pages: z.string(),
+            completeness: z.number()
+        })),
+        missingSections: z.array(z.string()),
+        misplacedSections: z.array(z.string())
+    }).optional(),
     methodologicalAnalysis: z.object({
         approachCoherent: z.boolean(),
         designAdequate: z.boolean(),
         techniquesAppropriate: z.boolean(),
         resultsDeriveFromMethod: z.boolean(),
         conclusionsSupportedByResults: z.boolean(),
-        criticalAlerts: z.array(z.string())
+        forensicReasoning: z.string().optional(),
+        criticalAlerts: z.array(z.string()),
+        invalidatingIssues: z.array(z.string()).optional()
     }),
     normativeCompliance: z.object({
         apa7Score: z.number().min(0).max(100),
@@ -155,7 +166,26 @@ const ConsistencyAnalysisResultSchema = z.object({
         grammaticalErrors: z.array(z.string()),
         styleIssues: z.array(z.string())
     }),
-    globalDiagnosis: GlobalDiagnosisSchema,
+    normativeComplianceDetailed: z.object({
+        overallCompliance: z.number(),
+        violations: z.array(z.object({
+            rule: z.string(),
+            severity: z.enum(['Critical', 'High', 'Medium', 'Low']),
+            evidence: z.string(),
+            impact: z.string()
+        })),
+        compliantItems: z.array(z.object({
+            rule: z.string(),
+            evidence: z.string()
+        }))
+    }).optional(),
+    globalDiagnosis: z.object({
+        level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']),
+        auditSummary: z.string().optional(),
+        mainRisks: z.array(z.string()),
+        internalConsistencyDegree: z.number().min(0).max(100),
+        publishabilityLevel: z.number().min(0).max(100)
+    }),
     prioritizedRecommendations: z.array(z.object({
         priority: z.enum(['Crítica', 'Alta', 'Media', 'Baja']),
         what: z.string(),

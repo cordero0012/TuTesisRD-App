@@ -137,16 +137,37 @@ export async function analyzeConsistencyStrict(
     regulationMetadata?: DeepNormativeAnalysis
 ): Promise<ConsistencyAnalysisResult> {
 
+    // 0. Clean and Chunk Text
+    const cleanText = documentText
+        .replace(/<img[^>]*src="data:[^"]*"[^>]*>/g, '') // Remove base64 images
+        .replace(/<[^>]*>/g, ' ') // Remove other HTML tags
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+
+    // Import Chunker dynamically to avoid circular dependencies if any
+    const { SemanticChunker } = await import('../ai/chunkingService');
+    const chunks = SemanticChunker.chunkBySections(cleanText);
+
+    // Prioritize sections for Forensic Analysis
+    const prioritySections = ['INTRODUCCI', 'PROBLEMA', 'METODOLOG', 'RESULTADOS', 'CONCLUSIONES', 'DISCUSI', 'OBJETIVO'];
+    const relevantChunks = chunks.filter(c => prioritySections.some(p => c.sectionType.toUpperCase().includes(p)));
+
+    const textToProcess = relevantChunks.length > 0
+        ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, 20000)}`).join('\n\n')
+        : cleanText.substring(0, 100000); // Higher fallback limit
+
     // 1. Build context
     const normativeContext = buildDetailedNormativeContext(institutionalRules, regulationMetadata);
 
     // 2. Build prompt
     const prompt = getStrictPrompt(normativeContext);
 
+    const finalPrompt = prompt + "\n\nDOCUMENTO A EVALUAR:\n" + textToProcess;
+
     // 3. Call AI
     try {
         const result = await generateJSON<StrictAnalysisResult>({
-            prompt,
+            prompt: finalPrompt,
             systemInstruction: "Eres un auditor académico estricto. Analiza el documento buscando inconsistencias fatales y fallos normativos.",
             temperature: 0.1, // Very low temperature for strictness
             model: 'gemini-1.5-flash' // Use stable flash model for high-priority analysis
