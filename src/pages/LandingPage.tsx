@@ -164,18 +164,15 @@ const LandingPage: React.FC = () => {
             {/* Our Services (Redesigned) */}
             <section id="servicios" className="py-12 bg-white dark:bg-black relative overflow-hidden">
                 <div className="container mx-auto px-6 relative z-10">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
-                        <div className="md:w-2/3">
-                            <span className="text-brand-orange font-black uppercase tracking-[0.2em] text-sm mb-4 block">Soluciones Integrales</span>
-                            <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
-                                Nuestros Servicios <br />
-                                <span className="text-slate-400 dark:text-slate-600">Premium</span>
-                            </h2>
-                            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">
-                                Diseñamos un ecosistema de servicios para cubrir cada etapa de tu investigación, desde la idea inicial hasta la sustentación.
-                            </p>
-                        </div>
-                        <div className="md:w-1/3 flex justify-start md:justify-end">
+                    <div className="text-center max-w-3xl mx-auto mb-16">
+                        <span className="text-brand-orange font-black uppercase tracking-[0.2em] text-sm mb-4 block">Soluciones Integrales</span>
+                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+                            Nuestros Servicios <span className="text-slate-400 dark:text-slate-600">Premium</span>
+                        </h2>
+                        <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
+                            Diseñamos un ecosistema de servicios para cubrir cada etapa de tu investigación, desde la idea inicial hasta la sustentación.
+                        </p>
+                        <div className="flex justify-center">
                             <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-slate-900 rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-slate-200/50 dark:shadow-none">
                                 <span className="uppercase tracking-wider text-sm">Ver Planes</span>
                                 <span className="material-icons group-hover:translate-x-1 transition-transform text-sm">arrow_forward</span>
