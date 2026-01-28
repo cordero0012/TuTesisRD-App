@@ -138,21 +138,21 @@ const LandingPage: React.FC = () => {
                             { icon: 'verified', title: '100%', desc: 'Tasa de Aprobación', color: 'text-green-500', bg: 'bg-green-500/10' },
                             { icon: 'language', title: 'Nacional', desc: 'Cobertura Nacional', color: 'text-purple-500', bg: 'bg-purple-500/10' }
                         ].map((stat, idx) => (
-                            <div key={idx} className="group bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-slate-300/50 dark:hover:shadow-black/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden border border-slate-100 dark:border-slate-700">
-                                <div className={`absolute top-0 right-0 w-32 h-32 ${stat.bg} rounded-bl-[100px] -mr-8 -mt-8 opacity-50 group-hover:scale-150 transition-transform duration-700`}></div>
-
-                                <div className="relative z-10">
-                                    <div className={`w-16 h-16 ${stat.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                                        <span className={`material-icons text-3xl ${stat.color}`} aria-hidden="true">{stat.icon}</span>
-                                    </div>
-                                    <h4 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-900 group-hover:to-slate-600 dark:group-hover:from-white dark:group-hover:to-slate-400 transition-all">
-                                        {stat.title}
-                                    </h4>
-                                    <p className="text-slate-500 dark:text-slate-400 font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                                        {stat.desc}
-                                    </p>
+                        ].map((stat, idx) => (
+                        <div key={idx} className="group bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-brand-orange/30 dark:hover:border-brand-orange/30 transition-all duration-300 hover:-translate-y-1">
+                            <div className="relative z-10 text-center">
+                                <div className={`w-16 h-16 mx-auto ${stat.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                    <span className={`material-icons text-3xl ${stat.color}`} aria-hidden="true">{stat.icon}</span>
                                 </div>
+                                <h4 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
+                                    {stat.title}
+                                </h4>
+                                <p className="text-slate-500 dark:text-slate-400 font-medium">
+                                    {stat.desc}
+                                </p>
                             </div>
+                        </div>
+                        ))}
                         ))}
                     </div>
                 </div>
