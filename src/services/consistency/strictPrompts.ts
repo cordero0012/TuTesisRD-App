@@ -72,4 +72,4 @@ FORMATO DE SALIDA (JSON ESTRICTO):
   "globalDiagnosis": { ... },
   "prioritizedRecommendations": [ ... ]
 }
-};
+`;
