@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import universitiesData from '../data/universities.json';
 
 // Define a simple Project interface
 export interface Project {
@@ -7,10 +8,20 @@ export interface Project {
     title?: string;
 }
 
+export interface UploadedFile {
+    name: string;
+    type: string;
+    size: number;
+    content: string | { page: number; text: string }[];
+    lastModified: number;
+}
+
 interface ProjectContextType {
     project: Project;
     setProject: (project: Project) => void;
-    universities: any[]; // Placeholder for univeristies if needed
+    uploadedFile: UploadedFile | null;
+    setUploadedFile: (file: UploadedFile | null) => void;
+    universities: any[];
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -23,8 +34,16 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         title: 'Mi Tesis'
     });
 
+    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+
     return (
-        <ProjectContext.Provider value={{ project, setProject, universities: [] }}>
+        <ProjectContext.Provider value={{
+            project,
+            setProject,
+            uploadedFile,
+            setUploadedFile,
+            universities: universitiesData
+        }}>
             {children}
         </ProjectContext.Provider>
     );

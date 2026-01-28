@@ -16,6 +16,7 @@ import UniversityTemplate from './pages/Universities/UniversityTemplate';
 import UniversityDirectory from './pages/Universities/UniversityDirectory';
 import BlogPostTemplate from './pages/BlogPostTemplate';
 import ConsistencyMatrix from './pages/ConsistencyMatrix';
+import AuditPage from './pages/AuditPage';
 
 const DarkModeToggle = () => {
     // Initialize state from localStorage or system preference
@@ -81,6 +82,7 @@ const App = () => {
                     <Route path="/design" element={<DesignSystem />} />
 
                     {/* Tools */}
+                    <Route path="/herramientas" element={<AuditPage />} />
                     <Route path="/herramientas/auditor" element={<DocumentAudit />} />
                     <Route path="/herramientas/matriz" element={<ConsistencyMatrix />} />
 

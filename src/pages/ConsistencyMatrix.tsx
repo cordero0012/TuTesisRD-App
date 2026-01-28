@@ -20,7 +20,7 @@ try {
 
 export const ConsistencyMatrix = () => {
     // Using project content if available, but primarily relying on local file upload
-    const { project } = useProject();
+    const { project, uploadedFile, setUploadedFile } = useProject();
     const { showNotification } = useNotification();
 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -29,9 +29,7 @@ export const ConsistencyMatrix = () => {
 
     const [selectedRegulationId, setSelectedRegulationId] = useState<string>('');
 
-    // Document upload state
-    const [uploadedContent, setUploadedContent] = useState<string | { page: number; text: string }[]>('');
-    const [uploadedFileName, setUploadedFileName] = useState<string>('');
+    // Document upload state handled by Context
     const [isUploading, setIsUploading] = useState(false);
     const [useDeepScan, setUseDeepScan] = useState(false);
 
@@ -64,9 +62,10 @@ export const ConsistencyMatrix = () => {
         }
 
         setIsUploading(true);
-        setUploadedFileName(file.name);
 
         try {
+            let content: string | { page: number; text: string }[] = '';
+
             // For PDF files
             if (file.type === 'application/pdf') {
                 if (useDeepScan && (window as any).scholar?.ocr) {
@@ -85,7 +84,7 @@ export const ConsistencyMatrix = () => {
                     pages.push({ page: i, text: pageText });
                 }
 
-                setUploadedContent(pages);
+                content = pages;
                 const totalChars = pages.reduce((acc, p) => acc + p.text.length, 0);
                 showNotification(`PDF cargado: ${file.name} (${totalChars} caracteres, ${pages.length} págs)`, "success");
             }
@@ -93,9 +92,18 @@ export const ConsistencyMatrix = () => {
             else if (file.name.endsWith('.docx')) {
                 const arrayBuffer = await file.arrayBuffer();
                 const result = await mammoth.extractRawText({ arrayBuffer });
-                setUploadedContent(result.value.trim());
+                content = result.value.trim();
                 showNotification(`DOCX cargado: ${file.name} (${result.value.length} caracteres)`, "success");
             }
+
+            setUploadedFile({
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                content: content,
+                lastModified: file.lastModified
+            });
+
         } catch (error) {
             console.error('File parsing error:', error);
             showNotification("Error al procesar el archivo", "error");
@@ -106,7 +114,7 @@ export const ConsistencyMatrix = () => {
     };
 
     const handleAnalyze = async () => {
-        const contentToAnalyze = uploadedContent || project.content;
+        const contentToAnalyze = uploadedFile?.content || project.content;
 
         const contentLength = Array.isArray(contentToAnalyze)
             ? contentToAnalyze.reduce((acc, p) => acc + p.text.length, 0)
@@ -215,7 +223,7 @@ export const ConsistencyMatrix = () => {
                             htmlFor="doc-upload"
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-dashed font-bold text-sm transition-all cursor-pointer ${isUploading
                                 ? 'border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 cursor-wait'
-                                : uploadedContent
+                                : uploadedFile
                                     ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'
                                     : 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary'
                                 }`}
@@ -225,12 +233,12 @@ export const ConsistencyMatrix = () => {
                                     <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                                     <span>Procesando...</span>
                                 </>
-                            ) : uploadedContent ? (
+                            ) : uploadedFile ? (
                                 <>
                                     <span className="material-symbols-outlined text-base">check_circle</span>
-                                    <span className="max-w-[150px] truncate">{uploadedFileName}</span>
+                                    <span className="max-w-[150px] truncate">{uploadedFile.name}</span>
                                     <span className="text-[9px] opacity-60">
-                                        ({Array.isArray(uploadedContent) ? uploadedContent.length + ' págs' : uploadedContent.length + ' chars'})
+                                        ({Array.isArray(uploadedFile.content) ? uploadedFile.content.length + ' págs' : (uploadedFile.content as string).length + ' chars'})
                                     </span>
                                 </>
                             ) : (
@@ -242,11 +250,10 @@ export const ConsistencyMatrix = () => {
                         </label>
                     </div>
 
-                    {uploadedContent && (
+                    {uploadedFile && (
                         <button
                             onClick={() => {
-                                setUploadedContent('');
-                                setUploadedFileName('');
+                                setUploadedFile(null);
                                 showNotification("Documento eliminado", "info");
                             }}
                             className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-all"
@@ -258,7 +265,7 @@ export const ConsistencyMatrix = () => {
 
                     <button
                         onClick={handleAnalyze}
-                        disabled={isAnalyzing || (!uploadedContent && !project.content)}
+                        disabled={isAnalyzing || (!uploadedFile && !project.content)}
                         className="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isAnalyzing ? (

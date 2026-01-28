@@ -1,31 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
-// import { useProject } from '../contexts/ProjectContext';
-// import { useNotification } from '../contexts/NotificationContext';
+import { useProject } from '../contexts/ProjectContext';
+import { useNotification } from '../contexts/NotificationContext';
 import { detectAiContent, detectAiContentBatch, AiDetectionResult } from '../services/analysis/detection';
 import { generateAuditPDF } from '../services/reports/auditReport';
 import { exportAuditToWord } from '../services/wordExportService';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-// --- Mocks for Standalone Version ---
-// In a full app these would come from Contexts
-const useNotification = () => {
-    return {
-        showNotification: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => {
-            // Simple alert fallback or custom toast could be added here
-            // distinct visual cues for different types
-            console.log(`[${type.toUpperCase()}] ${msg}`);
-            if (type === 'error') alert(msg);
-        }
-    };
-};
 
 /**
  * AI Audit Lab - Ultra-Premium Version
  * Integrates forensics metrics, split-view editing, and statistical signature visualization.
  */
 export const AiAudit = () => {
-    // const { project } = useProject();
+    const { project, uploadedFile, setUploadedFile } = useProject();
     const navigate = useNavigate();
     const { showNotification } = useNotification();
     const [text, setText] = useState("");
@@ -38,15 +25,22 @@ export const AiAudit = () => {
     const [progress, setProgress] = useState(0);
     const [progressStatus, setProgressStatus] = useState("");
 
-    // Sync with project content (Removed for standalone)
-    /*
+    // Sync with uploaded file or project content
     useEffect(() => {
-        if (project.content && !text) {
+        if (uploadedFile?.content) {
+            const fileText = Array.isArray(uploadedFile.content)
+                ? uploadedFile.content.map(p => p.text).join('\n\n')
+                : uploadedFile.content;
+
+            if (typeof fileText === 'string' && fileText !== text) {
+                setText(fileText);
+                if (fileText.length > 5000) setAuditMode('full');
+            }
+        } else if (project.content && !text) {
             setText(project.content);
             if (project.content.length > 5000) setAuditMode('full');
         }
-    }, [project.content]);
-    */
+    }, [uploadedFile, project.content]);
 
     const handleAnalyze = async () => {
         if (!text.trim()) return;
@@ -82,7 +76,7 @@ export const AiAudit = () => {
             setResult(data);
         } catch (e) {
             console.error("Analysis Error:", e);
-            alert("Hubo un error al realizar el análisis. Por favor intenta nuevamente.");
+            showNotification("Hubo un error al realizar el análisis. Por favor intenta nuevamente.", "error");
         } finally {
             setLoading(false);
             setProgress(0);
@@ -175,7 +169,13 @@ export const AiAudit = () => {
                                                 const arrayBuffer = await file.arrayBuffer();
                                                 const pdfjsLib = await import('pdfjs-dist');
                                                 // Ensure worker is loaded - simplified for Vite
-                                                pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+                                                // @ts-ignore
+                                                if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+                                                    // @ts-ignore
+                                                    const worker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+                                                    // @ts-ignore
+                                                    pdfjsLib.GlobalWorkerOptions.workerSrc = worker.default;
+                                                }
 
                                                 try {
                                                     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -232,6 +232,13 @@ export const AiAudit = () => {
                                             }
 
                                             if (content.trim()) {
+                                                setUploadedFile({
+                                                    name: file.name,
+                                                    type: file.type,
+                                                    size: file.size,
+                                                    content: content,
+                                                    lastModified: file.lastModified
+                                                });
                                                 setText(content);
                                                 showNotification("Documento cargado correctamente", "success");
                                             } else {
@@ -254,7 +261,10 @@ export const AiAudit = () => {
                                 </button>
                             </div>
                             <button
-                                onClick={() => setText('')}
+                                onClick={() => {
+                                    setText('');
+                                    setUploadedFile(null);
+                                }}
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
                             >
                                 <span className="material-symbols-outlined text-[18px]">delete</span>
@@ -608,32 +618,9 @@ export const AiAudit = () => {
                             <span className="material-symbols-outlined">description</span>
                             Exportar Word
                         </button>
-
-                        {/* 
-                        <button
-                            onClick={() => {
-                                navigate('/tone-optimizer', {
-                                    state: {
-                                        originalText: text,
-                                        detectionReport: {
-                                            isAiLikely: result.score > 0.4,
-                                            confidence: (result.score * 100).toFixed(0),
-                                            issues: result.signals // Pass signals as feedback issues
-                                        }
-                                    }
-                                });
-                            }}
-                            className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all text-sm font-bold animate-bounce-in ml-4 border-2 border-white/20"
-                        >
-                            <span className="material-symbols-outlined">auto_fix_high</span>
-                            Humanizar (Anti-Turnitin)
-                        </button>
-                        */}
                     </div>
                 )}
             </main>
         </div>
     );
 };
-
-// export default AiAudit;

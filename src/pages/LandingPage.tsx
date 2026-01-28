@@ -112,101 +112,143 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Stats Section (Why Choose Us) */}
-            <section className="py-16 md:py-24 bg-white dark:bg-white/5 border-y border-slate-100 dark:border-white/5">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">¿Por qué elegir Tu Tesis RD?</h2>
-                        <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Más de 7 años de experiencia y una trayectoria impecable nos respaldan.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            { icon: 'history_edu', title: '+7 Años', desc: 'Experiencia Académica' },
-                            { icon: 'groups', title: '300+', desc: 'Tesis Asesoradas' },
-                            { icon: 'verified', title: '100%', desc: 'Tasa de Aprobación' },
-                            { icon: 'language', title: 'Nacional', desc: 'Cobertura Nacional' }
-                        ].map((stat, idx) => (
-                            <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg transition-all text-center group">
-                                <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mx-auto mb-4 text-brand-orange group-hover:scale-110 transition-transform">
-                                    <span className="material-icons text-2xl" aria-hidden="true">{stat.icon}</span>
-                                </div>
-                                <h4 className="text-xl font-black text-slate-900 dark:text-white mb-1">{stat.title}</h4>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{stat.desc}</p>
-                            </div>
-                        ))}
-                    </div>
+            {/* Why Choose Us (Redesigned) */}
+            <section className="py-24 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-slate-200/50 dark:bg-slate-800/30 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
+                    <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-brand-orange/5 rounded-full blur-3xl translate-y-1/3 translate-x-1/3"></div>
                 </div>
-            </section>
 
-            {/* Services Section */}
-            <section id="servicios" className="py-20 bg-background-light dark:bg-surface-dark relative">
                 <div className="container mx-auto px-6 relative z-10">
-                    <div className="text-center mb-16">
-                        <span className="text-brand-orange font-bold uppercase tracking-wider text-sm mb-2 block">Lo que hacemos</span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">Nuestros Servicios</h2>
-                        <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                            Ofrecemos un paquete completo de soluciones académicas diseñadas para garantizar el éxito de tu proyecto de grado.
+                    <div className="text-center max-w-3xl mx-auto mb-20">
+                        <span className="text-brand-orange font-black uppercase tracking-[0.2em] text-sm mb-4 block">Nuestra Trayectoria</span>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6">
+                            ¿Por qué elegir <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">TuTesisRD?</span>
+                        </h2>
+                        <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Más de 7 años transformando el estrés académico en éxito profesional. Nuestra metodología garantiza resultados aprobados.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { icon: 'book', title: 'Asesoría de Tesis', desc: 'Acompañamiento metodológico completo desde el anteproyecto hasta la defensa final.' },
-                            { icon: 'edit', title: 'Corrección de Estilo', desc: 'Revisión ortotipográfica y gramatical profesional. Adaptación a normas APA, Vancouver, o IEEE.' },
-                            { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos con SPSS, Excel o R. Interpretación de resultados cuantitativos.' },
-                            { icon: 'science', title: 'Investigación', desc: 'Soporte en la búsqueda de información académica y construcción del marco teórico.' }
-                        ].map((service, idx) => (
-                            <div key={idx} className="bg-white dark:bg-white/5 p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-white/5 group flex flex-col items-center text-center">
-                                <div className="w-16 h-16 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/40 dark:to-orange-900/10 rounded-full flex items-center justify-center mb-6 text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition-all shadow-inner">
-                                    <span className="material-icons text-3xl" aria-hidden="true">{service.icon}</span>
+                            { icon: 'history_edu', title: '+7 Años', desc: 'Experiencia Académica', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+                            { icon: 'groups', title: '300+', desc: 'Tesis Asesoradas', color: 'text-brand-orange', bg: 'bg-brand-orange/10' },
+                            { icon: 'verified', title: '100%', desc: 'Tasa de Aprobación', color: 'text-green-500', bg: 'bg-green-500/10' },
+                            { icon: 'language', title: 'Nacional', desc: 'Cobertura Nacional', color: 'text-purple-500', bg: 'bg-purple-500/10' }
+                        ].map((stat, idx) => (
+                            <div key={idx} className="group bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-slate-300/50 dark:hover:shadow-black/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden border border-slate-100 dark:border-slate-700">
+                                <div className={`absolute top-0 right-0 w-32 h-32 ${stat.bg} rounded-bl-[100px] -mr-8 -mt-8 opacity-50 group-hover:scale-150 transition-transform duration-700`}></div>
+
+                                <div className="relative z-10">
+                                    <div className={`w-16 h-16 ${stat.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                        <span className={`material-icons text-3xl ${stat.color}`} aria-hidden="true">{stat.icon}</span>
+                                    </div>
+                                    <h4 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-900 group-hover:to-slate-600 dark:group-hover:from-white dark:group-hover:to-slate-400 transition-all">
+                                        {stat.title}
+                                    </h4>
+                                    <p className="text-slate-500 dark:text-slate-400 font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                                        {stat.desc}
+                                    </p>
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{service.title}</h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{service.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Our Services (Redesigned) */}
+            <section id="servicios" className="py-24 bg-white dark:bg-black relative overflow-hidden">
+                <div className="container mx-auto px-6 relative z-10">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+                        <div className="md:w-2/3">
+                            <span className="text-brand-orange font-black uppercase tracking-[0.2em] text-sm mb-4 block">Soluciones Integrales</span>
+                            <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+                                Nuestros Servicios <br />
+                                <span className="text-slate-400 dark:text-slate-600">Premium</span>
+                            </h2>
+                            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">
+                                Diseñamos un ecosistema de servicios para cubrir cada etapa de tu investigación, desde la idea inicial hasta la sustentación.
+                            </p>
+                        </div>
+                        <div className="md:w-1/3 flex justify-start md:justify-end">
+                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full font-bold transition-all hover:scale-105 active:scale-95">
+                                Ver Paquetes
+                                <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { icon: 'school', title: 'Asesoría de Tesis', desc: 'Acompañamiento 1 a 1 metodología y contenido.', img: 'bg-gradient-to-br from-blue-500 to-indigo-600' },
+                            { icon: 'fact_check', title: 'Corrección de Estilo', desc: 'Normas APA, ortografía y redacción académica.', img: 'bg-gradient-to-br from-emerald-500 to-teal-600' },
+                            { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos (SPSS, Excel) y resultados.', img: 'bg-gradient-to-br from-purple-500 to-violet-600' },
+                            { icon: 'menu_book', title: 'Investigación', desc: 'Marco teórico y búsqueda bibliográfica.', img: 'bg-gradient-to-br from-orange-400 to-red-500' }
+                        ].map((service, idx) => (
+                            <div key={idx} className="group relative h-[320px] rounded-[2rem] overflow-hidden cursor-pointer">
+                                {/* Background Gradient */}
+                                <div className={`absolute inset-0 ${service.img} opacity-90 group-hover:opacity-100 transition-opacity duration-500`}></div>
+
+                                {/* Pattern Overlay */}
+                                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat mix-blend-overlay"></div>
+
+                                {/* Content */}
+                                <div className="absolute inset-0 p-8 flex flex-col justify-between text-white z-10">
+                                    <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                                        <span className="material-icons text-2xl" aria-hidden="true">{service.icon}</span>
+                                    </div>
+
+                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                        <h3 className="text-2xl font-black mb-3 leading-tight">{service.title}</h3>
+                                        <p className="text-white/80 font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                            {service.desc}
+                                        </p>
+                                        <div className="mt-6 flex items-center gap-2 text-sm font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                                            Más información
+                                            <span className="material-icons text-sm">arrow_forward</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
 
-                    {/* Premium Breakdown */}
-                    <div className="mt-16 bg-white dark:bg-slate-800/30 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-700 shadow-lg">
-                        <div className="text-center mb-10">
-                            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Servicio Premium Incluido</h3>
-                            <p className="text-slate-500 dark:text-slate-400 mt-2">Elevamos el estándar de tu investigación</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 shrink-0">
-                                    <span className="material-icons text-sm" aria-hidden="true">check</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold mb-1 text-slate-900 dark:text-white">Revisión Anti-Plagio</h4>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Garantizamos originalidad con reportes detallados de similitud (Turnitin).</p>
-                                </div>
+                    {/* Premium Included Banner */}
+                    <div className="mt-16 bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-black rounded-[2.5rem] p-8 md:p-12 border border-slate-200 dark:border-slate-800 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-orange/5 rounded-full blur-[80px] pointer-events-none"></div>
+
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
+                            <div className="md:w-1/3">
+                                <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Todo Incluido <span className="text-brand-orange">Premium</span></h3>
+                                <p className="text-slate-600 dark:text-slate-400">
+                                    Al contratar cualquiera de nuestros servicios, obtienes beneficios exclusivos que garantizan tu tranquilidad.
+                                </p>
                             </div>
-                            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 shrink-0">
-                                    <span className="material-icons text-sm" aria-hidden="true">check</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold mb-1 text-slate-900 dark:text-white">Soporte Continuo</h4>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Comunicación directa con tu asesor vía WhatsApp y Correo.</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 shrink-0">
-                                    <span className="material-icons text-sm" aria-hidden="true">check</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold mb-1 text-slate-900 dark:text-white">Entrega Puntual</h4>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Cronograma riguroso para cumplir con las fechas de tu universidad.</p>
-                                </div>
+                            <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+                                {[
+                                    { icon: 'verified_user', title: 'Anti-Plagio', text: 'Reporte Turnitin Gratis' },
+                                    { icon: 'support_agent', title: 'Soporte 24/7', text: 'WhatsApp Directo' },
+                                    { icon: 'event_available', title: 'Garantía', text: 'Cumplimiento de Plazos' }
+                                ].map((item, i) => (
+                                    <div key={i} className="flex gap-4 items-start p-4 rounded-2xl hover:bg-white dark:hover:bg-white/5 border border-transparent hover:border-slate-100 dark:hover:border-slate-700 transition-colors">
+                                        <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center shrink-0">
+                                            <span className="material-icons text-sm">{item.icon}</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-900 dark:text-white">{item.title}</h4>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{item.text}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Tools Section */}
+            {/* Tools Section (Existing) */}
             <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/20 rounded-full blur-[120px] -mr-64 -mt-64"></div>
 
