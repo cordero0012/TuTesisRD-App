@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -52,7 +52,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     return (
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <HashRouter>
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
                 <Routes>
@@ -79,7 +79,7 @@ const App = () => {
                 </Routes>
                 {/* <AIChat /> */}
             </div>
-        </BrowserRouter>
+        </HashRouter>
     );
 };
 
