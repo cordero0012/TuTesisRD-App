@@ -1,6 +1,7 @@
 {
   "name": "tutesisrd",
   "private": true,
+  "homepage": "https://cordero0012.github.io/TuTesisRD-App/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
