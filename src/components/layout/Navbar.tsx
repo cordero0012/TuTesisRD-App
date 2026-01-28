@@ -9,10 +9,10 @@ const Navbar: React.FC = () => {
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <header className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800">
+        <header className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/70 dark:bg-background-dark/70 backdrop-blur-xl border-b border-gray-100/50 dark:border-white/5 shadow-sm">
             <div className="container mx-auto px-6 py-4 flex justify-between items-center">
                 <Link to="/" className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center group">
-                    <span className="material-icons mr-2 text-brand-orange group-hover:rotate-12 transition-transform duration-300">school</span>
+                    <span className="material-icons mr-2 text-brand-orange group-hover:rotate-12 transition-transform duration-300" aria-hidden="true">school</span>
                     TuTesis<span className="text-brand-orange">RD</span>
                 </Link>
                 {/* Mobile Menu Button */}

@@ -14,7 +14,7 @@ const Universities: React.FC = () => {
 
             <section className="pt-32 pb-20 bg-white dark:bg-background-dark transition-colors duration-200">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">Nuestra Experiencia Universitaria</h2>
+                    <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">Nuestra Experiencia Universitaria</h1>
                     <p className="text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto text-lg">
                         En Tu Tesis RD, entendemos que cada universidad tiene su propia identidad, normativa y rigor académico.
                         Hemos trabajado exitosamente con estudiantes de las principales instituciones de educación superior del país.

@@ -4,9 +4,10 @@ interface SEOProps {
     title: string;
     description?: string;
     canonical?: string;
+    schema?: object;
 }
 
-const SEO: React.FC<SEOProps> = ({ title, description, canonical }) => {
+const SEO: React.FC<SEOProps> = ({ title, description, canonical, schema }) => {
     const fullTitle = `${title} | TuTesisRD - Asesoría de Tesis en República Dominicana`;
     const defaultDescription = "Asesoría experta en tesis, anteproyectos y monográficos en República Dominicana. Más de 7 años ayudando a estudiantes a graduarse con éxito.";
     const currentDescription = description || defaultDescription;
@@ -50,7 +51,21 @@ const SEO: React.FC<SEOProps> = ({ title, description, canonical }) => {
             document.head.appendChild(linkCanonical);
         }
         linkCanonical.setAttribute('href', canonicalUrl);
-    }, [fullTitle, currentDescription, canonical]);
+
+        // Structured Data (JSON-LD)
+        let scriptSchema = document.querySelector('script[id="ld-json"]');
+        if (schema) {
+            if (!scriptSchema) {
+                scriptSchema = document.createElement('script');
+                scriptSchema.setAttribute('type', 'application/ld+json');
+                scriptSchema.setAttribute('id', 'ld-json');
+                document.head.appendChild(scriptSchema);
+            }
+            scriptSchema.textContent = JSON.stringify(schema);
+        } else if (scriptSchema) {
+            scriptSchema.remove();
+        }
+    }, [fullTitle, currentDescription, canonical, schema]);
 
     return null;
 };

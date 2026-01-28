@@ -5,11 +5,42 @@ import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 
 const LandingPage: React.FC = () => {
+    const mainSchema = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "TuTesisRD",
+        "image": "https://www.tutesisrd.online/favicon.png",
+        "@id": "https://www.tutesisrd.online",
+        "url": "https://www.tutesisrd.online",
+        "telephone": "+18294435985",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "República Dominicana",
+            "addressLocality": "Santo Domingo",
+            "addressCountry": "DO"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 18.4861,
+            "longitude": -69.9312
+        },
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+        },
+        "sameAs": [
+            "https://wa.me/message/YESJDSE3MZ3IM1"
+        ]
+    };
+
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             <SEO
                 title="Inicio"
                 description="Tu Tesis Aprobada, Sin Estrés. Expertos en redacción académica y metodología en República Dominicana."
+                schema={mainSchema}
             />
             <Navbar />
 
@@ -38,7 +69,7 @@ const LandingPage: React.FC = () => {
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
-                                    <span className="material-icons mr-2">chat</span> Contactar Asesor
+                                    <span className="material-icons mr-2" aria-hidden="true">chat</span> Contactar Asesor
                                 </a>
                                 <Link to="/servicios" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
                                     Ver Servicios
@@ -47,8 +78,8 @@ const LandingPage: React.FC = () => {
 
                             <div className="mt-12 inline-flex items-center gap-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm p-3 pr-6 rounded-full border border-white/50 dark:border-slate-700/50 shadow-sm">
                                 <div className="flex -space-x-3">
-                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Student" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Student" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Estudiante satisfecha" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Estudiante satisfecho" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
                                     <div className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-brand-orange flex items-center justify-center text-xs text-white font-bold">+300</div>
                                 </div>
                                 <div>
@@ -62,14 +93,14 @@ const LandingPage: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-yellow-400 rounded-[2rem] transform rotate-3 scale-105 opacity-20 blur-2xl group-hover:rotate-6 transition-transform duration-500"></div>
                             <img
                                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                                alt="Estudiante celebrando"
+                                alt="Estudiante celebrando graduación con éxito"
                                 className="relative rounded-[2rem] shadow-2xl transform transition-transform duration-500 group-hover:scale-[1.02] border border-white/20"
                             />
 
                             {/* Floating Badge */}
                             <div className="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-slow border border-gray-100 dark:border-gray-700">
                                 <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full text-green-600">
-                                    <span className="material-icons">check_circle</span>
+                                    <span className="material-icons" aria-hidden="true">check_circle</span>
                                 </div>
                                 <div>
                                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Resultado</p>

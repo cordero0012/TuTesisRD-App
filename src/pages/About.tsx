@@ -15,7 +15,7 @@ const About: React.FC = () => {
             <section className="pt-32 pb-20">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">¿Por qué elegir Tu Tesis RD?</h2>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">¿Por qué elegir Tu Tesis RD?</h1>
                         <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Más de 7 años de experiencia y 300+ tesis trabajadas nos respaldan.</p>
                     </div>
 

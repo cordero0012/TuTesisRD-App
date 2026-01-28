@@ -15,7 +15,7 @@ const Services: React.FC = () => {
             <section className="pt-32 pb-20 bg-background-light dark:bg-surface-dark relative transition-colors duration-200">
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Nuestros Servicios</h2>
+                        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Nuestros Servicios</h1>
                         <div className="w-20 h-1.5 bg-brand-orange mx-auto rounded-full"></div>
                         <p className="mt-6 text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
                             Ofrecemos un paquete completo de soluciones académicas diseñadas para garantizar el éxito de tu proyecto de grado.

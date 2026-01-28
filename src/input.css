@@ -3,9 +3,34 @@
 @tailwind utilities;
 
 /* Global Styles */
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: #f6f7f8;
 }
+
 .dark body {
     background-color: #101822;
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
 }
