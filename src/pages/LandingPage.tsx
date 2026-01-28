@@ -45,25 +45,25 @@ const LandingPage: React.FC = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section id="inicio" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-background-light dark:bg-background-dark">
+            <section id="inicio" className="relative pt-32 pb-16 lg:pt-48 lg:pb-32 overflow-hidden bg-background-light dark:bg-background-dark">
                 {/* Abstract Background Shapes */}
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-brand-orange/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl"></div>
+                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-brand-orange/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-blue-500/10 rounded-full blur-3xl"></div>
 
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
                         <div className="md:w-1/2 animate-fade-in-up text-center md:text-left">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 shadow-sm mb-8">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 shadow-sm mb-6 md:mb-8">
                                 <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
                                 <span className="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-200">Disponible para nuevos proyectos</span>
                             </div>
 
-                            <h1 className="text-5xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
+                            <h1 className="text-4xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
                                 Tu Tesis Aprobada,<br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">Sin Estrés.</span>
                             </h1>
 
-                            <p className="text-lg lg:text-xl text-slate-500 dark:text-slate-400 mb-10 leading-relaxed max-w-lg mx-auto md:mx-0">
+                            <p className="text-lg lg:text-xl text-slate-500 dark:text-slate-400 mb-8 md:mb-10 leading-relaxed max-w-lg mx-auto md:mx-0">
                                 Expertos en redacción académica y metodología. Te acompañamos desde el anteproyecto hasta la defensa final.
                             </p>
 
@@ -76,7 +76,7 @@ const LandingPage: React.FC = () => {
                                 </Link>
                             </div>
 
-                            <div className="mt-12 inline-flex items-center gap-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm p-3 pr-6 rounded-full border border-white/50 dark:border-slate-700/50 shadow-sm">
+                            <div className="mt-12 hidden md:inline-flex items-center gap-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm p-3 pr-6 rounded-full border border-white/50 dark:border-slate-700/50 shadow-sm">
                                 <div className="flex -space-x-3">
                                     <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Estudiante satisfecha" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
                                     <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Estudiante satisfecho" className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 object-cover" />
@@ -89,7 +89,7 @@ const LandingPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="md:w-1/2 relative animate-fade-in group perspective-1000">
+                        <div className="md:w-1/2 relative animate-fade-in group perspective-1000 mt-8 md:mt-0">
                             <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-yellow-400 rounded-[2rem] transform rotate-3 scale-105 opacity-20 blur-2xl group-hover:rotate-6 transition-transform duration-500"></div>
                             <img
                                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
@@ -112,13 +112,149 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
+            {/* Stats Section (Why Choose Us) */}
+            <section className="py-16 md:py-24 bg-white dark:bg-white/5 border-y border-slate-100 dark:border-white/5">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">¿Por qué elegir Tu Tesis RD?</h2>
+                        <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Más de 7 años de experiencia y una trayectoria impecable nos respaldan.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { icon: 'history_edu', title: '+7 Años', desc: 'Experiencia Académica' },
+                            { icon: 'groups', title: '300+', desc: 'Tesis Asesoradas' },
+                            { icon: 'verified', title: '100%', desc: 'Tasa de Aprobación' },
+                            { icon: 'language', title: 'Nacional', desc: 'Cobertura Nacional' }
+                        ].map((stat, idx) => (
+                            <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-lg transition-all text-center group">
+                                <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mx-auto mb-4 text-brand-orange group-hover:scale-110 transition-transform">
+                                    <span className="material-icons text-2xl" aria-hidden="true">{stat.icon}</span>
+                                </div>
+                                <h4 className="text-xl font-black text-slate-900 dark:text-white mb-1">{stat.title}</h4>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{stat.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Services Section */}
+            <section id="servicios" className="py-20 bg-background-light dark:bg-surface-dark relative">
+                <div className="container mx-auto px-6 relative z-10">
+                    <div className="text-center mb-16">
+                        <span className="text-brand-orange font-bold uppercase tracking-wider text-sm mb-2 block">Lo que hacemos</span>
+                        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">Nuestros Servicios</h2>
+                        <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                            Ofrecemos un paquete completo de soluciones académicas diseñadas para garantizar el éxito de tu proyecto de grado.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                        {[
+                            { icon: 'book', title: 'Asesoría de Tesis', desc: 'Acompañamiento metodológico completo desde el anteproyecto hasta la defensa final.' },
+                            { icon: 'edit', title: 'Corrección de Estilo', desc: 'Revisión ortotipográfica y gramatical profesional. Adaptación a normas APA, Vancouver, o IEEE.' },
+                            { icon: 'analytics', title: 'Análisis Estadístico', desc: 'Procesamiento de datos con SPSS, Excel o R. Interpretación de resultados cuantitativos.' },
+                            { icon: 'science', title: 'Investigación', desc: 'Soporte en la búsqueda de información académica y construcción del marco teórico.' }
+                        ].map((service, idx) => (
+                            <div key={idx} className="bg-white dark:bg-white/5 p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-white/5 group flex flex-col items-center text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/40 dark:to-orange-900/10 rounded-full flex items-center justify-center mb-6 text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition-all shadow-inner">
+                                    <span className="material-icons text-3xl" aria-hidden="true">{service.icon}</span>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{service.title}</h3>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{service.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Premium Breakdown */}
+                    <div className="mt-16 bg-white dark:bg-slate-800/30 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-700 shadow-lg">
+                        <div className="text-center mb-10">
+                            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Servicio Premium Incluido</h3>
+                            <p className="text-slate-500 dark:text-slate-400 mt-2">Elevamos el estándar de tu investigación</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 shrink-0">
+                                    <span className="material-icons text-sm" aria-hidden="true">check</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold mb-1 text-slate-900 dark:text-white">Revisión Anti-Plagio</h4>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">Garantizamos originalidad con reportes detallados de similitud (Turnitin).</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 shrink-0">
+                                    <span className="material-icons text-sm" aria-hidden="true">check</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold mb-1 text-slate-900 dark:text-white">Soporte Continuo</h4>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">Comunicación directa con tu asesor vía WhatsApp y Correo.</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 shrink-0">
+                                    <span className="material-icons text-sm" aria-hidden="true">check</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold mb-1 text-slate-900 dark:text-white">Entrega Puntual</h4>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">Cronograma riguroso para cumplir con las fechas de tu universidad.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Specialist Section */}
+            <section className="py-16 bg-brand-orange/5 dark:bg-black/20">
+                <div className="container mx-auto px-6">
+                    <div className="bg-white dark:bg-background-dark rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
+                        <div className="flex flex-col lg:flex-row">
+                            <div className="lg:w-2/5 bg-gray-100 dark:bg-gray-800 relative min-h-[300px] lg:min-h-full">
+                                <img src="/miguel-cordero.jpg" alt="Miguel Ángel Cordero Trinidad" className="absolute inset-0 w-full h-full object-cover object-top" />
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 text-white lg:hidden">
+                                    <h3 className="text-2xl font-bold">Miguel Ángel Cordero</h3>
+                                    <p className="text-brand-orange font-medium">CEO & Especialista Académico</p>
+                                </div>
+                            </div>
+                            <div className="lg:w-3/5 p-8 md:p-12">
+                                <span className="inline-block py-1 px-3 rounded-full bg-orange-100 dark:bg-orange-900/30 text-brand-orange text-sm font-bold mb-4">Sobre el Especialista</span>
+                                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Pasión por la Educación y la Investigación</h2>
+                                <div className="prose prose-gray dark:prose-invert text-gray-600 dark:text-gray-300 mb-8">
+                                    <p className="mb-4 text-justify">
+                                        Miguel Ángel Cordero Trinidad es un educador y asesor académico con más de cinco años de
+                                        experiencia en el diseño, desarrollo y acompañamiento de investigaciones científicas en
+                                        República Dominicana.
+                                    </p>
+                                    <p className="mb-4 text-justify">
+                                        Graduado <strong>Summa Cum Laude</strong> en Educación Primaria por la UCE, combina su
+                                        perfil con formación avanzada en competencias digitales, innovación educativa e IA
+                                        aplicada.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 items-center bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                                    <div className="flex-1 text-center sm:text-left">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Contacto Directo</p>
+                                        <p className="text-gray-900 dark:text-white font-medium">Higüey, La Altagracia</p>
+                                    </div>
+                                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-6 py-3 bg-brand-orange text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md flex items-center justify-center">
+                                        <span className="material-icons mr-2 text-sm" aria-hidden="true">chat</span> Hablar con Miguel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* CTA Section */}
             <section className="py-20 bg-brand-orange relative overflow-hidden">
                 <div className="container mx-auto px-6 text-center relative z-10">
                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">¡Únete a los cientos de estudiantes satisfechos!</h2>
-                    <p className="text-white text-xl mb-10 max-w-2xl mx-auto font-medium">Han alcanzado el éxito académico con nuestra ayuda. ¿Qué esperas para ser el próximo?</p>
-                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">
-                        <span className="material-icons mr-3 text-2xl">chat</span> <span className="text-lg">Hablar con un Asesor</span>
+                    <p className="text-white text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium">Han alcanzado el éxito académico con nuestra ayuda. ¿Qué esperas para ser el próximo?</p>
+                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105 group">
+                        <span className="material-icons mr-3 text-2xl group-hover:rotate-12 transition-transform" aria-hidden="true">chat</span> <span className="text-lg">Hablar con un Asesor</span>
                     </a>
                 </div>
             </section>
@@ -132,11 +268,11 @@ const LandingPage: React.FC = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <Link to="/registro" className="w-full sm:w-auto px-10 py-4 bg-brand-orange text-white rounded-full font-bold text-lg hover:shadow-xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
-                            Registrar Proyecto <span className="material-icons">arrow_forward</span>
+                            Registrar Proyecto <span className="material-icons" aria-hidden="true">arrow_forward</span>
                         </Link>
 
                         <Link to="/monitoreo" className="w-full sm:w-auto px-10 py-4 bg-transparent text-brand-orange border-2 border-brand-orange rounded-full font-bold text-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
-                            <span className="material-icons">search</span> Monitorear
+                            <span className="material-icons" aria-hidden="true">search</span> Monitorear
                         </Link>
                     </div>
                 </div>
