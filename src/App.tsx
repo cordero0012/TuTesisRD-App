@@ -52,6 +52,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     return (
+        /* Cache Buster: v4 */
         <HashRouter>
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
