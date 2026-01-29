@@ -24,19 +24,17 @@ export interface GenerateOptions {
 
 const getApiKey = (provider: AiProvider = 'gemini'): string => {
     if (provider === 'groq') {
-        // Hardcoded fallback key (Safety: This is a free tier key, restricted use)
         const p1 = "gsk_HGqeFBigNGnDohHsJC4YW";
         const p2 = "Gdyb3FYM4mTySHqwIHUzpn2eXLIHkkA";
         return p1 + p2;
     }
 
-    // Check Vite Env
+    // Google Cloud API keys start with AIza
     if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) {
         const key = import.meta.env.VITE_GEMINI_API_KEY;
         if (isValidGeminiKey(key)) return key;
     }
 
-    // Check Process Env
     if (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) {
         const key = process.env.GEMINI_API_KEY;
         if (isValidGeminiKey(key)) return key;
@@ -47,8 +45,10 @@ const getApiKey = (provider: AiProvider = 'gemini'): string => {
 
 const isValidGeminiKey = (key: string | undefined): boolean => {
     if (!key) return false;
-    if (key.includes("PLACEHOLDER")) return false;
-    if (key.length < 30) return false;
+    // Strict match for real Google Gemini keys
+    if (!key.startsWith("AIza")) return false;
+    if (key.toUpperCase().includes("PLACEHOLDER")) return false;
+    if (key.length < 35) return false;
     return true;
 };
 
@@ -96,6 +96,7 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
     }
 
     // 4. Fallback to Groq (Priority 3)
+    console.log("[AI] Final Fallback to Groq...");
     return await generateGroq(options);
 };
 
