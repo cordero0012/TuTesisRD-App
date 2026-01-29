@@ -4,8 +4,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // GLOBAL MODEL CONSTANTS
 export const GEMINI_MODEL = "gemini-1.5-flash"; // Stable alias
 export const GEMINI_MODEL_PRO = "gemini-1.5-pro";
-export const GROQ_MODEL = "llama3-8b-8192"; // Known stable Groq model
-export const GROQ_MODEL_FAST = "llama3-8b-8192";
+export const GROQ_MODEL = "llama-3.3-70b-versatile"; // 128k context for large docs
+export const GROQ_MODEL_FAST = "llama-3.1-8b-instant"; // Fast 128k context model
 
 export type AiProvider = 'gemini' | 'groq';
 
