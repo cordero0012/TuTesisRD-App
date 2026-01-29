@@ -1933,6 +1933,10 @@ video {
   border-bottom-width: 2px;
 }
 
+.border-l-2 {
+  border-left-width: 2px;
+}
+
 .border-l-4 {
   border-left-width: 4px;
 }
@@ -2000,6 +2004,10 @@ video {
 
 .border-brand-orange\/30 {
   border-color: rgb(234 154 35 / 0.3);
+}
+
+.border-brand-orange\/50 {
+  border-color: rgb(234 154 35 / 0.5);
 }
 
 .border-emerald-100 {
@@ -2144,6 +2152,10 @@ video {
 
 .border-white\/30 {
   border-color: rgb(255 255 255 / 0.3);
+}
+
+.border-white\/5 {
+  border-color: rgb(255 255 255 / 0.05);
 }
 
 .border-white\/50 {
@@ -2474,6 +2486,10 @@ video {
 .bg-slate-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(30 41 59 / var(--tw-bg-opacity, 1));
+}
+
+.bg-slate-800\/50 {
+  background-color: rgb(30 41 59 / 0.5);
 }
 
 .bg-slate-900 {
@@ -2890,6 +2906,10 @@ video {
   padding-left: 3rem;
 }
 
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
 .pl-4 {
   padding-left: 1rem;
 }
@@ -3202,6 +3222,11 @@ video {
 
 .text-brand-orange\/20 {
   color: rgb(234 154 35 / 0.2);
+}
+
+.text-emerald-400 {
+  --tw-text-opacity: 1;
+  color: rgb(52 211 153 / var(--tw-text-opacity, 1));
 }
 
 .text-emerald-500 {
@@ -3855,6 +3880,11 @@ body {
   border-color: rgb(241 245 249 / var(--tw-border-opacity, 1));
 }
 
+.hover\:border-slate-200:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(226 232 240 / var(--tw-border-opacity, 1));
+}
+
 .hover\:border-slate-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(203 213 225 / var(--tw-border-opacity, 1));
@@ -3926,11 +3956,6 @@ body {
   background-color: rgb(234 154 35 / 0.05);
 }
 
-.hover\:bg-red-50:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:bg-slate-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1));
@@ -3958,6 +3983,10 @@ body {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-white\/15:hover {
+  background-color: rgb(255 255 255 / 0.15);
 }
 
 .hover\:bg-white\/20:hover {
@@ -4834,10 +4863,6 @@ body {
 
 .dark\:hover\:bg-orange-900\/10:hover:is(.dark *) {
   background-color: rgb(124 45 18 / 0.1);
-}
-
-.dark\:hover\:bg-red-900\/10:hover:is(.dark *) {
-  background-color: rgb(127 29 29 / 0.1);
 }
 
 .dark\:hover\:bg-slate-700:hover:is(.dark *) {

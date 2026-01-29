@@ -26,41 +26,6 @@ export const AuditPage = () => {
                     </p>
                 </header>
 
-                {/* Context / File Status */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">
-                                Contexto de Análisis
-                            </h3>
-                            {uploadedFile ? (
-                                <div className="flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-emerald-500">description</span>
-                                    <span className="text-xl font-bold">{uploadedFile.name}</span>
-                                    <span className="text-sm text-slate-400 font-medium">
-                                        ({Array.isArray(uploadedFile.content) ? `${uploadedFile.content.length} páginas` : `${(uploadedFile.content as string).length} caracteres`})
-                                    </span>
-                                </div>
-                            ) : (
-                                <div className="text-lg font-medium text-slate-400 italic flex items-center gap-2">
-                                    <span className="material-symbols-outlined">upload_file</span>
-                                    Ningún archivo cargado actualmente
-                                </div>
-                            )}
-                        </div>
-
-                        {uploadedFile && (
-                            <button
-                                onClick={handleClearFile}
-                                className="px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all flex items-center gap-2"
-                            >
-                                <span className="material-symbols-outlined">delete</span>
-                                Limpiar Contexto
-                            </button>
-                        )}
-                    </div>
-                </div>
-
                 {/* Tools Grid */}
                 <div className="grid md:grid-cols-2 gap-8">
                     {/* Card: AI Detection */}
