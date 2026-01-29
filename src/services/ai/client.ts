@@ -68,7 +68,8 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
         const apiKey = getApiKey('groq');
         if (!apiKey) throw new Error("Groq API Key missing. Add VITE_GROQ_API_KEY to .env");
 
-        const model = options.model || GROQ_MODEL;
+        // Ensure we use a Groq model, not a Gemini model passed in options
+        const model = (options.model && options.model.includes('llama')) ? options.model : GROQ_MODEL;
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -151,7 +152,7 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
         // FALLBACK TO GROQ if Gemini fails and we haven't tried Groq yet
         if (options.provider !== 'groq') {
             console.warn("Gemini failed, switching to Groq fallback...", error);
-            return generateText({ ...options, provider: 'groq' });
+            return generateText({ ...options, provider: 'groq', model: undefined });
         }
         throw error;
     }
