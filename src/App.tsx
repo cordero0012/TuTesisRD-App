@@ -55,7 +55,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     useEffect(() => {
-        console.log("TuTesisRD App Loaded v1.1 - Check");
+        console.log("TuTesisRD App Loaded v1.3 - Production Fix");
     }, []);
 
     return (
