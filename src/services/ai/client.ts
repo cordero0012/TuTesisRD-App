@@ -63,29 +63,92 @@ export interface GenerateOptions {
 /**
  * Unified text generation helper
  */
+// Chain of Responsibility: Direct Gemini -> Proxy Gemini -> Groq
 export const generateText = async (options: GenerateOptions): Promise<string> => {
-    // Default to Gemini (via Supabase Proxy in production)
-    const provider = options.provider || 'gemini';
+    let lastError: any = null;
 
-    if (provider === 'groq') {
-        const apiKey = getApiKey('groq');
-        if (!apiKey) throw new Error("Groq API Key missing. Add VITE_GROQ_API_KEY to .env");
+    // 1. DIRECT GEMINI (Only if we have a key that isn't a placeholder)
+    const apiKey = getApiKey('gemini');
+    if (apiKey) {
+        try {
+            const ai = getClient();
+            const modelName = options.model || GEMINI_MODEL;
+            const model = ai.getGenerativeModel({
+                model: modelName,
+                systemInstruction: options.systemInstruction
+            });
 
-        const model = (options.model && options.model.includes('llama')) ? options.model : GROQ_MODEL;
+            console.log(`[AI] Attempting Direct Gemini (${modelName})...`);
+            const response = await model.generateContent({
+                contents: [{ role: 'user', parts: [{ text: options.prompt }] }],
+                generationConfig: {
+                    temperature: options.temperature ?? 0.7,
+                    ...(options.jsonMode ? { responseMimeType: "application/json" } : {})
+                }
+            });
 
-        // SAFEGUARD: Truncate prompt for Groq to avoid 413 Content Too Large
-        // Free tiers usually have strict request size limits (approx 4MB total, but often lower for prompt text)
-        const MAX_GROQ_CHARS = 32000; // Reduced to ~32k to be safe
+            return response.response.text();
+        } catch (err: any) {
+            console.warn("[AI] Direct Gemini failed:", err.message);
+            lastError = err;
+            // Continue to Proxy...
+        }
+    }
+
+    // 2. PROXY GEMINI (If Direct skipped or failed)
+    if (options.provider !== 'groq') { // Don't proxy if user explicitly requested Groq
+        try {
+            console.log("[AI] Attempting Supabase Proxy...");
+            // Use the project-specific URL, or dynamic detection
+            const proxyUrl = "https://rxzphenvgpbitltqrtjw.supabase.co/functions/v1/gemini-proxy";
+
+            const response = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: options.prompt,
+                    systemInstruction: options.systemInstruction,
+                    temperature: options.temperature,
+                    model: options.model || GEMINI_MODEL,
+                    jsonMode: options.jsonMode
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(`Proxy status ${response.status}: ${errData.error || response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (data.text) return data.text;
+
+        } catch (err: any) {
+            console.warn("[AI] Proxy Gemini failed:", err.message);
+            lastError = err;
+            // Continue to Groq...
+        }
+    }
+
+    // 3. FALLBACK TO GROQ (Last Resort)
+    console.log("[AI] Falling back to Groq...");
+    try {
+        const groqKey = getApiKey('groq');
+        if (!groqKey) throw new Error("No Groq API Key available");
+
+        // Safe truncation for Groq
+        const MAX_GROQ_CHARS = 32000;
         let finalPrompt = options.prompt;
         if (finalPrompt.length > MAX_GROQ_CHARS) {
-            console.warn(`[Groq] Prompt too large (${finalPrompt.length} chars). Truncating to ${MAX_GROQ_CHARS} to avoid 413 error.`);
-            finalPrompt = finalPrompt.substring(0, MAX_GROQ_CHARS) + "\n\n[...Texto truncado por límite de tamaño de petición...]";
+            console.warn(`[Groq] Truncating prompt from ${finalPrompt.length} to ${MAX_GROQ_CHARS}`);
+            finalPrompt = finalPrompt.substring(0, MAX_GROQ_CHARS) + "\n\n[...TRUNCATED...]";
         }
+
+        const model = (options.model && options.model.includes('llama')) ? options.model : GROQ_MODEL;
 
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${apiKey}`,
+                "Authorization": `Bearer ${groqKey}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -101,72 +164,15 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
 
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(`Groq API Error: ${error.error?.message || response.statusText}`);
+            throw new Error(`Groq ${response.status}: ${error.error?.message}`);
         }
 
         const data = await response.json();
         return data.choices[0]?.message?.content || '';
-    }
 
-    // 1. Check if Gemini API Key is present (Local Mode)
-    const apiKey = getApiKey('gemini');
-
-    // 2. PROXY MODE (Production/Web) - If no API Key, use Supabase Edge Function
-    if (!apiKey && provider === 'gemini') {
-        const proxyUrl = "https://rxzphenvgpbitltqrtjw.supabase.co/functions/v1/gemini-proxy";
-        console.log("Using Supabase Proxy for Gemini...");
-
-        try {
-            const response = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    prompt: options.prompt,
-                    systemInstruction: options.systemInstruction,
-                    temperature: options.temperature,
-                    model: options.model || GEMINI_MODEL,
-                    jsonMode: options.jsonMode
-                })
-            });
-
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(`Proxy Error: ${errData.error || response.statusText}`);
-            }
-
-            const data = await response.json();
-            return data.text || '';
-        } catch (err: any) {
-            console.error("Proxy call failed:", err);
-            throw new Error(err.message || 'Error calling AI proxy');
-        }
-    }
-
-    // 3. Fallback to Client-Side Gemini (Local Dev with .env)
-    try {
-        const ai = getClient();
-        const modelName = options.model || GEMINI_MODEL;
-        const model = ai.getGenerativeModel({
-            model: modelName,
-            systemInstruction: options.systemInstruction
-        });
-
-        const response = await model.generateContent({
-            contents: [{ role: 'user', parts: [{ text: options.prompt }] }],
-            generationConfig: {
-                temperature: options.temperature ?? 0.7,
-                ...(options.jsonMode ? { responseMimeType: "application/json" } : {})
-            }
-        });
-
-        return response.response.text() || '';
-    } catch (error: any) {
-        // FALLBACK TO GROQ if Gemini fails and we haven't tried Groq yet
-        if (options.provider !== 'groq') {
-            console.warn("Gemini failed, switching to Groq fallback...", error);
-            return generateText({ ...options, provider: 'groq', model: undefined });
-        }
-        throw error;
+    } catch (groqErr: any) {
+        console.error("[AI] All providers failed.");
+        throw lastError || groqErr; // Throw the original error or the Groq error
     }
 };
 
