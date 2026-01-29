@@ -34,7 +34,18 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         title: 'Mi Tesis'
     });
 
-    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(() => {
+        const saved = localStorage.getItem('tutesis_uploaded_file');
+        return saved ? JSON.parse(saved) : null;
+    });
+
+    React.useEffect(() => {
+        if (uploadedFile) {
+            localStorage.setItem('tutesis_uploaded_file', JSON.stringify(uploadedFile));
+        } else {
+            localStorage.removeItem('tutesis_uploaded_file');
+        }
+    }, [uploadedFile]);
 
     return (
         <ProjectContext.Provider value={{

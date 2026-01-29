@@ -224,10 +224,10 @@ export const ConsistencyMatrix = () => {
                                 Matriz de Consistencia
                             </h1>
                             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                                {project.content
-                                    ? `Analizando: ${project.title || 'Proyecto Actual'}`
-                                    : uploadedFile
-                                        ? `Archivo: ${uploadedFile.name}`
+                                {uploadedFile
+                                    ? `Archivo: ${uploadedFile.name}`
+                                    : project.content
+                                        ? `Analizando: ${project.title || 'Proyecto Actual'}`
                                         : 'Auditoría Forense con IA'
                                 }
                             </p>
