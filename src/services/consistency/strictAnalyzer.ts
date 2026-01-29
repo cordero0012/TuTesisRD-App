@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 import { generateJSON } from '../ai/client';
 import { getStrictPrompt } from './strictPrompts';
@@ -10,7 +11,7 @@ import { CONFIG } from '../../config';
 const ConsistencyMatrixRowSchema = z.object({
     element: z.string(),
     description: z.string(),
-    coherenceLevel: z.enum(['Alta', 'Media', 'Baja', 'Inexistente']),
+    coherenceLevel: z.union([z.literal('Alta'), z.literal('Media'), z.literal('Baja'), z.literal('Inexistente')]),
     technicalObservation: z.string(),
     recommendation: z.string()
 });
@@ -24,7 +25,7 @@ const SectionEvaluationSchema = z.object({
 });
 
 const GlobalDiagnosisSchema = z.object({
-    level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']),
+    level: z.union([z.literal('Excelente'), z.literal('Aceptable'), z.literal('Débil'), z.literal('Crítico')]),
     mainRisks: z.array(z.string()),
     internalConsistencyDegree: z.number().min(0).max(100),
     publishabilityLevel: z.number().min(0).max(100)
@@ -62,7 +63,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
     }),
 
     globalDiagnosis: z.object({
-        level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']),
+        level: z.union([z.literal('Excelente'), z.literal('Aceptable'), z.literal('Débil'), z.literal('Crítico')]),
         auditSummary: z.string().describe("Executive summary of the forensic audit"),
         mainRisks: z.array(z.string()),
         internalConsistencyDegree: z.number().min(0).max(100),
@@ -70,7 +71,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
     }),
 
     prioritizedRecommendations: z.array(z.object({
-        priority: z.enum(['Crítica', 'Alta', 'Media', 'Baja']),
+        priority: z.union([z.literal('Crítica'), z.literal('Alta'), z.literal('Media'), z.literal('Baja')]),
         what: z.string(),
         why: z.string(),
         how: z.string()
@@ -109,7 +110,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         overallCompliance: z.number(),
         violations: z.array(z.object({
             rule: z.string(),
-            severity: z.enum(['Critical', 'High', 'Medium', 'Low']),
+            severity: z.union([z.literal('Critical'), z.literal('High'), z.literal('Medium'), z.literal('Low')]),
             evidence: z.string(),
             impact: z.string()
         })),
@@ -172,9 +173,10 @@ export async function analyzeConsistencyStrict(
     const prioritySections = ['INTRODUCCI', 'PROBLEMA', 'METODOLOG', 'RESULTADOS', 'CONCLUSIONES', 'DISCUSI', 'OBJETIVO'];
     const relevantChunks = chunks.filter(c => prioritySections.some(p => c.sectionType.toUpperCase().includes(p)));
 
+    // Ensure we don't send too much
     const textToProcess = relevantChunks.length > 0
         ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, 20000)}`).join('\n\n')
-        : cleanText.substring(0, 100000); // Higher fallback limit
+        : cleanText.substring(0, 100000);
 
     // 1. Build context
     const normativeContext = buildDetailedNormativeContext(institutionalRules, regulationMetadata);
@@ -194,8 +196,6 @@ export async function analyzeConsistencyStrict(
         });
 
         // 4. Validate and Return
-        // Force the result to match the schema, handling potential missing optional fields
-        // Note: The schema has optionals where needed.
         const validated = EnhancedConsistencyAnalysisResultSchema.parse(result);
 
         // Add raw analysis text if needed by UI, though usually it's just the object
