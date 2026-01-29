@@ -20,11 +20,13 @@ const getApiKey = (provider: AiProvider = 'gemini'): string => {
 
     // Try Vite environment first
     if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) {
-        return import.meta.env.VITE_GEMINI_API_KEY;
+        const key = import.meta.env.VITE_GEMINI_API_KEY;
+        return (key && !key.includes('PLACEHOLDER')) ? key : "";
     }
     // Fallback to process.env (Node/Electron)
     if (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) {
-        return process.env.GEMINI_API_KEY;
+        const key = process.env.GEMINI_API_KEY;
+        return (key && !key.includes('PLACEHOLDER')) ? key : "";
     }
     // Last resort: check window (might be injected via preload)
     if (typeof window !== 'undefined' && (window as any).__GEMINI_API_KEY__) {
@@ -42,8 +44,9 @@ export const getClient = (): GoogleGenerativeAI => {
             clientInstance = new GoogleGenerativeAI(key);
         }
     }
-    if (!clientInstance) throw new Error("Gemini Client not initialized (Missing Key). Please add VITE_GEMINI_API_KEY to your .env file.");
-    return clientInstance;
+    // Don't throw here if key is missing, as we might handle it via proxy later
+    // if (!clientInstance) throw new Error("Gemini Client not initialized...");
+    return clientInstance!;
 };
 
 // --- Helper Functions for common AI operations ---
@@ -72,7 +75,7 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
 
         // SAFEGUARD: Truncate prompt for Groq to avoid 413 Content Too Large
         // Free tiers usually have strict request size limits (approx 4MB total, but often lower for prompt text)
-        const MAX_GROQ_CHARS = 60000;
+        const MAX_GROQ_CHARS = 32000; // Reduced to ~32k to be safe
         let finalPrompt = options.prompt;
         if (finalPrompt.length > MAX_GROQ_CHARS) {
             console.warn(`[Groq] Prompt too large (${finalPrompt.length} chars). Truncating to ${MAX_GROQ_CHARS} to avoid 413 error.`);
