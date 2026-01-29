@@ -15,6 +15,18 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, './src'),
       }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'pdf-vendor': ['pdfjs-dist', 'jspdf', 'jspdf-autotable'],
+            'doc-vendor': ['mammoth', 'docx', 'file-saver'],
+            'ai-vendor': ['@google/generative-ai'],
+          }
+        }
+      }
     }
   };
 });
