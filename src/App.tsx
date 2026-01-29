@@ -55,7 +55,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     useEffect(() => {
-        console.log("TuTesisRD App Loaded v1.6 - High Capacity Mode (350k Chars)");
+        console.log("TuTesisRD App Loaded v1.7 - Professional Silence (350k Chars)");
     }, []);
 
     return (

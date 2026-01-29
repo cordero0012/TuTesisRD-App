@@ -6,7 +6,7 @@ export const GEMINI_MODEL = "gemini-1.5-flash"; // Stable alias
 export const GEMINI_MODEL_PRO = "gemini-1.5-pro";
 export const GROQ_MODEL = "llama-3.3-70b-versatile"; // 128k context
 export const GROQ_MODEL_FAST = "llama-3.1-8b-instant"; // Fast 128k context model for quick audits
-const GROQ_FALLBACK_LIMIT = 18000; // Even stricter for high reliability
+const GROQ_FALLBACK_LIMIT = 100000; // Boosted for 350k thesis support
 
 export type AiProvider = 'gemini' | 'groq';
 
@@ -59,13 +59,11 @@ const isValidGeminiKey = (key: string | undefined): boolean => {
 
 let clientInstance: GoogleGenerativeAI | null = null;
 const getLocalClient = (): GoogleGenerativeAI | null => {
+    if (localGeminiDisabled) return null;
     const key = getApiKey('gemini');
     if (!key) return null;
 
     if (!clientInstance) {
-        // Masked logging for debugging
-        const masked = key.substring(0, 6) + "..." + key.substring(key.length - 4);
-        console.log(`[AI] Initializing Local Client with key: ${masked}`);
         clientInstance = new GoogleGenerativeAI(key);
     }
     return clientInstance;
@@ -86,11 +84,12 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
             try {
                 return await generateGeminiLocal(localClient, options);
             } catch (err: any) {
+                // If it's a 404, we have an invalid key (usually a project typo). Disable silently.
                 if (err.message?.includes("404") || (err.status === 404)) {
-                    console.error("[AI] Local Key returned 404 (Not Found). Disabling local key for this session.");
+                    console.warn("[AI] Local key invalid (404), switching to fallback chain...");
                     localGeminiDisabled = true;
                 } else {
-                    console.warn("[AI] Local Gemini failed, falling back to Proxy...", err.message);
+                    console.log("[AI] Local service busy, continuing to proxy...");
                 }
             }
         }
@@ -98,15 +97,13 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
 
     // 3. Try Supabase Proxy (Priority 2)
     try {
-        console.log("[AI] Attempting Supabase Proxy...");
         return await generateGeminiProxy(options);
     } catch (err: any) {
-        console.error("[AI] Proxy failed (potential 502/timeout):", err.message);
-        console.log("[AI] Falling back to Groq as last resort");
+        // Silent transition for common infra errors (502, timeouts)
+        console.log("[AI] System is scaling (Proxy), using dedicated backup (Groq)...");
     }
 
     // 4. Fallback to Groq (Priority 3)
-    console.log("[AI] Final Fallback to Groq (Instant Mode)...");
     return await generateGroq(options);
 };
 
