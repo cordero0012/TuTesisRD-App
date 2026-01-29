@@ -1,4 +1,4 @@
-import { getClient, GEMINI_MODEL } from '../ai/client';
+import { generateJSON } from '../ai/client';
 import { CONFIG } from '../../config';
 import { z } from 'zod';
 
@@ -70,65 +70,65 @@ export interface ConsistencyAnalysisResult {
         approachCoherent: boolean;
         designAdequate: boolean;
         techniquesAppropriate: boolean;
-        resultsDeriveFromMethod: boolean;
-        conclusionsSupportedByResults: boolean;
-        forensicReasoning?: string; // New
-        criticalAlerts: string[];
-        invalidatingIssues?: string[]; // New
+        resultsDerive fromMethod: boolean;
+conclusionsSupportedByResults: boolean;
+forensicReasoning ?: string; // New
+criticalAlerts: string[];
+invalidatingIssues ?: string[]; // New
     };
 
-    // Normativa y estilo
-    normativeCompliance: {
-        apa7Score: number;
-        academicWritingScore: number;
-        terminologyConsistencyScore: number;
-        orthographicErrors: string[];
-        grammaticalErrors: string[];
-        styleIssues: string[];
-    };
+// Normativa y estilo
+normativeCompliance: {
+    apa7Score: number;
+    academicWritingScore: number;
+    terminologyConsistencyScore: number;
+    orthographicErrors: string[];
+    grammaticalErrors: string[];
+    styleIssues: string[];
+};
 
-    // NUEVO: Cumplimiento Normativo Detallado
-    normativeComplianceDetailed?: {
-        overallCompliance: number;
-        violations: {
-            rule: string;
-            severity: 'Critical' | 'High' | 'Medium' | 'Low';
-            evidence: string;
-            impact: string;
-        }[];
-        compliantItems: {
-            rule: string;
-            evidence: string;
-        }[];
-    };
-
-    // Diagnóstico global
-    globalDiagnosis: {
-        level: 'Excelente' | 'Aceptable' | 'Débil' | 'Crítico';
-        auditSummary?: string; // New
-        mainRisks: string[];
-        internalConsistencyDegree: number; // 0-100
-        publishabilityLevel: number; // 0-100
-    };
-
-    // Recomendaciones priorizadas
-    prioritizedRecommendations: {
-        priority: 'Crítica' | 'Alta' | 'Media' | 'Baja';
-        what: string;
-        why: string;
-        how: string;
+// NUEVO: Cumplimiento Normativo Detallado
+normativeComplianceDetailed ?: {
+    overallCompliance: number;
+    violations: {
+        rule: string;
+        severity: 'Critical' | 'High' | 'Medium' | 'Low';
+        evidence: string;
+        impact: string;
     }[];
+    compliantItems: {
+        rule: string;
+        evidence: string;
+    }[];
+};
 
-    // NUEVO: Modelo Operativo APA 7
-    sourceConsistencySubMatrix?: {
-        citationsFound: SourceAlignment[];
-        referencesCiting: string[]; // List of references actually cited
-        unusedReferences: string[]; // List of references in bibliography but not in text
-        missingReferences: string[]; // List of citations not in bibliography
-    };
-    actionableFeedback: FeedbackItem[];
+// Diagnóstico global
+globalDiagnosis: {
+    level: 'Excelente' | 'Aceptable' | 'Débil' | 'Crítico';
+    auditSummary ?: string; // New
+    mainRisks: string[];
+    internalConsistencyDegree: number; // 0-100
+    publishabilityLevel: number; // 0-100
+};
 
-    rawAnalysis: string;
+// Recomendaciones priorizadas
+prioritizedRecommendations: {
+    priority: 'Crítica' | 'Alta' | 'Media' | 'Baja';
+    what: string;
+    why: string;
+    how: string;
+} [];
+
+// NUEVO: Modelo Operativo APA 7
+sourceConsistencySubMatrix ?: {
+    citationsFound: SourceAlignment[];
+    referencesCiting: string[]; // List of references actually cited
+    unusedReferences: string[]; // List of references in bibliography but not in text
+    missingReferences: string[]; // List of citations not in bibliography
+};
+actionableFeedback: FeedbackItem[];
+
+rawAnalysis: string;
 }
 
 // Zod Schema for validation
@@ -146,13 +146,6 @@ const SectionEvaluationSchema = z.object({
     weaknesses: z.array(z.string()),
     internalIncoherences: z.array(z.string()),
     methodologicalMisalignments: z.array(z.string())
-});
-
-const GlobalDiagnosisSchema = z.object({
-    level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']),
-    mainRisks: z.array(z.string()),
-    internalConsistencyDegree: z.number().min(0).max(100),
-    publishabilityLevel: z.number().min(0).max(100)
 });
 
 const ConsistencyAnalysisResultSchema = z.object({
@@ -394,16 +387,6 @@ export async function analyzeConsistencyMatrix(
     documentInput: string | { page: number; text: string }[],
     institutionalRules?: string
 ): Promise<ConsistencyAnalysisResult> {
-    const ai = getClient();
-
-    // Use configurable model and temperature
-    const model = ai.getGenerativeModel({
-        model: CONFIG.CONSISTENCY_AI_MODEL,
-        generationConfig: {
-            responseMimeType: "application/json"
-        }
-    });
-
     // Handle paginated content
     let documentText = '';
     if (Array.isArray(documentInput)) {
@@ -413,49 +396,40 @@ export async function analyzeConsistencyMatrix(
     }
 
     const originalLength = documentText.length;
-    const maxChars = CONFIG.CONSISTENCY_MAX_CHARS;
+    const maxChars = CONFIG.CONSISTENCY_MAX_CHARS; // Now 100,000 from config
     let wasTruncated = false;
 
-    // Apply truncation with warning
     if (documentText.length > maxChars) {
-        console.warn(`[ConsistencyAnalyzer] Document truncated from ${originalLength} to ${maxChars} chars`);
+        console.warn(`[ConsistencyAnalyzer] Document truncated from ${originalLength} to ${maxChars} chars for stability`);
         documentText = documentText.substring(0, maxChars);
         wasTruncated = true;
     }
 
     try {
-        let prompt = CONSISTENCY_MATRIX_PROMPT.replace('{DOCUMENT_TEXT}', documentText);
+        let promptTemplate = CONSISTENCY_MATRIX_PROMPT;
 
         // Add institutional rules if provided
         if (institutionalRules && institutionalRules.trim()) {
             const rulesSection = `\n\nNORMATIVAS INSTITUCIONALES A APLICAR:\nEl documento debe ser evaluado también contra las siguientes normativas institucionales específicas:\n\n${institutionalRules}\n\nAsegúrate de validar el cumplimiento de estas reglas institucionales en tu análisis de coherencia y en las recomendaciones.\n`;
-            prompt = prompt.replace('{INSTITUTIONAL_RULES}', rulesSection);
+            promptTemplate = promptTemplate.replace('{INSTITUTIONAL_RULES}', rulesSection);
         } else {
-            prompt = prompt.replace('{INSTITUTIONAL_RULES}', '');
+            promptTemplate = promptTemplate.replace('{INSTITUTIONAL_RULES}', '');
         }
 
-        const result = await model.generateContent({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            generationConfig: {
-                temperature: CONFIG.CONSISTENCY_AI_TEMPERATURE,
-                topP: 0.9,
-                maxOutputTokens: 8192,
-            }
+        const finalPrompt = promptTemplate.replace('{DOCUMENT_TEXT}', documentText);
+
+        // Use unified Chain-of-Responsibility client
+        const validated = await generateJSON<any>({
+            prompt: finalPrompt,
+            systemInstruction: "Eres un experto en metodología de investigación científica y auditoría de tesis doctorales.",
+            temperature: CONFIG.CONSISTENCY_AI_TEMPERATURE,
+            model: CONFIG.CONSISTENCY_AI_MODEL
         });
-
-        let responseText = result.response.text();
-
-        // Clean markdown formatting if present
-        responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-        // Parse and validate JSON response with Zod
-        const parsed = JSON.parse(responseText);
-        const validated = ConsistencyAnalysisResultSchema.parse(parsed);
 
         const analysis: ConsistencyAnalysisResult = {
             ...validated,
-            rawAnalysis: responseText
-        };
+            rawAnalysis: JSON.stringify(validated)
+        } as ConsistencyAnalysisResult;
 
         // Add truncation warning to recommendations if applicable
         if (wasTruncated) {
@@ -463,7 +437,7 @@ export async function analyzeConsistencyMatrix(
                 priority: 'Alta',
                 what: `⚠️ ADVERTENCIA: Documento truncado a ${maxChars.toLocaleString()} caracteres (original: ${originalLength.toLocaleString()})`,
                 why: 'El análisis puede estar incompleto debido a limitaciones de procesamiento. Partes finales del documento pueden no haber sido evaluadas.',
-                how: 'Para análisis completo de documentos largos, considera dividir el documento en secciones o aumentar el límite en configuración (VITE_CONSISTENCY_MAX_CHARS).'
+                how: 'Para análisis completo de documentos largos, considera dividir el documento en secciones o aumentar el límite en configuración.'
             });
         }
 
@@ -476,12 +450,10 @@ export async function analyzeConsistencyMatrix(
         if (error instanceof z.ZodError) {
             msg = "El formato de respuesta del AI es inválido. Por favor intenta nuevamente.";
             console.error("Zod validation errors:", error.issues);
-        } else if (error.message?.includes("API Key")) {
-            msg = "Falta la API Key de Gemini. Ve a Ajustes > Configuración.";
-        } else if (error.message?.includes("fetch failed") || error.message?.includes("Network")) {
-            msg = "Error de conexión con Google AI. Verifica tu internet.";
-        } else if (error.message?.includes("JSON")) {
-            msg = "Error al parsear la respuesta del AI. El modelo puede haber retornado formato inválido.";
+        } else if (error.message?.includes("Proxy")) {
+            msg = "Error en el servidor de enlace (Proxy 502). El documento puede ser demasiado largo o el servidor está saturado.";
+        } else if (error.message?.includes("Groq")) {
+            msg = "El servicio de respaldo está saturado (Error 429). Por favor espera un momento e intenta con un texto más breve.";
         }
 
         throw new Error(msg);
