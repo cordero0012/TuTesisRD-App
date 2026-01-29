@@ -332,15 +332,31 @@ export const ConsistencyMatrix = () => {
                             {/* Upload Button */}
                             <button
                                 onClick={() => document.getElementById('hidden-file-upload')?.click()}
-                                className="w-full py-6 px-6 rounded-[2rem] font-bold transition-all hover:shadow-xl bg-white dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-brand-orange dark:hover:border-brand-orange group text-left relative overflow-hidden"
+                                className={`w-full py-6 px-6 rounded-[2rem] font-bold transition-all hover:shadow-xl border-2 border-dashed group text-left relative overflow-hidden
+                                    ${uploadedFile
+                                        ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-500 hover:border-emerald-600'
+                                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:border-brand-orange dark:hover:border-brand-orange'
+                                    }
+                                `}
                             >
                                 <div className="relative z-10 flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-brand-orange/10 transition-colors">
-                                        <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 group-hover:text-brand-orange">upload_file</span>
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors
+                                        ${uploadedFile
+                                            ? 'bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300'
+                                            : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 group-hover:bg-brand-orange/10 group-hover:text-brand-orange'
+                                        }
+                                    `}>
+                                        <span className="material-symbols-outlined">
+                                            {uploadedFile ? 'check_circle' : 'upload_file'}
+                                        </span>
                                     </div>
-                                    <div>
-                                        <span className="block text-slate-800 dark:text-white text-sm">Cargar Documento</span>
-                                        <span className="block text-slate-400 text-xs font-normal">PDF o DOCX</span>
+                                    <div className="flex-1 min-w-0">
+                                        <span className={`block text-sm font-bold truncate ${uploadedFile ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-800 dark:text-white'}`}>
+                                            {uploadedFile ? uploadedFile.name : 'Cargar Documento'}
+                                        </span>
+                                        <span className={`block text-xs font-normal truncate ${uploadedFile ? 'text-emerald-600/70 dark:text-emerald-400/70' : 'text-slate-400'}`}>
+                                            {uploadedFile ? 'Clic para cambiar archivo' : 'PDF o DOCX'}
+                                        </span>
                                     </div>
                                 </div>
                             </button>

@@ -61,8 +61,8 @@ export interface GenerateOptions {
  * Unified text generation helper
  */
 export const generateText = async (options: GenerateOptions): Promise<string> => {
-    // FORCE GROQ as primary provider since we have the key and Gemini is 404ing
-    const provider = options.provider || 'groq';
+    // Default to Gemini (via Supabase Proxy in production)
+    const provider = options.provider || 'gemini';
 
     if (provider === 'groq') {
         const apiKey = getApiKey('groq');
