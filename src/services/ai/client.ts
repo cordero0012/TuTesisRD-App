@@ -94,7 +94,41 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
         return data.choices[0]?.message?.content || '';
     }
 
-    // 1. Fallback to Client-Side Gemini (Web/Dev)
+    // 1. Check if Gemini API Key is present (Local Mode)
+    const apiKey = getApiKey('gemini');
+
+    // 2. PROXY MODE (Production/Web) - If no API Key, use Supabase Edge Function
+    if (!apiKey && provider === 'gemini') {
+        const proxyUrl = "https://rxzphenvgpbitltqrtjw.supabase.co/functions/v1/gemini-proxy";
+        console.log("Using Supabase Proxy for Gemini...");
+
+        try {
+            const response = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: options.prompt,
+                    systemInstruction: options.systemInstruction,
+                    temperature: options.temperature,
+                    model: options.model || GEMINI_MODEL,
+                    jsonMode: options.jsonMode
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(`Proxy Error: ${errData.error || response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.text || '';
+        } catch (err: any) {
+            console.error("Proxy call failed:", err);
+            throw new Error(err.message || 'Error calling AI proxy');
+        }
+    }
+
+    // 3. Fallback to Client-Side Gemini (Local Dev with .env)
     const ai = getClient();
     const modelName = options.model || GEMINI_MODEL;
     const model = ai.getGenerativeModel({
