@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // GLOBAL MODEL CONSTANTS
-export const GEMINI_MODEL = "gemini-1.5-flash-latest"; // Using latest for better API stability
+export const GEMINI_MODEL = "gemini-1.5-flash"; // Using stable latest version
 export const GEMINI_MODEL_PRO = "gemini-1.5-pro"; // For complex reasoning
 export const GROQ_MODEL = "llama-3.3-70b-versatile"; // High capability Groq
 export const GROQ_MODEL_FAST = "llama-3.1-8b-instant"; // Ultra-fast Groq

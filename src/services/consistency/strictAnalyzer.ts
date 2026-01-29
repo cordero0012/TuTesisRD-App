@@ -3,6 +3,7 @@ import { generateJSON } from '../ai/client';
 import { getStrictPrompt } from './strictPrompts';
 import { DeepNormativeAnalysis } from '../normative/types';
 import { ConsistencyAnalysisResult } from './matrixAnalyzer';
+import { CONFIG } from '../../config';
 
 // --- Zod Schemas (Duplicated from matrixAnalyzer due to lack of export) ---
 
@@ -189,7 +190,7 @@ export async function analyzeConsistencyStrict(
             prompt: finalPrompt,
             systemInstruction: "Eres un auditor académico estricto. Analiza el documento buscando inconsistencias fatales y fallos normativos.",
             temperature: 0.1, // Very low temperature for strictness
-            model: undefined // Let generateJSON use the default GEMINI_MODEL
+            model: CONFIG.CONSISTENCY_AI_MODEL // Use configured model
         });
 
         // 4. Validate and Return
