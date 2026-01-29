@@ -6,7 +6,7 @@ export const GEMINI_MODEL = "gemini-1.5-flash"; // Stable alias
 export const GEMINI_MODEL_PRO = "gemini-1.5-pro";
 export const GROQ_MODEL = "llama-3.3-70b-versatile"; // 128k context
 export const GROQ_MODEL_FAST = "llama-3.1-8b-instant"; // Fast 128k context model for quick audits
-const GROQ_FALLBACK_LIMIT = 22000; // Safer limit for Groq free-tier/restricted keys
+const GROQ_FALLBACK_LIMIT = 18000; // Even stricter for high reliability
 
 export type AiProvider = 'gemini' | 'groq';
 
@@ -20,7 +20,8 @@ export interface GenerateOptions {
     maxOutputTokens?: number;
 }
 
-// --- API Key Management ---
+// Flag to disable local Gemini for the session if it fails with 404
+let localGeminiDisabled = false;
 
 const getApiKey = (provider: AiProvider = 'gemini'): string => {
     if (provider === 'groq') {
@@ -28,6 +29,8 @@ const getApiKey = (provider: AiProvider = 'gemini'): string => {
         const p2 = "Gdyb3FYM4mTySHqwIHUzpn2eXLIHkkA";
         return p1 + p2;
     }
+
+    if (localGeminiDisabled) return "";
 
     // Google Cloud API keys start with AIza
     if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) {
@@ -60,6 +63,9 @@ const getLocalClient = (): GoogleGenerativeAI | null => {
     if (!key) return null;
 
     if (!clientInstance) {
+        // Masked logging for debugging
+        const masked = key.substring(0, 6) + "..." + key.substring(key.length - 4);
+        console.log(`[AI] Initializing Local Client with key: ${masked}`);
         clientInstance = new GoogleGenerativeAI(key);
     }
     return clientInstance;
@@ -74,29 +80,33 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
     }
 
     // 2. Try Local Gemini (Priority 1)
-    const localClient = getLocalClient();
-    if (localClient) {
-        try {
-            console.log("[AI] Using Local Gemini Key");
-            return await generateGeminiLocal(localClient, options);
-        } catch (err: any) {
-            console.warn("[AI] Local Gemini failed, falling back to Proxy...", err);
+    if (!localGeminiDisabled) {
+        const localClient = getLocalClient();
+        if (localClient) {
+            try {
+                return await generateGeminiLocal(localClient, options);
+            } catch (err: any) {
+                if (err.message?.includes("404") || (err.status === 404)) {
+                    console.error("[AI] Local Key returned 404 (Not Found). Disabling local key for this session.");
+                    localGeminiDisabled = true;
+                } else {
+                    console.warn("[AI] Local Gemini failed, falling back to Proxy...", err.message);
+                }
+            }
         }
-    } else {
-        console.log("[AI] No valid local key, skipping to Proxy");
     }
 
     // 3. Try Supabase Proxy (Priority 2)
     try {
-        console.log("[AI] Attempting Supabase Proxy");
+        console.log("[AI] Attempting Supabase Proxy...");
         return await generateGeminiProxy(options);
     } catch (err: any) {
-        console.error("[AI] Proxy failed:", err);
+        console.error("[AI] Proxy failed (potential 502/timeout):", err.message);
         console.log("[AI] Falling back to Groq as last resort");
     }
 
     // 4. Fallback to Groq (Priority 3)
-    console.log("[AI] Final Fallback to Groq...");
+    console.log("[AI] Final Fallback to Groq (Instant Mode)...");
     return await generateGroq(options);
 };
 

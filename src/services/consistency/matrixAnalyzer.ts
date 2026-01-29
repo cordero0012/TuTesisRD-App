@@ -40,95 +40,41 @@ export interface SourceAlignment {
 }
 
 export interface ConsistencyAnalysisResult {
-    // Identificación inicial
     documentType: string;
     methodologicalApproach: string;
     disciplinaryArea: string;
     applicableStandards: string[];
-
-    // Matriz de consistencia
     consistencyMatrix: ConsistencyMatrixRow[];
-
-    // Evaluación por secciones
     sectionEvaluations: SectionEvaluation[];
-
-    // NUEVO: Verificación Estructural
-    structuralVerification?: {
-        sectionsFound: {
-            [sectionName: string]: {
-                exists: boolean;
-                pages: string;
-                completeness: number;
-            };
-        };
-        missingSections: string[];
-        misplacedSections: string[];
-    };
-
-    // Análisis metodológico
     methodologicalAnalysis: {
         approachCoherent: boolean;
         designAdequate: boolean;
         techniquesAppropriate: boolean;
-        resultsDerive fromMethod: boolean;
-conclusionsSupportedByResults: boolean;
-forensicReasoning ?: string; // New
-criticalAlerts: string[];
-invalidatingIssues ?: string[]; // New
+        resultsDeriveFromMethod: boolean;
+        conclusionsSupportedByResults: boolean;
+        criticalAlerts: string[];
     };
-
-// Normativa y estilo
-normativeCompliance: {
-    apa7Score: number;
-    academicWritingScore: number;
-    terminologyConsistencyScore: number;
-    orthographicErrors: string[];
-    grammaticalErrors: string[];
-    styleIssues: string[];
-};
-
-// NUEVO: Cumplimiento Normativo Detallado
-normativeComplianceDetailed ?: {
-    overallCompliance: number;
-    violations: {
-        rule: string;
-        severity: 'Critical' | 'High' | 'Medium' | 'Low';
-        evidence: string;
-        impact: string;
+    normativeCompliance: {
+        apa7Score: number;
+        academicWritingScore: number;
+        terminologyConsistencyScore: number;
+        orthographicErrors: string[];
+        grammaticalErrors: string[];
+        styleIssues: string[];
+    };
+    globalDiagnosis: {
+        level: 'Excelente' | 'Aceptable' | 'Débil' | 'Crítico';
+        mainRisks: string[];
+        internalConsistencyDegree: number; // 0-100
+        publishabilityLevel: number; // 0-100
+    };
+    prioritizedRecommendations: {
+        priority: 'Crítica' | 'Alta' | 'Media' | 'Baja';
+        what: string;
+        why: string;
+        how: string;
     }[];
-    compliantItems: {
-        rule: string;
-        evidence: string;
-    }[];
-};
-
-// Diagnóstico global
-globalDiagnosis: {
-    level: 'Excelente' | 'Aceptable' | 'Débil' | 'Crítico';
-    auditSummary ?: string; // New
-    mainRisks: string[];
-    internalConsistencyDegree: number; // 0-100
-    publishabilityLevel: number; // 0-100
-};
-
-// Recomendaciones priorizadas
-prioritizedRecommendations: {
-    priority: 'Crítica' | 'Alta' | 'Media' | 'Baja';
-    what: string;
-    why: string;
-    how: string;
-} [];
-
-// NUEVO: Modelo Operativo APA 7
-sourceConsistencySubMatrix ?: {
-    citationsFound: SourceAlignment[];
-    referencesCiting: string[]; // List of references actually cited
-    unusedReferences: string[]; // List of references in bibliography but not in text
-    missingReferences: string[]; // List of citations not in bibliography
-};
-actionableFeedback: FeedbackItem[];
-
-rawAnalysis: string;
+    rawAnalysis: string;
 }
 
 // Zod Schema for validation
@@ -155,24 +101,13 @@ const ConsistencyAnalysisResultSchema = z.object({
     applicableStandards: z.array(z.string()),
     consistencyMatrix: z.array(ConsistencyMatrixRowSchema),
     sectionEvaluations: z.array(SectionEvaluationSchema),
-    structuralVerification: z.object({
-        sectionsFound: z.record(z.string(), z.object({
-            exists: z.boolean(),
-            pages: z.string(),
-            completeness: z.number()
-        })),
-        missingSections: z.array(z.string()),
-        misplacedSections: z.array(z.string())
-    }).optional(),
     methodologicalAnalysis: z.object({
         approachCoherent: z.boolean(),
         designAdequate: z.boolean(),
         techniquesAppropriate: z.boolean(),
         resultsDeriveFromMethod: z.boolean(),
         conclusionsSupportedByResults: z.boolean(),
-        forensicReasoning: z.string().optional(),
-        criticalAlerts: z.array(z.string()),
-        invalidatingIssues: z.array(z.string()).optional()
+        criticalAlerts: z.array(z.string())
     }),
     normativeCompliance: z.object({
         apa7Score: z.number().min(0).max(100),
@@ -182,22 +117,8 @@ const ConsistencyAnalysisResultSchema = z.object({
         grammaticalErrors: z.array(z.string()),
         styleIssues: z.array(z.string())
     }),
-    normativeComplianceDetailed: z.object({
-        overallCompliance: z.number(),
-        violations: z.array(z.object({
-            rule: z.string(),
-            severity: z.enum(['Critical', 'High', 'Medium', 'Low']),
-            evidence: z.string(),
-            impact: z.string()
-        })),
-        compliantItems: z.array(z.object({
-            rule: z.string(),
-            evidence: z.string()
-        }))
-    }).optional(),
     globalDiagnosis: z.object({
         level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']),
-        auditSummary: z.string().optional(),
         mainRisks: z.array(z.string()),
         internalConsistencyDegree: z.number().min(0).max(100),
         publishabilityLevel: z.number().min(0).max(100)
@@ -207,174 +128,38 @@ const ConsistencyAnalysisResultSchema = z.object({
         what: z.string(),
         why: z.string(),
         how: z.string()
-    })),
-    sourceConsistencySubMatrix: z.object({
-        citationsFound: z.array(z.object({
-            citation: z.string(),
-            inBibliography: z.boolean(),
-            page: z.string()
-        })),
-        referencesCiting: z.array(z.string()),
-        unusedReferences: z.array(z.string()),
-        missingReferences: z.array(z.string())
-    }).optional(),
-    actionableFeedback: z.array(z.object({
-        finding: z.string(),
-        evidence: z.string(),
-        whyItMatters: z.string(),
-        howToFix: z.string(),
-        example: z.string()
     }))
 });
 
 const CONSISTENCY_MATRIX_PROMPT = `Rol y especialización
-Actúa como un revisor académico senior multidisciplinario, con más de 20 años de experiencia evaluando:
-- Tesis de grado, posgrado y doctorales
-- Monográficos
-- Artículos científicos indexados
-
-Dominas metodología cuantitativa, cualitativa y mixta, así como normas institucionales universitarias, APA 7, ISO y otros estándares editoriales académicos.
-
-Objetivo general
-Evaluar integralmente la coherencia, consistencia metodológica, calidad académica y cumplimiento normativo del documento completo, detectando:
-- Inconsistencias estructurales
-- Desalineaciones metodológicas
-- Errores conceptuales
-- Fallas de articulación interna
-- Errores ortográficos y de redacción académica
+Actúa como un revisor académico senior multidisciplinario, con más de 20 años de experiencia evaluando tesis y artículos científicos.
 
 EVIDENCIA REQUERIDA (CRÍTICO):
 Para TODA observación, hallazgo o recomendación, DEBES citar el número de página donde se encuentra la evidencia o el error.
 Formato de cita: [Pág. X]
-Ejemplo: "El objetivo general no se alinea con la pregunta de investigación [Pág. 12] ya que menciona..."
 
 ANÁLISIS REQUERIDO:
-
 1. IDENTIFICACIÓN INICIAL
-Determina:
-- Tipo de trabajo: Grado / Posgrado / Doctoral / Artículo científico
-- Enfoque metodológico predominante: Cuantitativo / Cualitativo / Mixto
-- Área disciplinar aproximada
-- Normativas aplicables detectadas (APA 7, ISO, institucional u otras)
-
 2. MATRIZ DE CONSISTENCIA (OBLIGATORIA)
-Genera una Matriz de Consistencia Académica evaluando la alineación entre:
-- Problema de investigación
-- Justificación
-- Objetivo general
-- Objetivos específicos
-- Preguntas / hipótesis (si aplica)
-- Variables / categorías
-- Enfoque metodológico
-- Diseño de investigación
-- Técnicas e instrumentos
-- Población y muestra / participantes
-- Resultados
-- Conclusiones
-- Recomendaciones
-
-Para CADA elemento, proporciona:
-- Descripción encontrada en el documento (Citar página: [Pág. X])
-- Nivel de coherencia (Alta / Media / Baja / Inexistente)
-- Observación técnica (Citar evidencia: [Pág. X])
-- Recomendación concreta de ajuste
-
 3. EVALUACIÓN POR SECCIONES
-Analiza: Planteamiento del problema, Marco teórico, Metodología, Resultados, Discusión, Conclusiones, Referencias.
-Para cada sección indica:
-- Fortalezas (Citar ejemplos: [Pág. X])
-- Debilidades (Citar evidencia: [Pág. X])
-- Incoherencias internas
-- Desajustes con objetivos o método
-
 4. ANÁLISIS METODOLÓGICO PROFUNDO
-Verifica si:
-- El enfoque metodológico es coherente con los objetivos
-- El diseño es adecuado al tipo de estudio
-- Las técnicas e instrumentos responden al enfoque
-- Los resultados derivan realmente del método aplicado
-- Las conclusiones se sustentan en los resultados [Pág. X]
-Marca alertas críticas cuando el diseño invalide los hallazgos.
-
 5. NORMATIVA Y ESTILO ACADÉMICO
-Evalúa cumplimiento de APA 7, ISO, redacción académica formal, coherencia terminológica, uso adecuado de tiempos verbales.
-Detecta y lista: Errores ortográficos, gramaticales, problemas de estilo académico. (Indicar [Pág. X] en ejemplos)
-
 6. DIAGNÓSTICO GLOBAL
-- Nivel global del trabajo: Excelente / Aceptable / Débil / Crítico
-- Principales riesgos académicos
-- Grado de consistencia interna (0-100%)
-- Nivel de publicabilidad / defendibilidad (0-100%)
-
 7. RECOMENDACIONES ACCIONABLES PRIORIZADAS
-Para cada recomendación:
-- Prioridad: Crítica / Alta / Media / Baja
-- Qué corregir (Citar ubicación: [Pág. X])
-- Por qué corregirlo
-- Cómo corregirlo
 
 FORMATO DE SALIDA (JSON ESTRICTO):
 {
-  "documentType": "Tesis de Grado / Posgrado / etc.",
-  "methodologicalApproach": "Cuantitativo / Cualitativo / Mixto",
-  "disciplinaryArea": "Área identificada",
-  "applicableStandards": ["APA 7", "ISO", "etc."],
-  "consistencyMatrix": [
-    {
-      "element": "Problema de investigación",
-      "description": "Texto encontrado [Pág. X]",
-      "coherenceLevel": "Alta/Media/Baja/Inexistente",
-      "technicalObservation": "Observación con evidencia [Pág. X]",
-      "recommendation": "Recomendación"
-    }
-  ],
-  "sectionEvaluations": [
-    {
-      "section": "Planteamiento del problema",
-      "strengths": ["Fortaleza 1 [Pág. X]"],
-      "weaknesses": ["Debilidad 1 [Pág. X]"],
-      "internalIncoherences": ["Incoherencia 1"],
-      "methodologicalMisalignments": ["Desajuste 1"]
-    }
-  ],
-  "methodologicalAnalysis": {
-    "approachCoherent": true/false,
-    "designAdequate": true/false,
-    "techniquesAppropriate": true/false,
-    "resultsDeriveFromMethod": true/false,
-    "conclusionsSupportedByResults": true/false,
-    "criticalAlerts": ["Alerta 1 [Pág. X]"]
-  },
-  "normativeCompliance": {
-    "apa7Score": 0-100,
-    "academicWritingScore": 0-100,
-    "terminologyConsistencyScore": 0-100,
-    "orthographicErrors": ["Error 1 [Pág. X]"],
-    "grammaticalErrors": ["Error 1 [Pág. X]"],
-    "styleIssues": ["Issue 1 [Pág. X]"]
-  },
-  "globalDiagnosis": {
-    "level": "Excelente/Aceptable/Débil/Crítico",
-    "mainRisks": ["Riesgo 1 [Pág. X]"],
-    "internalConsistencyDegree": 0-100,
-    "publishabilityLevel": 0-100
-  },
-  "prioritizedRecommendations": [
-    {
-      "priority": "Crítica/Alta/Media/Baja",
-      "what": "Qué corregir [Pág. X]",
-      "why": "Por qué es importante",
-      "how": "Pasos específicos"
-    }
-  ]
+  "documentType": "",
+  "methodologicalApproach": "",
+  "disciplinaryArea": "",
+  "applicableStandards": [],
+  "consistencyMatrix": [{"element": "", "description": "", "coherenceLevel": "", "technicalObservation": "", "recommendation": ""}],
+  "sectionEvaluations": [{"section": "", "strengths": [], "weaknesses": [], "internalIncoherences": [], "methodologicalMisalignments": []}],
+  "methodologicalAnalysis": {"approachCoherent": true, "designAdequate": true, "techniquesAppropriate": true, "resultsDeriveFromMethod": true, "conclusionsSupportedByResults": true, "criticalAlerts": []},
+  "normativeCompliance": {"apa7Score": 0, "academicWritingScore": 0, "terminologyConsistencyScore": 0, "orthographicErrors": [], "grammaticalErrors": [], "styleIssues": []},
+  "globalDiagnosis": {"level": "", "mainRisks": [], "internalConsistencyDegree": 0, "publishabilityLevel": 0},
+  "prioritizedRecommendations": [{"priority": "", "what": "", "why": "", "how": ""}]
 }
-
-RESTRICCIONES:
-- No inventes información. Si falta algo, indícalo explícitamente.
-- Mantén lenguaje académico claro y profesional.
-- Prioriza RIGOR sobre simplicidad.
-- Sé técnico y específico en las recomendaciones.
-- SIEMPRE CITA LA PÁGINA DE REFERENCIA cuando sea posible.
 
 {INSTITUTIONAL_RULES}
 
@@ -387,7 +172,6 @@ export async function analyzeConsistencyMatrix(
     documentInput: string | { page: number; text: string }[],
     institutionalRules?: string
 ): Promise<ConsistencyAnalysisResult> {
-    // Handle paginated content
     let documentText = '';
     if (Array.isArray(documentInput)) {
         documentText = documentInput.map(page => `\n--- PÁGINA ${page.page} ---\n${page.text}`).join('\n');
@@ -396,21 +180,22 @@ export async function analyzeConsistencyMatrix(
     }
 
     const originalLength = documentText.length;
-    const maxChars = CONFIG.CONSISTENCY_MAX_CHARS; // Now 100,000 from config
+    const maxChars = CONFIG.CONSISTENCY_MAX_CHARS;
     let wasTruncated = false;
 
     if (documentText.length > maxChars) {
-        console.warn(`[ConsistencyAnalyzer] Document truncated from ${originalLength} to ${maxChars} chars for stability`);
-        documentText = documentText.substring(0, maxChars);
+        const headLimit = 120000;
+        const tailLimit = 180000;
+        const head = documentText.substring(0, headLimit);
+        const tail = documentText.substring(documentText.length - tailLimit);
+        documentText = head + "\n\n[... PARTE MEDIA DEL DOCUMENTO OMITIDA POR EXTENSIÓN ...]\n\n" + tail;
         wasTruncated = true;
     }
 
     try {
         let promptTemplate = CONSISTENCY_MATRIX_PROMPT;
-
-        // Add institutional rules if provided
         if (institutionalRules && institutionalRules.trim()) {
-            const rulesSection = `\n\nNORMATIVAS INSTITUCIONALES A APLICAR:\nEl documento debe ser evaluado también contra las siguientes normativas institucionales específicas:\n\n${institutionalRules}\n\nAsegúrate de validar el cumplimiento de estas reglas institucionales en tu análisis de coherencia y en las recomendaciones.\n`;
+            const rulesSection = `\n\nNORMATIVAS INSTITUCIONALES:\n${institutionalRules}\n`;
             promptTemplate = promptTemplate.replace('{INSTITUTIONAL_RULES}', rulesSection);
         } else {
             promptTemplate = promptTemplate.replace('{INSTITUTIONAL_RULES}', '');
@@ -418,10 +203,9 @@ export async function analyzeConsistencyMatrix(
 
         const finalPrompt = promptTemplate.replace('{DOCUMENT_TEXT}', documentText);
 
-        // Use unified Chain-of-Responsibility client
         const validated = await generateJSON<any>({
             prompt: finalPrompt,
-            systemInstruction: "Eres un experto en metodología de investigación científica y auditoría de tesis doctorales.",
+            systemInstruction: "Eres un experto en metodología de investigación científica.",
             temperature: CONFIG.CONSISTENCY_AI_TEMPERATURE,
             model: CONFIG.CONSISTENCY_AI_MODEL
         });
@@ -431,32 +215,19 @@ export async function analyzeConsistencyMatrix(
             rawAnalysis: JSON.stringify(validated)
         } as ConsistencyAnalysisResult;
 
-        // Add truncation warning to recommendations if applicable
         if (wasTruncated) {
             analysis.prioritizedRecommendations.unshift({
                 priority: 'Alta',
-                what: `⚠️ ADVERTENCIA: Documento truncado a ${maxChars.toLocaleString()} caracteres (original: ${originalLength.toLocaleString()})`,
-                why: 'El análisis puede estar incompleto debido a limitaciones de procesamiento. Partes finales del documento pueden no haber sido evaluadas.',
-                how: 'Para análisis completo de documentos largos, considera dividir el documento en secciones o aumentar el límite en configuración.'
+                what: `⚠️ ADVERTENCIA: Documento de gran extensión (${originalLength.toLocaleString()} chars).`,
+                why: 'Se aplicó el modo de alta capacidad conservando las partes críticas (inicio y fin) para el análisis.',
+                how: 'El análisis es válido para la estructura global, pero partes intermedias no fueron procesadas.'
             });
         }
 
         return analysis;
     } catch (error: any) {
         console.error('Consistency matrix analysis error:', error);
-
-        // Enhanced error messages
-        let msg = "Error al analizar la consistencia.";
-        if (error instanceof z.ZodError) {
-            msg = "El formato de respuesta del AI es inválido. Por favor intenta nuevamente.";
-            console.error("Zod validation errors:", error.issues);
-        } else if (error.message?.includes("Proxy")) {
-            msg = "Error en el servidor de enlace (Proxy 502). El documento puede ser demasiado largo o el servidor está saturado.";
-        } else if (error.message?.includes("Groq")) {
-            msg = "El servicio de respaldo está saturado (Error 429). Por favor espera un momento e intenta con un texto más breve.";
-        }
-
-        throw new Error(msg);
+        throw new Error("Error al analizar la consistencia. Intenta con un texto más breve o revisa la conexión.");
     }
 }
 
@@ -464,41 +235,11 @@ export async function generateConsistencyReport(
     documentText: string
 ): Promise<string> {
     const analysis = await analyzeConsistencyMatrix(documentText);
-
-    // Generate markdown report
     let report = `# Informe de Matriz de Consistencia Académica\n\n`;
-
-    report += `## Identificación del Documento\n\n`;
-    report += `- **Tipo**: ${analysis.documentType}\n`;
-    report += `- **Enfoque Metodológico**: ${analysis.methodologicalApproach}\n`;
-    report += `- **Área Disciplinar**: ${analysis.disciplinaryArea}\n`;
-    report += `- **Normativas Aplicables**: ${analysis.applicableStandards.join(', ')}\n\n`;
-
-    report += `## Matriz de Consistencia\n\n`;
-    report += `| Elemento | Descripción | Coherencia | Observación | Recomendación |\n`;
-    report += `|----------|-------------|------------|-------------|---------------|\n`;
-    analysis.consistencyMatrix.forEach(row => {
-        report += `| ${row.element} | ${row.description.substring(0, 50)}... | ${row.coherenceLevel} | ${row.technicalObservation.substring(0, 50)}... | ${row.recommendation.substring(0, 50)}... |\n`;
-    });
-    report += `\n`;
-
-    report += `## Diagnóstico Global\n\n`;
-    report += `- **Nivel del Trabajo**: ${analysis.globalDiagnosis.level}\n`;
-    report += `- **Consistencia Interna**: ${analysis.globalDiagnosis.internalConsistencyDegree}%\n`;
-    report += `- **Nivel de Publicabilidad**: ${analysis.globalDiagnosis.publishabilityLevel}%\n\n`;
-
-    report += `### Principales Riesgos\n\n`;
-    analysis.globalDiagnosis.mainRisks.forEach(risk => {
-        report += `- ${risk}\n`;
-    });
-    report += `\n`;
-
-    report += `## Recomendaciones Prioritarias\n\n`;
+    report += `## Diagnóstico Global\n\n- **Nivel**: ${analysis.globalDiagnosis.level}\n- **Consistencia**: ${analysis.globalDiagnosis.internalConsistencyDegree}%\n\n`;
+    report += `## Recomendaciones\n\n`;
     analysis.prioritizedRecommendations.forEach((rec, idx) => {
-        report += `### ${idx + 1}. [${rec.priority}] ${rec.what}\n\n`;
-        report += `**Por qué**: ${rec.why}\n\n`;
-        report += `**Cómo**: ${rec.how}\n\n`;
+        report += `### ${idx + 1}. [${rec.priority}] ${rec.what}\n\n**Cómo**: ${rec.how}\n\n`;
     });
-
     return report;
 }
