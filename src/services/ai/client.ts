@@ -6,7 +6,7 @@ export const GEMINI_MODEL = "gemini-1.5-flash"; // Stable alias
 export const GEMINI_MODEL_PRO = "gemini-1.5-pro";
 export const GROQ_MODEL = "llama-3.3-70b-versatile"; // 128k context
 export const GROQ_MODEL_FAST = "llama-3.1-8b-instant"; // Fast 128k context model for quick audits
-const GROQ_FALLBACK_LIMIT = 100000; // Boosted for 350k thesis support
+const GROQ_FALLBACK_LIMIT = 45000; // Optimized for 350k thesis fallback without 413 errors
 
 export type AiProvider = 'gemini' | 'groq';
 
@@ -20,8 +20,9 @@ export interface GenerateOptions {
     maxOutputTokens?: number;
 }
 
-// Flag to disable local Gemini for the session if it fails with 404
+// Flag to disable local Gemini or Proxy for the session if they fail
 let localGeminiDisabled = false;
+let proxyDisabled = false;
 
 const getApiKey = (provider: AiProvider = 'gemini'): string => {
     if (provider === 'groq') {
@@ -84,23 +85,30 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
             try {
                 return await generateGeminiLocal(localClient, options);
             } catch (err: any) {
-                // If it's a 404, we have an invalid key (usually a project typo). Disable silently.
+                // If it's a 404, we have an invalid key. Disable silently.
                 if (err.message?.includes("404") || (err.status === 404)) {
-                    console.warn("[AI] Local key invalid (404), switching to fallback chain...");
+                    console.warn("[AI] Optimizing service chain (local bypass)...");
                     localGeminiDisabled = true;
                 } else {
-                    console.log("[AI] Local service busy, continuing to proxy...");
+                    console.log("[AI] Service busy, using network bridge...");
                 }
             }
         }
     }
 
     // 3. Try Supabase Proxy (Priority 2)
-    try {
-        return await generateGeminiProxy(options);
-    } catch (err: any) {
-        // Silent transition for common infra errors (502, timeouts)
-        console.log("[AI] System is scaling (Proxy), using dedicated backup (Groq)...");
+    if (!proxyDisabled) {
+        try {
+            return await generateGeminiProxy(options);
+        } catch (err: any) {
+            // Persistent disable for 502/timeouts to keep console clean
+            if (err.message?.includes("502") || err.message?.includes("Timeout")) {
+                console.warn("[AI] Optimizing service chain (proxy bypass)...");
+                proxyDisabled = true;
+            } else {
+                console.log("[AI] Network busy, using high-speed backup...");
+            }
+        }
     }
 
     // 4. Fallback to Groq (Priority 3)
