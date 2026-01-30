@@ -22,7 +22,8 @@ serve(async (req) => {
             })
         }
 
-        const { prompt, model: modelName, systemInstruction, temperature, jsonMode } = await req.json()
+        const body = await req.json();
+        const { prompt, model: modelName, systemInstruction, temperature, jsonMode } = body;
 
         if (!prompt) {
             return new Response(JSON.stringify({ error: 'Missing prompt' }), {
@@ -38,22 +39,23 @@ serve(async (req) => {
 
         for (const mName of tryModels) {
             try {
-                // STABLE v1 API
                 const url = `https://generativelanguage.googleapis.com/v1/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
+
+                // --- PAYLOAD SHIELD (v1.14) ---
+                // We send BOTH formats to ensure compatibility if Google switches expectations
+                const payload = {
+                    systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: temperature ?? 0.7,
+                        responseMimeType: jsonMode ? "application/json" : "text/plain"
+                    }
+                };
 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        // FIXED: Use camelCase as per REST v1 spec
-                        systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
-                        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                        generationConfig: {
-                            temperature: temperature ?? 0.7,
-                            // FIXED: Add responseMimeType for JSON mode
-                            responseMimeType: jsonMode ? "application/json" : "text/plain"
-                        }
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (response.ok) {
@@ -65,7 +67,14 @@ serve(async (req) => {
                     });
                 }
 
+                // --- CRITICAL LOGGING (v1.14) ---
                 const errBody = await response.json().catch(() => ({}));
+                console.error(`[Proxy] Google Upstream Error (400) for model ${mName}:`, JSON.stringify({
+                    status: response.status,
+                    error: errBody,
+                    payloadSent: { ...payload, contents: "[REDACTED_FOR_PRIVACY]" } // Log structure, not thesis data
+                }));
+
                 lastError = errBody.error?.message || response.statusText;
                 lastStatus = response.status;
 
@@ -73,10 +82,13 @@ serve(async (req) => {
                     console.warn(`[Proxy] Model ${mName} returned 404. Rotating...`);
                     continue;
                 }
+
+                // If 400, might be a permanent schema issue with this model, break and return
                 break;
 
             } catch (err: any) {
                 lastError = err.message;
+                console.error(`[Proxy] Critical error with ${mName}:`, err);
             }
         }
 
@@ -84,7 +96,8 @@ serve(async (req) => {
             JSON.stringify({
                 error: lastError || 'No available Gemini model found.',
                 type: 'UPSTREAM_ERROR',
-                status: lastStatus
+                status: lastStatus,
+                details: "Check Supabase logs for Payload Shield info."
             }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },

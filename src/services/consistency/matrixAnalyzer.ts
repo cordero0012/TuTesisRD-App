@@ -212,25 +212,33 @@ export async function analyzeConsistencyMatrix(
 
     const microResults: MicroAnalysis[] = [];
 
-    // Phase 1: Micro-Analysis (Extraction)
-    for (let i = 0; i < chunks.length; i++) {
-        const chunk = chunks[i];
-        console.log(`[MatrixAnalyzer] Analyzing chunk ${i + 1}/${chunks.length} (${chunk.sectionHint})...`);
+    // Phase 1: Micro-Analysis (Extraction) with Throttling
+    const CONCURRENCY_LIMIT = 2;
+    const CHUNK_DELAY = 1000; // 1s between chunks to be safe
 
-        try {
-            const result = await generateJSON<MicroAnalysis>({
-                prompt: MICRO_EXTRACTION_PROMPT
-                    .replace('{SECTION_HINT}', chunk.sectionHint)
-                    .replace('{INDEX}', chunk.index.toString())
-                    .replace('{CHUNK_TEXT}', chunk.text),
-                systemInstruction: "Eres un extractor de datos académicos ultra-preciso.",
-                temperature: 0.1, // Low temp for extraction consistency
-                model: 'gemini-1.5-flash' // Favor fast model for micro-tasks
-            });
-            microResults.push(result);
-        } catch (err) {
-            console.error(`[MatrixAnalyzer] Failed chunk ${i}:`, err);
-            // We continue even if one chunk fails, but later the aggregator might lack info
+    for (let i = 0; i < chunks.length; i += CONCURRENCY_LIMIT) {
+        const batch = chunks.slice(i, i + CONCURRENCY_LIMIT);
+
+        await Promise.all(batch.map(async (chunk) => {
+            console.log(`[MatrixAnalyzer] Analyzing chunk ${chunk.index + 1}/${chunks.length} (${chunk.sectionHint})...`);
+            try {
+                const result = await generateJSON<MicroAnalysis>({
+                    prompt: MICRO_EXTRACTION_PROMPT
+                        .replace('{SECTION_HINT}', chunk.sectionHint)
+                        .replace('{INDEX}', chunk.index.toString())
+                        .replace('{CHUNK_TEXT}', chunk.text),
+                    systemInstruction: "Eres un extractor de datos académicos ultra-preciso.",
+                    temperature: 0.1,
+                    model: 'gemini-2.0-flash' // Updated to 2.0
+                });
+                microResults.push(result);
+            } catch (err) {
+                console.error(`[MatrixAnalyzer] Failed chunk ${chunk.index}:`, err);
+            }
+        }));
+
+        if (i + CONCURRENCY_LIMIT < chunks.length) {
+            await new Promise(resolve => setTimeout(resolve, CHUNK_DELAY));
         }
     }
 

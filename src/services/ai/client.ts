@@ -23,6 +23,9 @@ export interface GenerateOptions {
 // Flag to disable local Gemini or Proxy for the session if they fail
 let localGeminiDisabled = false;
 let proxyDisabled = false;
+let groqPausedUntil = 0;
+
+const isGroqLocked = () => Date.now() < groqPausedUntil;
 
 const getApiKey = (provider: AiProvider = 'gemini'): string => {
     if (provider === 'groq') {
@@ -182,6 +185,11 @@ async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
 }
 
 async function generateGroq(options: GenerateOptions): Promise<string> {
+    if (isGroqLocked()) {
+        const remaining = Math.ceil((groqPausedUntil - Date.now()) / 1000);
+        throw new Error(`Groq temporalmente bloqueado (Rate Limit). Reintenta en ${remaining}s.`);
+    }
+
     const apiKey = getApiKey('groq');
     if (!apiKey) throw new Error("No Groq API key available");
 
@@ -210,6 +218,10 @@ async function generateGroq(options: GenerateOptions): Promise<string> {
     });
 
     if (!response.ok) {
+        if (response.status === 429) {
+            console.error("[Groq] Rate limit hit. Pausing service for 30s...");
+            groqPausedUntil = Date.now() + 30000;
+        }
         const err = await response.json().catch(() => ({}));
         throw new Error(`Groq Error ${response.status}: ${err.error?.message || response.statusText}`);
     }
