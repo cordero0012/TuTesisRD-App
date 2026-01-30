@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import universitiesData from '../data/universities.json';
 import { supabase } from '../supabaseClient';
 import { Session } from '@supabase/supabase-js';
+import { persistenceService } from '../services/persistenceService';
 
 // Define a simple Project interface
 export interface Project {
@@ -46,35 +47,26 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
 
     const [session, setSession] = useState<Session | null>(null);
-    const initLock = React.useRef(false);
+    const currentCallId = React.useRef(0);
 
     // Core Initialization Logic
     const initProject = async (currentSession: Session | null) => {
-        if (initLock.current) return;
-        initLock.current = true;
+        const myCallId = ++currentCallId.current;
+        console.log(`[ProjectContext] Starting initProject #${myCallId}, session:`, currentSession?.user?.email || 'none');
 
         try {
             const storedId = localStorage.getItem('tutesis_project_uuid');
 
             // --- 1. Anonymous / Offline Mode (No Session) ---
             if (!currentSession) {
-                console.log("[ProjectContext] No session. Initializing Mode.");
+                if (myCallId !== currentCallId.current) return;
+                console.log(`[ProjectContext] #${myCallId} No session. Setting Offline Mode.`);
 
-                // Initialize Offline Project
-                if (storedId === 'offline-demo' || !storedId) {
-                    setProject({
-                        id: 'offline-demo',
-                        title: 'Mi Tesis (Offline)',
-                        content: ''
-                    });
-                } else {
-                    setProject({
-                        id: 'offline-demo',
-                        title: 'Mi Tesis (Offline)',
-                        content: ''
-                    });
-                }
-                // Stop here. Do not call Supabase.
+                setProject({
+                    id: 'offline-demo',
+                    title: 'Mi Tesis (Offline)',
+                    content: ''
+                });
                 return;
             }
 
@@ -90,6 +82,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
                     .eq('id', storedId)
                     .single();
 
+                if (myCallId !== currentCallId.current) return;
+
                 if (data) {
                     // If found, check ownership
                     if (currentSession && !data.owner_id) {
@@ -98,6 +92,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
                             .from('scholar_projects')
                             .update({ owner_id: currentSession.user.id })
                             .eq('id', storedId);
+
+                        if (myCallId !== currentCallId.current) return;
 
                         if (!updateError) {
                             console.log("Project claimed by user:", storedId);
@@ -121,6 +117,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
                     .limit(1)
                     .single();
 
+                if (myCallId !== currentCallId.current) return;
+
                 if (data) {
                     activeProjectId = data.id;
                     activeProjectData = data;
@@ -140,6 +138,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
                     .select()
                     .single();
 
+                if (myCallId !== currentCallId.current) return;
+
                 if (data && !error) {
                     activeProjectId = data.id;
                     activeProjectData = data;
@@ -152,6 +152,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
             }
 
             // 4. Update State
+            if (myCallId !== currentCallId.current) return;
+
             setProject({
                 id: activeProjectId,
                 title: activeProjectData.title || 'Mi Tesis',
@@ -159,28 +161,42 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
                 owner_id: activeProjectData.owner_id
             });
 
-        } finally {
-            initLock.current = false;
+            console.log(`[ProjectContext] #${myCallId} Successfully initialized project:`, activeProjectId);
+
+        } catch (err) {
+            console.error(`[ProjectContext] #${myCallId} Critical Error:`, err);
+            if (myCallId === currentCallId.current) {
+                setProject(p => ({ ...p, id: 'offline-demo' }));
+            }
         }
     };
 
     // Auth & Init Sync
     React.useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        let isMounted = true;
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            if (!isMounted) return;
+
+            console.log(`[ProjectContext] Auth state change [${_event}]:`, session?.user?.email || 'none');
             setSession(session);
-            // Init with fetched session (might be null initially or valid)
-            if (!session) {
-                initProject(null);
+
+            // Wait for project to initialize (might create new one or load existing)
+            await initProject(session);
+
+            // If we have a session AND a real project ID, sync the queue
+            if (session && project.id && project.id !== 'offline-demo') {
+                persistenceService.updateQueueProjectId(project.id);
+                persistenceService.flushQueue();
             }
         });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            setSession(session);
-            await initProject(session);
-        });
+        return () => {
+            isMounted = false;
+            subscription.unsubscribe();
+        };
+    }, [project.id]); // Re-run if project.id changes to ensure we flush with current ID
 
-        return () => subscription.unsubscribe();
-    }, []);
 
     React.useEffect(() => {
         if (uploadedFile) {

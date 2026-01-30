@@ -2,7 +2,7 @@ import { supabase } from '../supabaseClient';
 import { MatrixAnalysisDTO, AuditResultDTO } from '../types/schemas';
 
 type AnalysisType = 'consistency' | 'audit';
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error' | 'offline' | 'pending';
 
 export interface SavedAnalysisRecord {
     id: string;
@@ -70,9 +70,6 @@ class PersistenceService {
         };
     }
 
-    /**
-     * Adds an analysis to the save queue and triggers processing.
-     */
     public async saveAnalysis(
         projectId: string,
         type: AnalysisType,
@@ -89,8 +86,47 @@ class PersistenceService {
 
         this.queue.push(item);
         this.saveQueueToLocal();
-        this.notify('saving');
-        this.processQueue();
+
+        // If offline, notify pending
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            this.notify('pending');
+        } else {
+            this.notify('saving');
+            this.processQueue();
+        }
+    }
+
+    /**
+     * Updates the projectId of all items in the queue.
+     * Useful when an anonymous user logs in and claims their work.
+     */
+    public updateQueueProjectId(newId: string) {
+        if (!newId || newId === 'offline-demo') return;
+
+        let changed = false;
+        this.queue = this.queue.map(item => {
+            if (item.projectId === 'offline-demo') {
+                changed = true;
+                return { ...item, projectId: newId };
+            }
+            return item;
+        });
+
+        if (changed) {
+            console.log(`[Persistence] Updated queue items to project: ${newId}`);
+            this.saveQueueToLocal();
+        }
+    }
+
+    /**
+     * Manually triggers queue processing.
+     */
+    public flushQueue() {
+        if (this.queue.length > 0 && !this.processing) {
+            console.log('[Persistence] Manual flush triggered.');
+            this.processQueue();
+        }
     }
 
     private async processQueue() {
@@ -105,7 +141,7 @@ class PersistenceService {
             if (!session) {
                 console.log('[Persistence] Queue paused: No active session.');
                 this.processing = false;
-                this.notify('error'); // Or a new status 'paused'? 'error' works to show red badge for now.
+                this.notify('offline');
                 return;
             }
 

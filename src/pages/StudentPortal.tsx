@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useProject } from '../contexts/ProjectContext';
 
 const StudentPortal: React.FC = () => {
+    const { session } = useProject();
+    const user = session?.user;
+    const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Estudiante';
+    const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=random`;
+
     return (
         <div className="flex h-screen w-full font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-white overflow-hidden transition-colors duration-200">
             <aside className="hidden md:flex w-72 flex-col bg-surface-light dark:bg-surface-dark border-r border-slate-200 dark:border-slate-800 h-full p-6 transition-colors duration-200">
@@ -23,10 +29,10 @@ const StudentPortal: React.FC = () => {
             </aside>
             <main className="flex-1 flex flex-col h-full overflow-y-auto p-8">
                 <header className="flex justify-between items-center mb-8">
-                    <h2 className="text-3xl font-bold animate-fade-in">¡Hola, <span className="text-primary">Carlos!</span> 👋</h2>
+                    <h2 className="text-3xl font-bold animate-fade-in">¡Hola, <span className="text-primary">{displayName}!</span> 👋</h2>
                     <div className="flex items-center gap-4">
                         <div className="bg-white dark:bg-slate-700 p-2 rounded-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"><span className="material-symbols-outlined">notifications</span></div>
-                        <div className="size-10 rounded-full bg-cover ring-2 ring-white dark:ring-slate-700 shadow-md" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVUvIDS3tSZCfS538VxO8VQkD0THkmMPL5yOaZ9q92zMPh1MSxRkbealDVwtxYU-l5ylCUPqB9DGPLW5TOggcHAHdPKmgqR_N3Uv_76hg55A4atJVjpSvxvNi6Hegi03YOcO57qozAl7nGWhyE4HbHVSqQp6W7IMsLe9SqVFP9OzQnhJUmITy_ccdecOB4eSQMEccckgX2zbzXAJr8kHsH6XeeP1YpOJeMx_JTQ_Zrfi_hzR8bW2FZsm46OUzTeLru-2DLDuZIfmAQ')" }}></div>
+                        <div className="size-10 rounded-full bg-cover ring-2 ring-white dark:ring-slate-700 shadow-md bg-center" style={{ backgroundImage: `url('${avatarUrl}')` }}></div>
                     </div>
                 </header>
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 animate-slide-up">

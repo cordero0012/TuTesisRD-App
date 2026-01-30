@@ -130,7 +130,7 @@ export const ConsistencyMatrix = () => {
         }
     };
 
-    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error' | 'offline' | 'pending'>('idle');
 
     useEffect(() => {
         import('../services/persistenceService').then(({ persistenceService }) => {
@@ -179,12 +179,10 @@ export const ConsistencyMatrix = () => {
             setAnalysisProgress(100);
             setResult(analysis);
 
-            // Persist to Supabase
-            if (project.id && project.id !== 'offline-demo') {
-                import('../services/persistenceService').then(({ persistenceService }) => {
-                    persistenceService.saveAnalysis(project.id, 'consistency', analysis);
-                });
-            }
+            // Persist to Supabase (or Queue if offline)
+            import('../services/persistenceService').then(({ persistenceService }) => {
+                persistenceService.saveAnalysis(project.id || 'offline-demo', 'consistency', analysis);
+            });
 
             showNotification("Análisis de consistencia completado", "success");
         } catch (error) {
@@ -329,6 +327,16 @@ export const ConsistencyMatrix = () => {
                                 {saveStatus === 'error' && (
                                     <span className="text-xs font-bold text-red-400 flex items-center gap-1" title="Reintentando...">
                                         <span className="material-symbols-outlined text-sm">cloud_off</span> Error
+                                    </span>
+                                )}
+                                {saveStatus === 'offline' && (
+                                    <span className="text-xs font-bold text-slate-400 flex items-center gap-1" title="Inicia sesión para guardar en la nube">
+                                        <span className="material-symbols-outlined text-sm">offline_pin</span> Modo Local
+                                    </span>
+                                )}
+                                {saveStatus === 'pending' && (
+                                    <span className="text-xs font-bold text-amber-500 flex items-center gap-1" title="Pendiente de sincronización">
+                                        <span className="material-symbols-outlined text-sm">schedule_send</span> Pendiente Sinc
                                     </span>
                                 )}
                             </div>
