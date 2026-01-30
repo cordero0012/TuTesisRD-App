@@ -5,7 +5,7 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// DEFINITIVE GEMINI 2.x MODELS (Post-Sept 2025 Deprecation)
+// DEFINITIVE GEMINI 2.x MODELS
 const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-pro'];
 
 serve(async (req) => {
@@ -22,7 +22,7 @@ serve(async (req) => {
             })
         }
 
-        const { prompt, model: modelName, systemInstruction, temperature } = await req.json()
+        const { prompt, model: modelName, systemInstruction, temperature, jsonMode } = await req.json()
 
         if (!prompt) {
             return new Response(JSON.stringify({ error: 'Missing prompt' }), {
@@ -31,7 +31,6 @@ serve(async (req) => {
             })
         }
 
-        // --- NEW PIPELINE: STABLE v1 API ---
         let lastError = null;
         let lastStatus = 500;
         const requestedModel = modelName || 'gemini-2.5-flash';
@@ -39,17 +38,20 @@ serve(async (req) => {
 
         for (const mName of tryModels) {
             try {
-                // Using standard fetch to v1 stable endpoint
+                // STABLE v1 API
                 const url = `https://generativelanguage.googleapis.com/v1/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        system_instruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
+                        // FIXED: Use camelCase as per REST v1 spec
+                        systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
                         contents: [{ role: 'user', parts: [{ text: prompt }] }],
                         generationConfig: {
                             temperature: temperature ?? 0.7,
+                            // FIXED: Add responseMimeType for JSON mode
+                            responseMimeType: jsonMode ? "application/json" : "text/plain"
                         }
                     })
                 });
@@ -67,18 +69,14 @@ serve(async (req) => {
                 lastError = errBody.error?.message || response.statusText;
                 lastStatus = response.status;
 
-                // 404 (Not Found) means model deprecated/unavailable. Rotate.
                 if (response.status === 404) {
                     console.warn(`[Proxy] Model ${mName} returned 404. Rotating...`);
                     continue;
                 }
-
-                // 429 (Rate Limit) or 401 (Auth) should fail fast
                 break;
 
             } catch (err: any) {
                 lastError = err.message;
-                console.error(`[Proxy] Critical failure with ${mName}:`, err);
             }
         }
 
@@ -94,7 +92,6 @@ serve(async (req) => {
             },
         )
     } catch (error: any) {
-        console.error('Edge Function Crash:', error)
         return new Response(
             JSON.stringify({ error: error.message }),
             {

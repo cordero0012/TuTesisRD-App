@@ -165,7 +165,8 @@ async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
             prompt: options.prompt,
             model: options.model || GEMINI_MODEL,
             systemInstruction: options.systemInstruction,
-            temperature: options.temperature
+            temperature: options.temperature,
+            jsonMode: options.jsonMode
         }
     });
 

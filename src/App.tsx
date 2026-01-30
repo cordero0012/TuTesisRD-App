@@ -55,7 +55,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     useEffect(() => {
-        console.log("TuTesisRD App Loaded v1.12 - Gemini 2.x Migration");
+        console.log("TuTesisRD App Loaded v1.13 - Payload Fix");
     }, []);
 
     return (
