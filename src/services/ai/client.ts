@@ -157,26 +157,26 @@ async function generateGeminiLocal(ai: GoogleGenerativeAI, options: GenerateOpti
     return result.response.text();
 }
 
-async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
-    const proxyUrl = "https://rxzphenvgpbitltqrtjw.supabase.co/functions/v1/gemini-proxy";
+import { supabase } from '../../supabaseClient';
 
-    const response = await fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
+    const { data, error } = await supabase.functions.invoke('gemini-proxy', {
+        body: {
             prompt: options.prompt,
             model: options.model || GEMINI_MODEL,
             systemInstruction: options.systemInstruction,
             temperature: options.temperature
-        })
+        }
     });
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Proxy Error ${response.status}: ${errorData.error || response.statusText}`);
+    if (error) {
+        throw new Error(`Proxy Error: ${error.message || 'Unknown error'}`);
     }
 
-    const data = await response.json();
+    if (!data || !data.text) {
+        throw new Error("Proxy Error: Invalid response format from edge function");
+    }
+
     return data.text;
 }
 
