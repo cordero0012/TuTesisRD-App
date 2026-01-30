@@ -186,7 +186,7 @@ export async function analyzeConsistencyMatrix(
                         .replace('{CHUNK_TEXT}', chunk.text),
                     systemInstruction: "Eres un extractor de datos académicos ultra-preciso.",
                     temperature: 0.1,
-                    model: 'gemini-2.0-flash' // Updated to 2.0
+                    model: CONFIG.CONSISTENCY_AI_MODEL
                 });
                 microResults.push(result);
             } catch (err) {

@@ -79,6 +79,9 @@ const getLocalClient = (): GoogleGenerativeAI | null => {
 const FORCE_PROXY_ONLY = false; // Allow local fallback if available
 
 export const generateText = async (options: GenerateOptions): Promise<string> => {
+    // TELEMETRY: Trace Model Request
+    console.log(`[AI Request] Provider: ${options.provider || 'default (gemini)'}, Model: ${options.model || GEMINI_MODEL}`);
+
     // 1. If user explicitly requests Groq, skip chain
     if (options.provider === 'groq') {
         return generateGroq(options);

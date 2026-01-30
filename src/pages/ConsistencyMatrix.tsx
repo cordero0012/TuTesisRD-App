@@ -12,6 +12,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import mammoth from 'mammoth';
 import universitiesData from '../data/universities.json';
+import { AuthButton } from '../components/common/AuthButton';
 
 // Configure PDF worker
 try {
@@ -254,6 +255,10 @@ export const ConsistencyMatrix = () => {
 
                         {/* View Toggles & Export Actions */}
                         <div className="flex items-center gap-4">
+                            <div className="mr-4">
+                                <AuthButton />
+                            </div>
+
                             {result && (
                                 <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
                                     <button

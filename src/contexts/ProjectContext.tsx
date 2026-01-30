@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import universitiesData from '../data/universities.json';
+import { supabase } from '../supabaseClient';
+import { Session } from '@supabase/supabase-js';
 
 // Define a simple Project interface
 export interface Project {
     id: string;
     content: string;
     title?: string;
+    owner_id?: string | null;
 }
 
 export interface UploadedFile {
@@ -22,15 +25,14 @@ interface ProjectContextType {
     uploadedFile: UploadedFile | null;
     setUploadedFile: (file: UploadedFile | null) => void;
     universities: any[];
+    session: Session | null;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
-import { supabase } from '../supabaseClient';
-
 export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
-    // Default mock project initially, will be hydrated
+    // Default project state
     const [project, setProject] = useState<Project>({
         id: '',
         content: '',
@@ -38,58 +40,137 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
 
     const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(() => {
+        if (typeof window === 'undefined') return null;
         const saved = localStorage.getItem('tutesis_uploaded_file');
         return saved ? JSON.parse(saved) : null;
     });
 
-    // Hydrate Project from Supabase or Create New
-    React.useEffect(() => {
-        const initProject = async () => {
-            const storedId = localStorage.getItem('tutesis_project_uuid');
+    const [session, setSession] = useState<Session | null>(null);
 
-            if (storedId) {
-                // Fetch existing
-                const { data } = await supabase
-                    .from('scholar_projects')
-                    .select('*')
-                    .eq('id', storedId)
-                    .single();
+    // Core Initialization Logic
+    const initProject = async (currentSession: Session | null) => {
+        const storedId = localStorage.getItem('tutesis_project_uuid');
 
-                if (data) {
-                    setProject({
-                        id: data.id,
-                        title: data.title || 'Mi Tesis',
-                        content: data.content || ''
-                    });
-                    return;
-                }
+        // --- 1. Anonymous / Offline Mode (No Session) ---
+        if (!currentSession) {
+            console.log("[ProjectContext] No session. Initializing Mode.");
+
+            // Try to load full project state from local storage if we want true offline persistence
+            // For now, we just keep the ID in memory or use a default, avoiding Supabase calls
+            if (storedId === 'offline-demo' || !storedId) {
+                setProject({
+                    id: 'offline-demo',
+                    title: 'Mi Tesis (Offline)',
+                    content: ''
+                });
+            } else {
+                setProject({
+                    id: 'offline-demo',
+                    title: 'Mi Tesis (Offline)',
+                    content: ''
+                });
             }
+            return;
+        }
 
-            // Create new if none found or not valid
+        // --- 2. Authenticated Mode ---
+        let activeProjectId = '';
+        let activeProjectData: any = null;
+
+        // Try to load Stored Project
+        if (storedId && storedId !== 'offline-demo') {
+            const { data } = await supabase
+                .from('scholar_projects')
+                .select('*')
+                .eq('id', storedId)
+                .single();
+
+            if (data) {
+                // If found, check ownership
+                if (currentSession && !data.owner_id) {
+                    // It's anonymous and we are logged in -> CLAIM IT
+                    const { error: updateError } = await supabase
+                        .from('scholar_projects')
+                        .update({ owner_id: currentSession.user.id })
+                        .eq('id', storedId);
+
+                    if (!updateError) {
+                        console.log("Project claimed by user:", storedId);
+                        data.owner_id = currentSession.user.id;
+                    }
+                }
+
+                // If it's mine or anon (and visible), use it
+                activeProjectId = data.id;
+                activeProjectData = data;
+            }
+        }
+
+        // If no valid stored project, try to fetch user's latest
+        if (!activeProjectId) {
+            const { data } = await supabase
+                .from('scholar_projects')
+                .select('*')
+                .eq('owner_id', currentSession.user.id)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (data) {
+                activeProjectId = data.id;
+                activeProjectData = data;
+                localStorage.setItem('tutesis_project_uuid', data.id);
+            }
+        }
+
+        // If still nothing, create new owned project
+        if (!activeProjectId) {
             const { data, error } = await supabase
                 .from('scholar_projects')
                 .insert({
                     title: 'Nuevo Proyecto',
-                    content: ''
+                    content: '',
+                    owner_id: currentSession.user.id
                 })
                 .select()
                 .single();
 
             if (data && !error) {
+                activeProjectId = data.id;
+                activeProjectData = data;
                 localStorage.setItem('tutesis_project_uuid', data.id);
-                setProject({
-                    id: data.id,
-                    title: data.title,
-                    content: data.content || ''
-                });
             } else {
-                console.error("Failed to initialize project", error);
-                // Fallback to offline/mock
+                console.error("Failed to create project", error);
                 setProject(p => ({ ...p, id: 'offline-demo' }));
+                return;
             }
-        };
+        }
 
-        initProject();
+        // 4. Update State
+        setProject({
+            id: activeProjectId,
+            title: activeProjectData.title || 'Mi Tesis',
+            content: activeProjectData.content || '',
+            owner_id: activeProjectData.owner_id
+        });
+    };
+
+    // Auth & Init Sync
+    React.useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            // Init with fetched session (might be null initially or valid)
+            if (!session) {
+                initProject(null);
+            }
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            setSession(session);
+            await initProject(session);
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
     React.useEffect(() => {
@@ -106,7 +187,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
             setProject,
             uploadedFile,
             setUploadedFile,
-            universities: universitiesData
+            universities: universitiesData,
+            session
         }}>
             {children}
         </ProjectContext.Provider>
