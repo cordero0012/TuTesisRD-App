@@ -159,7 +159,8 @@ export const ConsistencyMatrix = () => {
             showNotification("Análisis de consistencia completado", "success");
         } catch (error) {
             console.error('Analysis error:', error);
-            showNotification("Error al analizar la consistencia", "error");
+            const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+            showNotification(`Error: ${errorMessage}`, "error");
         } finally {
             setIsAnalyzing(false);
         }

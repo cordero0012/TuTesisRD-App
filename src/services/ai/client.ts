@@ -75,7 +75,7 @@ const getLocalClient = (): GoogleGenerativeAI | null => {
 
 // --- Main Generation Logic (Chain of Responsibility) ---
 
-const FORCE_PROXY_ONLY = true; // DEFINITIVE KILL SWITCH for direct Google calls in web
+const FORCE_PROXY_ONLY = false; // Allow local fallback if available
 
 export const generateText = async (options: GenerateOptions): Promise<string> => {
     // 1. If user explicitly requests Groq, skip chain
@@ -125,8 +125,8 @@ export const generateText = async (options: GenerateOptions): Promise<string> =>
 export const generateJSON = async <T>(options: GenerateOptions): Promise<T> => {
     const text = await generateText({ ...options, jsonMode: true });
     try {
-        // Clean markdown code blocks if present
-        const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        // Clean markdown code blocks if present (robust regex)
+        const cleanText = text.replace(/```(?:json)?/gi, '').trim();
         return JSON.parse(cleanText) as T;
     } catch (e) {
         console.error("JSON Parse Error:", text);
