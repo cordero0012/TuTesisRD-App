@@ -4,10 +4,13 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  const isVercel = process.env.VERCEL === '1';
+
+  // Only use the repo-specific base path on GitHub Actions (for GitHub Pages)
+  // For Vercel, Local, and other environments, we use the root '/'
+  const isGitHubPages = !!process.env.GITHUB_ACTIONS;
 
   return {
-    base: isVercel ? '/' : '/TuTesisRD-App/',
+    base: isGitHubPages ? '/TuTesisRD-App/' : '/',
     server: {
       port: 3000,
       host: '0.0.0.0',
