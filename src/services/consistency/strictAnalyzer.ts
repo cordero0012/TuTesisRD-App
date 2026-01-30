@@ -182,9 +182,8 @@ export async function analyzeConsistencyStrict(
     const normativeContext = buildDetailedNormativeContext(institutionalRules, regulationMetadata);
 
     // 2. Build prompt
-    const prompt = getStrictPrompt(normativeContext, academicLevel);
-
-    const finalPrompt = prompt + "\n\nDOCUMENTO A EVALUAR:\n" + textToProcess;
+    const promptTemplate = getStrictPrompt(normativeContext, academicLevel);
+    const finalPrompt = promptTemplate.replace('{DOCUMENT_TEXT}', textToProcess);
 
     // 3. Call AI
     try {
