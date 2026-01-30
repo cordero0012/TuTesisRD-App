@@ -100,6 +100,15 @@ class PersistenceService {
         const maxRetries = 3;
 
         try {
+            // Gating: Check Session
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                console.log('[Persistence] Queue paused: No active session.');
+                this.processing = false;
+                this.notify('error'); // Or a new status 'paused'? 'error' works to show red badge for now.
+                return;
+            }
+
             // Peek first item
             const item = this.queue[0];
 
@@ -163,21 +172,23 @@ class PersistenceService {
     /**
      * Retrieves the latest analysis for a given project and type.
      */
-    public async getLatestAnalysis(
-        projectId: string,
-        type: AnalysisType
-    ): Promise<SavedAnalysisRecord | null> {
+    /**
+     * Retrieves all analyses for a given project.
+     */
+    public async listAnalyses(
+        projectId: string
+    ): Promise<SavedAnalysisRecord[]> {
         const { data, error } = await supabase
             .from('analysis_reports')
             .select('*')
             .eq('project_id', projectId)
-            .eq('type', type)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
+            .order('created_at', { ascending: false });
 
-        if (error) return null;
-        return data as SavedAnalysisRecord;
+        if (error) {
+            console.error('[Persistence] Error listing analyses:', error);
+            return [];
+        }
+        return data as SavedAnalysisRecord[];
     }
 }
 

@@ -17,6 +17,7 @@ import UniversityDirectory from './pages/Universities/UniversityDirectory';
 import BlogPostTemplate from './pages/BlogPostTemplate';
 import ConsistencyMatrix from './pages/ConsistencyMatrix';
 import AuditPage from './pages/AuditPage';
+import HistoryPage from './pages/HistoryPage';
 
 const DarkModeToggle = () => {
     // Initialize state from localStorage or system preference
@@ -78,6 +79,7 @@ const App = () => {
                     <Route path="/registro" element={<RegisterWizard initialMode="register" />} />
                     <Route path="/monitoreo" element={<RegisterWizard initialMode="monitor" />} />
                     <Route path="/portal" element={<StudentPortal />} />
+                    <Route path="/portal/historial" element={<HistoryPage />} />
                     <Route path="/exito" element={<SuccessScreen />} />
                     <Route path="/design" element={<DesignSystem />} />
 

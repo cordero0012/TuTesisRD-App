@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import { useProject } from '../contexts/ProjectContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { analyzeConsistencyStrict } from '../services/consistency/strictAnalyzer';
@@ -26,10 +27,20 @@ export const ConsistencyMatrix = () => {
     // Using project content if available, but primarily relying on local file upload
     const { project, uploadedFile, setUploadedFile } = useProject();
     const { showNotification } = useNotification();
+    const location = useLocation();
 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisProgress, setAnalysisProgress] = useState(0);
     const [result, setResult] = useState<ConsistencyAnalysisResult | null>(null);
+
+    // Load analysis from history if passed via state
+    useEffect(() => {
+        if (location.state?.loadedAnalysis) {
+            setResult(location.state.loadedAnalysis);
+            showNotification("Visualizando reporte del historial", "info");
+        }
+    }, [location.state]);
+
     const [viewMode, setViewMode] = useState<'dashboard' | 'matrix'>('dashboard');
     const [academicLevel, setAcademicLevel] = useState<'Grado' | 'Maestría' | 'Doctorado'>('Grado');
 
@@ -202,25 +213,30 @@ export const ConsistencyMatrix = () => {
                 {/* BEGIN: Sidebar */}
                 <aside className="w-20 lg:w-64 flex flex-col p-6 border-r border-slate-200/50 dark:border-slate-700/50 hidden md:flex z-10 bg-white/50 dark:bg-slate-900/50">
                     {/* Logo Section */}
-                    <div className="flex items-center gap-3 mb-10 pl-1">
+                    <Link to="/portal" className="flex items-center gap-3 mb-10 pl-1 hover:opacity-80 transition-opacity">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-brand-orange/20">
                             <span className="material-symbols-outlined text-xl">school</span>
                         </div>
                         <span className="text-lg font-black tracking-tight text-slate-800 dark:text-white hidden lg:block">TuTesisRD</span>
-                    </div>
+                    </Link>
 
                     {/* Navigation Links */}
                     <nav className="flex-1 space-y-2">
-                        <a className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-bold shadow-sm transition-all" href="#">
+                        <Link className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-bold shadow-sm transition-all" to="/herramientas/matriz">
                             <span className="material-symbols-outlined">grid_view</span>
                             <span className="hidden lg:block">Matriz</span>
-                        </a>
-                        {/* Disabled/Hidden Links as per request */}
-                        <div className="opacity-40 pointer-events-none hidden lg:block">
-                            <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mt-6 mb-2">Próximamente</p>
+                        </Link>
+
+                        <Link to="/portal/historial" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-brand-orange/10 hover:text-brand-orange transition-all">
+                            <span className="material-symbols-outlined">history</span>
+                            <span className="hidden lg:block">Historial</span>
+                        </Link>
+
+                        <div className="opacity-40 pointer-events-none hidden lg:block border-t border-slate-100 dark:border-slate-800 pt-4 mt-4">
+                            <p className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Próximamente</p>
                             <div className="flex items-center gap-3 px-4 py-3 text-slate-500">
-                                <span className="material-symbols-outlined">folder</span>
-                                <span>Mis Proyectos</span>
+                                <span className="material-symbols-outlined">chat</span>
+                                <span>IA Chat</span>
                             </div>
                         </div>
                     </nav>

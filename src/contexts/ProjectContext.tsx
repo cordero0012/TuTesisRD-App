@@ -46,113 +46,122 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
 
     const [session, setSession] = useState<Session | null>(null);
+    const initLock = React.useRef(false);
 
     // Core Initialization Logic
     const initProject = async (currentSession: Session | null) => {
-        const storedId = localStorage.getItem('tutesis_project_uuid');
+        if (initLock.current) return;
+        initLock.current = true;
 
-        // --- 1. Anonymous / Offline Mode (No Session) ---
-        if (!currentSession) {
-            console.log("[ProjectContext] No session. Initializing Mode.");
+        try {
+            const storedId = localStorage.getItem('tutesis_project_uuid');
 
-            // Try to load full project state from local storage if we want true offline persistence
-            // For now, we just keep the ID in memory or use a default, avoiding Supabase calls
-            if (storedId === 'offline-demo' || !storedId) {
-                setProject({
-                    id: 'offline-demo',
-                    title: 'Mi Tesis (Offline)',
-                    content: ''
-                });
-            } else {
-                setProject({
-                    id: 'offline-demo',
-                    title: 'Mi Tesis (Offline)',
-                    content: ''
-                });
-            }
-            return;
-        }
+            // --- 1. Anonymous / Offline Mode (No Session) ---
+            if (!currentSession) {
+                console.log("[ProjectContext] No session. Initializing Mode.");
 
-        // --- 2. Authenticated Mode ---
-        let activeProjectId = '';
-        let activeProjectData: any = null;
-
-        // Try to load Stored Project
-        if (storedId && storedId !== 'offline-demo') {
-            const { data } = await supabase
-                .from('scholar_projects')
-                .select('*')
-                .eq('id', storedId)
-                .single();
-
-            if (data) {
-                // If found, check ownership
-                if (currentSession && !data.owner_id) {
-                    // It's anonymous and we are logged in -> CLAIM IT
-                    const { error: updateError } = await supabase
-                        .from('scholar_projects')
-                        .update({ owner_id: currentSession.user.id })
-                        .eq('id', storedId);
-
-                    if (!updateError) {
-                        console.log("Project claimed by user:", storedId);
-                        data.owner_id = currentSession.user.id;
-                    }
+                // Initialize Offline Project
+                if (storedId === 'offline-demo' || !storedId) {
+                    setProject({
+                        id: 'offline-demo',
+                        title: 'Mi Tesis (Offline)',
+                        content: ''
+                    });
+                } else {
+                    setProject({
+                        id: 'offline-demo',
+                        title: 'Mi Tesis (Offline)',
+                        content: ''
+                    });
                 }
-
-                // If it's mine or anon (and visible), use it
-                activeProjectId = data.id;
-                activeProjectData = data;
-            }
-        }
-
-        // If no valid stored project, try to fetch user's latest
-        if (!activeProjectId) {
-            const { data } = await supabase
-                .from('scholar_projects')
-                .select('*')
-                .eq('owner_id', currentSession.user.id)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .single();
-
-            if (data) {
-                activeProjectId = data.id;
-                activeProjectData = data;
-                localStorage.setItem('tutesis_project_uuid', data.id);
-            }
-        }
-
-        // If still nothing, create new owned project
-        if (!activeProjectId) {
-            const { data, error } = await supabase
-                .from('scholar_projects')
-                .insert({
-                    title: 'Nuevo Proyecto',
-                    content: '',
-                    owner_id: currentSession.user.id
-                })
-                .select()
-                .single();
-
-            if (data && !error) {
-                activeProjectId = data.id;
-                activeProjectData = data;
-                localStorage.setItem('tutesis_project_uuid', data.id);
-            } else {
-                console.error("Failed to create project", error);
-                setProject(p => ({ ...p, id: 'offline-demo' }));
+                // Stop here. Do not call Supabase.
                 return;
             }
-        }
 
-        // 4. Update State
-        setProject({
-            id: activeProjectId,
-            title: activeProjectData.title || 'Mi Tesis',
-            content: activeProjectData.content || '',
-            owner_id: activeProjectData.owner_id
-        });
+            // --- 2. Authenticated Mode ---
+            let activeProjectId = '';
+            let activeProjectData: any = null;
+
+            // Try to load Stored Project
+            if (storedId && storedId !== 'offline-demo') {
+                const { data } = await supabase
+                    .from('scholar_projects')
+                    .select('*')
+                    .eq('id', storedId)
+                    .single();
+
+                if (data) {
+                    // If found, check ownership
+                    if (currentSession && !data.owner_id) {
+                        // It's anonymous and we are logged in -> CLAIM IT
+                        const { error: updateError } = await supabase
+                            .from('scholar_projects')
+                            .update({ owner_id: currentSession.user.id })
+                            .eq('id', storedId);
+
+                        if (!updateError) {
+                            console.log("Project claimed by user:", storedId);
+                            data.owner_id = currentSession.user.id;
+                        }
+                    }
+
+                    // If it's mine or anon (and visible), use it
+                    activeProjectId = data.id;
+                    activeProjectData = data;
+                }
+            }
+
+            // If no valid stored project, try to fetch user's latest
+            if (!activeProjectId) {
+                const { data } = await supabase
+                    .from('scholar_projects')
+                    .select('*')
+                    .eq('owner_id', currentSession.user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                if (data) {
+                    activeProjectId = data.id;
+                    activeProjectData = data;
+                    localStorage.setItem('tutesis_project_uuid', data.id);
+                }
+            }
+
+            // If still nothing, create new owned project
+            if (!activeProjectId) {
+                const { data, error } = await supabase
+                    .from('scholar_projects')
+                    .insert({
+                        title: 'Nuevo Proyecto',
+                        content: '',
+                        owner_id: currentSession.user.id
+                    })
+                    .select()
+                    .single();
+
+                if (data && !error) {
+                    activeProjectId = data.id;
+                    activeProjectData = data;
+                    localStorage.setItem('tutesis_project_uuid', data.id);
+                } else {
+                    console.error("Failed to create project", error);
+                    setProject(p => ({ ...p, id: 'offline-demo' }));
+                    return;
+                }
+            }
+
+            // 4. Update State
+            setProject({
+                id: activeProjectId,
+                title: activeProjectData.title || 'Mi Tesis',
+                content: activeProjectData.content || '',
+                owner_id: activeProjectData.owner_id
+            });
+
+        } finally {
+            initLock.current = false;
+        }
     };
 
     // Auth & Init Sync
