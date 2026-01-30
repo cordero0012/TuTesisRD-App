@@ -32,50 +32,51 @@ const GlobalDiagnosisSchema = z.object({
 });
 
 // Expanded Schema for Strict Analysis
+// Expanded Schema for Strict Analysis
 const EnhancedConsistencyAnalysisResultSchema = z.object({
-    documentType: z.string(),
-    methodologicalApproach: z.string(),
-    disciplinaryArea: z.string(),
-    applicableStandards: z.array(z.string()),
+    documentType: z.string().optional().default("Documento Académico"),
+    methodologicalApproach: z.string().optional().default("No especificado"),
+    disciplinaryArea: z.string().optional().default("General"),
+    applicableStandards: z.array(z.string()).optional().default([]),
 
     // Original Fields
-    consistencyMatrix: z.array(ConsistencyMatrixRowSchema),
-    sectionEvaluations: z.array(SectionEvaluationSchema),
+    consistencyMatrix: z.array(ConsistencyMatrixRowSchema).optional().default([]),
+    sectionEvaluations: z.array(SectionEvaluationSchema).optional().default([]),
 
     methodologicalAnalysis: z.object({
-        approachCoherent: z.boolean(),
-        designAdequate: z.boolean(),
-        techniquesAppropriate: z.boolean(),
-        resultsDeriveFromMethod: z.boolean(),
-        conclusionsSupportedByResults: z.boolean(),
-        forensicReasoning: z.string().describe("Explanation of the forensic analysis logic"),
-        criticalAlerts: z.array(z.string()),
-        invalidatingIssues: z.array(z.string()).optional() // New strict field
+        approachCoherent: z.boolean().optional().default(false),
+        designAdequate: z.boolean().optional().default(false),
+        techniquesAppropriate: z.boolean().optional().default(false),
+        resultsDeriveFromMethod: z.boolean().optional().default(false),
+        conclusionsSupportedByResults: z.boolean().optional().default(false),
+        forensicReasoning: z.string().describe("Explanation of the forensic analysis logic").optional().default("Análisis forense realizado."),
+        criticalAlerts: z.array(z.string()).optional().default([]),
+        invalidatingIssues: z.array(z.string()).optional().default([])
     }),
 
     normativeCompliance: z.object({
-        apa7Score: z.number().min(0).max(100),
-        academicWritingScore: z.number().min(0).max(100),
-        terminologyConsistencyScore: z.number().min(0).max(100),
-        orthographicErrors: z.array(z.string()),
-        grammaticalErrors: z.array(z.string()),
-        styleIssues: z.array(z.string())
-    }),
+        apa7Score: z.number().min(0).max(100).optional().default(0),
+        academicWritingScore: z.number().min(0).max(100).optional().default(0),
+        terminologyConsistencyScore: z.number().min(0).max(100).optional().default(0),
+        orthographicErrors: z.array(z.string()).optional().default([]),
+        grammaticalErrors: z.array(z.string()).optional().default([]),
+        styleIssues: z.array(z.string()).optional().default([])
+    }).optional().default({}),
 
     globalDiagnosis: z.object({
-        level: z.string(), // Relaxed from enum to string
-        auditSummary: z.string().describe("Executive summary of the forensic audit"),
-        mainRisks: z.array(z.string()),
-        internalConsistencyDegree: z.number().min(0).max(100),
-        publishabilityLevel: z.number().min(0).max(100)
-    }),
+        level: z.string().optional().default("Pendiente"),
+        auditSummary: z.string().describe("Executive summary of the forensic audit").optional().default("Resumen de auditoría no disponible."),
+        mainRisks: z.array(z.string()).optional().default([]),
+        internalConsistencyDegree: z.number().min(0).max(100).optional().default(0),
+        publishabilityLevel: z.number().min(0).max(100).optional().default(0)
+    }).optional().default({}),
 
     prioritizedRecommendations: z.array(z.object({
-        priority: z.string(), // Relaxed from enum to string
-        what: z.string(),
-        why: z.string(),
-        how: z.string()
-    })),
+        priority: z.string().optional().default("Media"),
+        what: z.string().optional().default("Revisión general"),
+        why: z.string().optional().default("Mejora requerida"),
+        how: z.string().optional().default("Revisar sección")
+    })).optional().default([]),
 
     // NEW STRICT FIELDS (Operational Model)
     sourceConsistencySubMatrix: z.object({
@@ -83,42 +84,43 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
             citation: z.string(),
             inBibliography: z.boolean(),
             page: z.string()
-        })),
-        referencesCiting: z.array(z.string()),
-        unusedReferences: z.array(z.string()),
-        missingReferences: z.array(z.string())
-    }).optional(),
+        })).optional().default([]),
+        referencesCiting: z.array(z.string()).optional().default([]),
+        unusedReferences: z.array(z.string()).optional().default([]),
+        missingReferences: z.array(z.string()).optional().default([])
+    }).optional().default({ citationsFound: [], referencesCiting: [], unusedReferences: [], missingReferences: [] }),
+
     actionableFeedback: z.array(z.object({
-        finding: z.string(),
-        evidence: z.string(),
-        whyItMatters: z.string(),
-        howToFix: z.string(),
-        example: z.string()
-    })),
+        finding: z.string().optional().default("Hallazgo general"),
+        evidence: z.string().optional().default("Documento"),
+        whyItMatters: z.string().optional().default("Importancia académica"),
+        howToFix: z.string().optional().default("Revisar"),
+        example: z.string().optional().default("-")
+    })).optional().default([]),
 
     structuralVerification: z.object({
         sectionsFound: z.record(z.string(), z.object({
             exists: z.boolean(),
             pages: z.string(),
             completeness: z.number()
-        })),
-        missingSections: z.array(z.string()),
-        misplacedSections: z.array(z.string())
-    }).optional(),
+        })).optional().default({}),
+        missingSections: z.array(z.string()).optional().default([]),
+        misplacedSections: z.array(z.string()).optional().default([])
+    }).optional().default({ sectionsFound: {}, missingSections: [], misplacedSections: [] }),
 
     normativeComplianceDetailed: z.object({
-        overallCompliance: z.number(),
+        overallCompliance: z.number().optional().default(0),
         violations: z.array(z.object({
             rule: z.string(),
-            severity: z.union([z.literal('Critical'), z.literal('High'), z.literal('Medium'), z.literal('Low')]),
+            severity: z.string().optional().default("Medium"), // Relaxed union to string default
             evidence: z.string(),
             impact: z.string()
-        })),
+        })).optional().default([]),
         compliantItems: z.array(z.object({
             rule: z.string(),
             evidence: z.string()
-        }))
-    }).optional()
+        })).optional().default([])
+    }).optional().default({ overallCompliance: 0, violations: [], compliantItems: [] })
 });
 
 export type StrictAnalysisResult = z.infer<typeof EnhancedConsistencyAnalysisResultSchema>;
