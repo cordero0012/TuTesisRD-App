@@ -55,7 +55,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     useEffect(() => {
-        console.log("TuTesisRD App Loaded v1.9 - Segmented Architecture (350k Chars)");
+        console.log("TuTesisRD App Loaded v1.10 - Definitive Hardening");
     }, []);
 
     return (

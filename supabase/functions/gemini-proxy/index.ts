@@ -6,8 +6,9 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const MODELS = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+
 serve(async (req) => {
-    // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
@@ -15,49 +16,77 @@ serve(async (req) => {
     try {
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
         if (!GEMINI_API_KEY) {
-            throw new Error('Missing GEMINI_API_KEY environment variable')
+            return new Response(JSON.stringify({ error: 'Configuración pendiente: Falta GEMINI_API_KEY en Supabase.' }), {
+                status: 500,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            })
         }
 
-        const { prompt, model: modelName, startChat } = await req.json()
+        const { prompt, model: modelName, systemInstruction, temperature } = await req.json()
 
-        // Validate request
         if (!prompt) {
-            throw new Error('Missing prompt in request body')
+            return new Response(JSON.stringify({ error: 'Missing prompt' }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            })
         }
 
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 
-        // Choose model - Default to gemini-1.5-flash if not provided
-        const targetModel = modelName || 'gemini-1.5-flash'
-        const model = genAI.getGenerativeModel({ model: targetModel })
+        // Attempt models in sequence if 404
+        let lastError = null;
+        const requestedModel = modelName || 'gemini-1.5-flash';
+        const tryModels = [requestedModel, ...MODELS.filter(m => m !== requestedModel)];
 
-        let text = ''
+        for (const mName of tryModels) {
+            try {
+                const model = genAI.getGenerativeModel({
+                    model: mName,
+                    systemInstruction: systemInstruction
+                })
 
-        if (startChat) {
-            // Chat mode logic if needed, but for now we basically default to generateContent
-            // for consistency matrix
-            const result = await model.generateContent(prompt)
-            text = result.response.text()
-        } else {
-            // Standard generation
-            const result = await model.generateContent(prompt)
-            text = result.response.text()
+                const result = await model.generateContent({
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: temperature ?? 0.7,
+                    }
+                })
+
+                const text = result.response.text()
+                return new Response(JSON.stringify({ text }), {
+                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                    status: 200,
+                })
+            } catch (err: any) {
+                lastError = err;
+                // If it's a 404, try next model. If it's something else (429, etc), fail early or continue?
+                // 429 (Rate limit) should probably fail or wait, but 404 (Model not found) should definitely try next.
+                if (!err.message?.includes('404')) {
+                    break;
+                }
+                console.warn(`Model ${mName} returned 404, trying next...`);
+            }
         }
 
+        // If we get here, all models failed or we hit a non-404 error
         return new Response(
-            JSON.stringify({ text }),
+            JSON.stringify({
+                error: lastError?.message || 'Error desconocido en el proveedor AI.',
+                type: 'UPSTREAM_ERROR',
+                status: lastError?.status || 500
+            }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 200,
+                status: lastError?.status || 500,
             },
         )
-    } catch (error) {
-        console.error('Gemini Proxy Error:', error)
+    } catch (error: any) {
+        console.error('Edge Function Crash:', error)
         return new Response(
             JSON.stringify({ error: error.message }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 500, // Return 500 so client knows it failed and can fallback
+                status: 500,
             },
         )
     }

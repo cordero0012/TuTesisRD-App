@@ -72,46 +72,50 @@ const getLocalClient = (): GoogleGenerativeAI | null => {
 
 // --- Main Generation Logic (Chain of Responsibility) ---
 
+const FORCE_PROXY_ONLY = true; // DEFINITIVE KILL SWITCH for direct Google calls in web
+
 export const generateText = async (options: GenerateOptions): Promise<string> => {
     // 1. If user explicitly requests Groq, skip chain
     if (options.provider === 'groq') {
         return generateGroq(options);
     }
 
-    // 2. Try Local Gemini (Priority 1)
-    if (!localGeminiDisabled) {
+    // 2. Try Local Gemini (Priority 1) - ONLY if not forced proxy
+    if (!FORCE_PROXY_ONLY && !localGeminiDisabled) {
         const localClient = getLocalClient();
         if (localClient) {
             try {
                 return await generateGeminiLocal(localClient, options);
             } catch (err: any) {
-                // If it's a 404, we have an invalid key. Disable silently.
+                // If it's a 404, we have an invalid key or restricted region. Disable permanently.
                 if (err.message?.includes("404") || (err.status === 404)) {
-                    console.warn("[AI] Optimizing service chain (local bypass)...");
+                    console.warn("[AI] Model restricted or invalid key. Switching to network bridge...");
                     localGeminiDisabled = true;
-                } else {
-                    console.log("[AI] Service busy, using network bridge...");
                 }
             }
         }
     }
 
-    // 3. Try Supabase Proxy (Priority 2)
+    // 3. Try Supabase Proxy (Primary Path)
     if (!proxyDisabled) {
         try {
             return await generateGeminiProxy(options);
         } catch (err: any) {
-            // Persistent disable for 502/timeouts to keep console clean
-            if (err.message?.includes("502") || err.message?.includes("Timeout")) {
-                console.warn("[AI] Optimizing service chain (proxy bypass)...");
+            // Enhanced error reporting from proxy
+            const errorMsg = err.message || "";
+            if (errorMsg.includes("502") || errorMsg.includes("Timeout")) {
+                console.warn("[AI] Network bridge unstable (502/Timeout). Using backup...");
                 proxyDisabled = true;
-            } else {
-                console.log("[AI] Network busy, using high-speed backup...");
+            } else if (errorMsg.includes("UPSTREAM_ERROR")) {
+                console.groupCollapsed("[AI] Provider Alert");
+                console.log("Details:", errorMsg);
+                console.groupEnd();
             }
         }
     }
 
-    // 4. Fallback to Groq (Priority 3)
+    // 4. Fallback to Groq (Safety Net)
+    console.log("[AI] Safety net activated (Groq)");
     return await generateGroq(options);
 };
 
