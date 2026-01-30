@@ -101,7 +101,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
     structuralVerification: z.object({
         sectionsFound: z.record(z.string(), z.object({
             exists: z.boolean(),
-            pages: z.string(),
+            pages: z.string().nullable().optional(),
             completeness: z.number()
         })).optional().default({}),
         missingSections: z.array(z.string()).optional().default([]),

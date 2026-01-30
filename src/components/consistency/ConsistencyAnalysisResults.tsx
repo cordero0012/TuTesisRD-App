@@ -184,7 +184,7 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
                                 <div key={name} className={`p-4 rounded-xl border ${data.exists ? (data.completeness >= 80 ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700' : 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-700') : 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800 opacity-60'}`}>
                                     <div className="flex justify-between items-start mb-2">
                                         <span className={`w-2 h-2 rounded-full ${data.exists ? (data.completeness >= 80 ? 'bg-emerald-500' : 'bg-yellow-500') : 'bg-red-500'}`}></span>
-                                        <span className="text-[10px] font-mono text-slate-400">{data.pages || 'N/A'}</span>
+                                        <span className="text-[10px] font-mono text-slate-400">{data.pages ?? 'Evidencia Textual'}</span>
                                     </div>
                                     <p className={`text-sm font-bold truncate ${data.exists ? 'text-slate-700 dark:text-slate-200' : 'text-red-600 dark:text-red-400 line-through decoration-red-500/50'}`}>{name}</p>
 

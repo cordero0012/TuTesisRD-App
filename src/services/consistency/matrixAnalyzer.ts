@@ -60,7 +60,7 @@ export interface ConsistencyAnalysisResult {
 
     // STRICT MODE FIELDS
     structuralVerification?: {
-        sectionsFound: Record<string, { exists: boolean; pages: string; completeness: number }>;
+        sectionsFound: Record<string, { exists: boolean; pages: string | null | undefined; completeness: number }>;
         missingSections: string[];
         misplacedSections: string[];
     };
