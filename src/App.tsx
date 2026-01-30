@@ -55,7 +55,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     useEffect(() => {
-        console.log("TuTesisRD App Loaded v1.14 - Operation Throttling");
+        console.log("TuTesisRD App Loaded v1.15 - Payload Alignment");
     }, []);
 
     return (
