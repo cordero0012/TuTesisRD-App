@@ -49,7 +49,6 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         techniquesAppropriate: z.boolean().optional().default(false),
         resultsDeriveFromMethod: z.boolean().optional().default(false),
         conclusionsSupportedByResults: z.boolean().optional().default(false),
-        forensicReasoning: z.string().describe("Explanation of the forensic analysis logic").optional().default(""), // Empty default
         criticalAlerts: z.array(z.string()).optional().default([]),
         invalidatingIssues: z.array(z.string()).optional().default([])
     }),
@@ -65,7 +64,6 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
 
     globalDiagnosis: z.object({
         level: z.string().optional().default("Pendiente"),
-        auditSummary: z.string().describe("Executive summary of the forensic audit").optional().default("No disponible: el modelo no devolvió este campo."), // Neutral default
         mainRisks: z.array(z.string()).optional().default([]),
         internalConsistencyDegree: z.number().min(0).max(100).optional().default(0),
         publishabilityLevel: z.number().min(0).max(100).optional().default(0)
@@ -207,11 +205,9 @@ export async function analyzeConsistencyStrict(
             status = 'insufficient_input';
         }
 
-        // 2. Model Non-Compliant / Partial: Check for empty critical fields that we filled with defaults
-        const hasMissingReasoning = !validated.methodologicalAnalysis.forensicReasoning;
-        const hasMissingSummary = validated.globalDiagnosis.auditSummary.includes("No disponible");
-
-        if (hasMissingReasoning || hasMissingSummary) {
+        // 2. Model Non-Compliant / Partial: Check for critical structural failures
+        // We only mark partial if substantially empty (e.g. no diagnosis level)
+        if (validated.globalDiagnosis.level === 'Pendiente') {
             status = 'partial';
         }
 
