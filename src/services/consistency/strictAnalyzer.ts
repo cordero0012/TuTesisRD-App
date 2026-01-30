@@ -49,7 +49,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         techniquesAppropriate: z.boolean().optional().default(false),
         resultsDeriveFromMethod: z.boolean().optional().default(false),
         conclusionsSupportedByResults: z.boolean().optional().default(false),
-        forensicReasoning: z.string().describe("Explanation of the forensic analysis logic").optional().default("Análisis forense realizado."),
+        forensicReasoning: z.string().describe("Explanation of the forensic analysis logic").optional().default(""), // Empty default
         criticalAlerts: z.array(z.string()).optional().default([]),
         invalidatingIssues: z.array(z.string()).optional().default([])
     }),
@@ -65,7 +65,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
 
     globalDiagnosis: z.object({
         level: z.string().optional().default("Pendiente"),
-        auditSummary: z.string().describe("Executive summary of the forensic audit").optional().default("Resumen de auditoría no disponible."),
+        auditSummary: z.string().describe("Executive summary of the forensic audit").optional().default("No disponible: el modelo no devolvió este campo."), // Neutral default
         mainRisks: z.array(z.string()).optional().default([]),
         internalConsistencyDegree: z.number().min(0).max(100).optional().default(0),
         publishabilityLevel: z.number().min(0).max(100).optional().default(0)
@@ -92,7 +92,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
 
     actionableFeedback: z.array(z.object({
         finding: z.string().optional().default("Hallazgo general"),
-        evidence: z.string().optional().default("Documento"),
+        evidence: z.string().optional().default(""), // Empty evidence default
         whyItMatters: z.string().optional().default("Importancia académica"),
         howToFix: z.string().optional().default("Revisar"),
         example: z.string().optional().default("-")
@@ -112,7 +112,7 @@ const EnhancedConsistencyAnalysisResultSchema = z.object({
         overallCompliance: z.number().optional().default(0),
         violations: z.array(z.object({
             rule: z.string(),
-            severity: z.string().optional().default("Medium"), // Relaxed union to string default
+            severity: z.string().optional().default("Medium"),
             evidence: z.string(),
             impact: z.string()
         })).optional().default([]),
@@ -199,16 +199,36 @@ export async function analyzeConsistencyStrict(
         // 4. Validate and Return
         const validated = EnhancedConsistencyAnalysisResultSchema.parse(result);
 
-        // Add raw analysis text if needed by UI, though usually it's just the object
+        // --- STATUS DETERMINATION LOGIC ---
+        let status: 'ok' | 'partial' | 'insufficient_input' | 'model_noncompliant' = 'ok';
+
+        // 1. Insufficient Input: If document text was tiny or meaningful content wasn't found
+        if (cleanText.length < 500) {
+            status = 'insufficient_input';
+        }
+
+        // 2. Model Non-Compliant / Partial: Check for empty critical fields that we filled with defaults
+        const hasMissingReasoning = !validated.methodologicalAnalysis.forensicReasoning;
+        const hasMissingSummary = validated.globalDiagnosis.auditSummary.includes("No disponible");
+
+        if (hasMissingReasoning || hasMissingSummary) {
+            status = 'partial';
+        }
+
+        // Add raw analysis text if needed by UI
         return {
             ...validated,
-            rawAnalysis: "Análisis Forense Completado"
+            rawAnalysis: "Análisis Forense Completado",
+            analysisStatus: status
         } as unknown as ConsistencyAnalysisResult;
 
     } catch (error: any) {
         console.error("Strict Analysis Failed. Full Error:", JSON.stringify(error, null, 2));
         if (error instanceof z.ZodError) {
+            // Even in error, return a 'partial' state if possible, or 'model_noncompliant'
             console.error("Zod Validation Issues:", error.issues);
+            // We could return a partial object here if we wanted to be extremely resilient,
+            // but for now, we throw but log cleanly.
         }
         throw new Error(`Error en análisis estricto: ${error.message}`);
     }

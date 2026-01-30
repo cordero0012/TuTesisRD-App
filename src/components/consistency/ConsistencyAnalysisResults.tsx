@@ -75,175 +75,207 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
                 </div>
             </div>
 
-            {/* FASE 1: VERIFICACIÓN DE CUMPLIMIENTO NORMATIVO (STRICT MODE) */}
-            {result.normativeComplianceDetailed && (
-                <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
-                    <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-orange-500">policy</span>
-                        Cumplimiento Normativo Institucional
-                    </h3>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Overall Score */}
-                        <div className="col-span-1 flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
-                            <div className="relative size-32 mb-4">
-                                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
-                                    <path className="text-slate-200 dark:text-slate-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3"></path>
-                                    <path className={`${result.normativeComplianceDetailed.overallCompliance >= 80 ? 'text-emerald-500' : result.normativeComplianceDetailed.overallCompliance >= 60 ? 'text-orange-500' : 'text-red-500'}`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray={`${result.normativeComplianceDetailed.overallCompliance}, 100`} strokeWidth="3" strokeLinecap="round"></path>
-                                </svg>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-3xl font-black text-slate-900 dark:text-white">{result.normativeComplianceDetailed.overallCompliance}%</span>
-                                    <span className="text-[10px] font-bold uppercase text-slate-500">Cumplimiento</span>
-                                </div>
+            {/* STATUS WARNINGS - PROMINENT DISPLAY */}
+            {
+                (result.analysisStatus === 'partial' || result.analysisStatus === 'insufficient_input') && (
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-6 rounded-r-xl shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 bg-amber-100 dark:bg-amber-900/40 rounded-full shrink-0">
+                                <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-2xl">
+                                    {result.analysisStatus === 'insufficient_input' ? 'content_paste_off' : 'warning'}
+                                </span>
                             </div>
-                        </div>
-
-                        {/* Violations List */}
-                        <div className="col-span-1 lg:col-span-2 space-y-4">
-                            {result.normativeComplianceDetailed.violations.length > 0 ? (
-                                <>
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-red-500 flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-sm">warning</span>
-                                        Violaciones Detectadas ({result.normativeComplianceDetailed.violations.length})
-                                    </h4>
-                                    <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                                        {result.normativeComplianceDetailed.violations.map((violation, idx) => (
-                                            <div key={idx} className={`p-4 rounded-xl border-l-4 ${violation.severity === 'Critical' ? 'bg-red-50 dark:bg-red-900/10 border-red-500' : violation.severity === 'High' ? 'bg-orange-50 dark:bg-orange-900/10 border-orange-500' : 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-500'}`}>
-                                                <div className="flex justify-between items-start mb-1">
-                                                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${violation.severity === 'Critical' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
-                                                        {violation.severity === 'Critical' ? 'Crítico' : violation.severity === 'High' ? 'Alto' : 'Medio'}
-                                                    </span>
-                                                    <span className="text-[10px] font-mono text-slate-500 italic">{violation.evidence.match(/\[Pág\. [^\]]+\]/)?.[0] || 'Ubicación n/a'}</span>
-                                                </div>
-                                                <p className="font-bold text-sm text-slate-900 dark:text-white mt-1">{violation.rule}</p>
-                                                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{violation.impact}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
-                                    <span className="material-symbols-outlined text-4xl text-emerald-500 mb-2">verified</span>
-                                    <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">¡Excelente! No se detectaron violaciones normativas.</p>
-                                </div>
-                            )}
+                            <div>
+                                <h3 className="text-lg font-black text-amber-800 dark:text-amber-200 uppercase tracking-tight mb-2">
+                                    {result.analysisStatus === 'insufficient_input' ? 'Información Insuficiente para Dictamen' : 'Análisis Parcial (Salida Limitada)'}
+                                </h3>
+                                <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed max-w-2xl">
+                                    {result.analysisStatus === 'insufficient_input'
+                                        ? "No se pudo extraer suficiente texto del documento para realizar una auditoría forense confiable. Verifica que el archivo no esté protegido o sea una imagen escaneada."
+                                        : "La Inteligencia Artificial generó un reporte incompleto. Algunos indicadores pueden estar en 0% o faltar detalles específicos. Se muestran los datos recuperados."}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-            {/* FASE 2: VERIFICACIÓN ESTRUCTURAL (STRICT MODE) */}
-            {result.structuralVerification && (
-                <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
-                    <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-indigo-500">account_tree</span>
-                        Verificación Estructural
-                    </h3>
+            {/* FASE 1: VERIFICACIÓN DE CUMPLIMIENTO NORMATIVO (STRICT MODE) */}
+            {
+                result.normativeComplianceDetailed && (
+                    <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
+                        <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-orange-500">policy</span>
+                            Cumplimiento Normativo Institucional
+                        </h3>
 
-                    {result.structuralVerification.missingSections.length > 0 && (
-                        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl flex items-start gap-3">
-                            <span className="material-symbols-outlined text-red-500 mt-0.5">error</span>
-                            <div>
-                                <p className="font-bold text-red-700 dark:text-red-400 text-sm">Secciones Obligatorias Faltantes</p>
-                                <p className="text-xs text-red-600 dark:text-red-300 mt-1">El documento no cumple con la estructura requerida. Faltan: {result.structuralVerification.missingSections.join(', ')}.</p>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {Object.entries(result.structuralVerification.sectionsFound).map(([name, data]) => (
-                            <div key={name} className={`p-4 rounded-xl border ${data.exists ? (data.completeness >= 80 ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700' : 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-700') : 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800 opacity-60'}`}>
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className={`w-2 h-2 rounded-full ${data.exists ? (data.completeness >= 80 ? 'bg-emerald-500' : 'bg-yellow-500') : 'bg-red-500'}`}></span>
-                                    <span className="text-[10px] font-mono text-slate-400">{data.pages || 'N/A'}</span>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Overall Score */}
+                            <div className="col-span-1 flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                <div className="relative size-32 mb-4">
+                                    <svg className="size-full -rotate-90" viewBox="0 0 36 36">
+                                        <path className="text-slate-200 dark:text-slate-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3"></path>
+                                        <path className={`${result.normativeComplianceDetailed.overallCompliance >= 80 ? 'text-emerald-500' : result.normativeComplianceDetailed.overallCompliance >= 60 ? 'text-orange-500' : 'text-red-500'}`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray={`${result.normativeComplianceDetailed.overallCompliance}, 100`} strokeWidth="3" strokeLinecap="round"></path>
+                                    </svg>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-3xl font-black text-slate-900 dark:text-white">{result.normativeComplianceDetailed.overallCompliance}%</span>
+                                        <span className="text-[10px] font-bold uppercase text-slate-500">Cumplimiento</span>
+                                    </div>
                                 </div>
-                                <p className={`text-sm font-bold truncate ${data.exists ? 'text-slate-700 dark:text-slate-200' : 'text-red-600 dark:text-red-400 line-through decoration-red-500/50'}`}>{name}</p>
+                            </div>
 
-                                {data.exists && (
-                                    <div className="mt-3">
-                                        <div className="flex justify-between text-[10px] mb-1">
-                                            <span className="text-slate-400">Completitud</span>
-                                            <span className="font-bold">{data.completeness}%</span>
+                            {/* Violations List */}
+                            <div className="col-span-1 lg:col-span-2 space-y-4">
+                                {result.normativeComplianceDetailed.violations.length > 0 ? (
+                                    <>
+                                        <h4 className="text-xs font-black uppercase tracking-widest text-red-500 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-sm">warning</span>
+                                            Violaciones Detectadas ({result.normativeComplianceDetailed.violations.length})
+                                        </h4>
+                                        <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                            {result.normativeComplianceDetailed.violations.map((violation, idx) => (
+                                                <div key={idx} className={`p-4 rounded-xl border-l-4 ${violation.severity === 'Critical' ? 'bg-red-50 dark:bg-red-900/10 border-red-500' : violation.severity === 'High' ? 'bg-orange-50 dark:bg-orange-900/10 border-orange-500' : 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-500'}`}>
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${violation.severity === 'Critical' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
+                                                            {violation.severity === 'Critical' ? 'Crítico' : violation.severity === 'High' ? 'Alto' : 'Medio'}
+                                                        </span>
+                                                        <span className="text-[10px] font-mono text-slate-500 italic">{violation.evidence.match(/\[Pág\. [^\]]+\]/)?.[0] || 'Ubicación n/a'}</span>
+                                                    </div>
+                                                    <p className="font-bold text-sm text-slate-900 dark:text-white mt-1">{violation.rule}</p>
+                                                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{violation.impact}</p>
+                                                </div>
+                                            ))}
                                         </div>
-                                        <div className="h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                            <div className={`h-full rounded-full ${data.completeness >= 80 ? 'bg-emerald-500' : 'bg-yellow-500'}`} style={{ width: `${data.completeness}%` }}></div>
-                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
+                                        <span className="material-symbols-outlined text-4xl text-emerald-500 mb-2">verified</span>
+                                        <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">¡Excelente! No se detectaron violaciones normativas.</p>
                                     </div>
                                 )}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
+
+            {/* FASE 2: VERIFICACIÓN ESTRUCTURAL (STRICT MODE) */}
+            {
+                result.structuralVerification && (
+                    <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
+                        <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-indigo-500">account_tree</span>
+                            Verificación Estructural
+                        </h3>
+
+                        {result.structuralVerification.missingSections.length > 0 && (
+                            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl flex items-start gap-3">
+                                <span className="material-symbols-outlined text-red-500 mt-0.5">error</span>
+                                <div>
+                                    <p className="font-bold text-red-700 dark:text-red-400 text-sm">Secciones Obligatorias Faltantes</p>
+                                    <p className="text-xs text-red-600 dark:text-red-300 mt-1">El documento no cumple con la estructura requerida. Faltan: {result.structuralVerification.missingSections.join(', ')}.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            {Object.entries(result.structuralVerification.sectionsFound).map(([name, data]) => (
+                                <div key={name} className={`p-4 rounded-xl border ${data.exists ? (data.completeness >= 80 ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700' : 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-700') : 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800 opacity-60'}`}>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className={`w-2 h-2 rounded-full ${data.exists ? (data.completeness >= 80 ? 'bg-emerald-500' : 'bg-yellow-500') : 'bg-red-500'}`}></span>
+                                        <span className="text-[10px] font-mono text-slate-400">{data.pages || 'N/A'}</span>
+                                    </div>
+                                    <p className={`text-sm font-bold truncate ${data.exists ? 'text-slate-700 dark:text-slate-200' : 'text-red-600 dark:text-red-400 line-through decoration-red-500/50'}`}>{name}</p>
+
+                                    {data.exists && (
+                                        <div className="mt-3">
+                                            <div className="flex justify-between text-[10px] mb-1">
+                                                <span className="text-slate-400">Completitud</span>
+                                                <span className="font-bold">{data.completeness}%</span>
+                                            </div>
+                                            <div className="h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                                <div className={`h-full rounded-full ${data.completeness >= 80 ? 'bg-emerald-500' : 'bg-yellow-500'}`} style={{ width: `${data.completeness}%` }}></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
 
             {/* FASE 2.5: SUB-MATRIZ DE CONSISTENCIA DE FUENTES (NEW) */}
-            {result.sourceConsistencySubMatrix && (
-                <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
-                    <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-blue-500">menu_book</span>
-                        Sub-matriz de Consistencia de Fuentes (APA 7)
-                    </h3>
+            {
+                result.sourceConsistencySubMatrix && (
+                    <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
+                        <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-blue-500">menu_book</span>
+                            Sub-matriz de Consistencia de Fuentes (APA 7)
+                        </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Status Summary */}
-                        <div className="space-y-4">
-                            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
-                                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Alineación de Citación</h4>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center text-sm">
-                                        <span className="text-slate-600 dark:text-slate-400">Referencias Citadas</span>
-                                        <span className="font-bold text-slate-900 dark:text-white">{result.sourceConsistencySubMatrix.referencesCiting.length}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm">
-                                        <span className="text-slate-600 dark:text-slate-400">Referencias NO Usadas</span>
-                                        <span className={`font-bold ${result.sourceConsistencySubMatrix.unusedReferences.length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
-                                            {result.sourceConsistencySubMatrix.unusedReferences.length}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm">
-                                        <span className="text-slate-600 dark:text-slate-400">Citas sin Referencia</span>
-                                        <span className={`font-bold ${result.sourceConsistencySubMatrix.missingReferences.length > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
-                                            {result.sourceConsistencySubMatrix.missingReferences.length}
-                                        </span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Status Summary */}
+                            <div className="space-y-4">
+                                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                    <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Alineación de Citación</h4>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-600 dark:text-slate-400">Referencias Citadas</span>
+                                            <span className="font-bold text-slate-900 dark:text-white">{result.sourceConsistencySubMatrix.referencesCiting.length}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-600 dark:text-slate-400">Referencias NO Usadas</span>
+                                            <span className={`font-bold ${result.sourceConsistencySubMatrix.unusedReferences.length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                                                {result.sourceConsistencySubMatrix.unusedReferences.length}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-600 dark:text-slate-400">Citas sin Referencia</span>
+                                            <span className={`font-bold ${result.sourceConsistencySubMatrix.missingReferences.length > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                                                {result.sourceConsistencySubMatrix.missingReferences.length}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {result.sourceConsistencySubMatrix.missingReferences.length > 0 && (
+                                    <div className="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl">
+                                        <h5 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-2">Citas Críticas (Faltan en Bibliografía)</h5>
+                                        <ul className="text-xs space-y-1 text-red-700 dark:text-red-400">
+                                            {result.sourceConsistencySubMatrix.missingReferences.map((ref, i) => (
+                                                <li key={i} className="flex gap-2">
+                                                    <span className="material-symbols-outlined text-xs">close</span>
+                                                    {ref}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
 
-                            {result.sourceConsistencySubMatrix.missingReferences.length > 0 && (
-                                <div className="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl">
-                                    <h5 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-2">Citas Críticas (Faltan en Bibliografía)</h5>
-                                    <ul className="text-xs space-y-1 text-red-700 dark:text-red-400">
-                                        {result.sourceConsistencySubMatrix.missingReferences.map((ref, i) => (
-                                            <li key={i} className="flex gap-2">
-                                                <span className="material-symbols-outlined text-xs">close</span>
-                                                {ref}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Citations List */}
-                        <div className="bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
-                            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Citas Encontradas en Texto</h4>
-                            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                {result.sourceConsistencySubMatrix.citationsFound.map((item, idx) => (
-                                    <div key={idx} className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                                        <div className="flex items-center gap-3">
-                                            <span className={`material-symbols-outlined text-sm ${item.inBibliography ? 'text-emerald-500' : 'text-red-500'}`}>
-                                                {item.inBibliography ? 'check_circle' : 'cancel'}
-                                            </span>
-                                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{item.citation}</span>
+                            {/* Citations List */}
+                            <div className="bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+                                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Citas Encontradas en Texto</h4>
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {result.sourceConsistencySubMatrix.citationsFound.map((item, idx) => (
+                                        <div key={idx} className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                                            <div className="flex items-center gap-3">
+                                                <span className={`material-symbols-outlined text-sm ${item.inBibliography ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                    {item.inBibliography ? 'check_circle' : 'cancel'}
+                                                </span>
+                                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{item.citation}</span>
+                                            </div>
+                                            <span className="text-[10px] font-mono text-slate-400">Pág. {item.page}</span>
                                         </div>
-                                        <span className="text-[10px] font-mono text-slate-400">Pág. {item.page}</span>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Diagnóstico Global */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -425,55 +457,57 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
             </div>
 
             {/* Evaluación por Secciones */}
-            {result.sectionEvaluations && result.sectionEvaluations.length > 0 && (
-                <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
-                    <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-primary">menu_book</span>
-                        Evaluación por Secciones
-                    </h3>
-                    <div className="space-y-4">
-                        {result.sectionEvaluations.map((section, idx) => (
-                            <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                <h4 className="text-base font-black text-slate-900 dark:text-white mb-4">{section.section}</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {section.strengths.length > 0 && (
-                                        <div>
-                                            <h5 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-sm">thumb_up</span>
-                                                Fortalezas
-                                            </h5>
-                                            <ul className="space-y-1">
-                                                {section.strengths.map((s, i) => (
-                                                    <li key={i} className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2">
-                                                        <span className="text-emerald-500 mt-0.5">•</span>
-                                                        <span>{s}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                    {section.weaknesses.length > 0 && (
-                                        <div>
-                                            <h5 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-2 flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-sm">thumb_down</span>
-                                                Debilidades
-                                            </h5>
-                                            <ul className="space-y-1">
-                                                {section.weaknesses.map((w, i) => (
-                                                    <li key={i} className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2">
-                                                        <span className="text-red-500 mt-0.5">•</span>
-                                                        <span>{w}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
+            {
+                result.sectionEvaluations && result.sectionEvaluations.length > 0 && (
+                    <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
+                        <h3 className="text-lg font-black uppercase tracking-tight text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-primary">menu_book</span>
+                            Evaluación por Secciones
+                        </h3>
+                        <div className="space-y-4">
+                            {result.sectionEvaluations.map((section, idx) => (
+                                <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                    <h4 className="text-base font-black text-slate-900 dark:text-white mb-4">{section.section}</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {section.strengths.length > 0 && (
+                                            <div>
+                                                <h5 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-sm">thumb_up</span>
+                                                    Fortalezas
+                                                </h5>
+                                                <ul className="space-y-1">
+                                                    {section.strengths.map((s, i) => (
+                                                        <li key={i} className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2">
+                                                            <span className="text-emerald-500 mt-0.5">•</span>
+                                                            <span>{s}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {section.weaknesses.length > 0 && (
+                                            <div>
+                                                <h5 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-2 flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-sm">thumb_down</span>
+                                                    Debilidades
+                                                </h5>
+                                                <ul className="space-y-1">
+                                                    {section.weaknesses.map((w, i) => (
+                                                        <li key={i} className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2">
+                                                            <span className="text-red-500 mt-0.5">•</span>
+                                                            <span>{w}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Normativa y Estilo */}
             <div className="bg-white dark:bg-surface-dark rounded-3xl border border-slate-200 dark:border-surface-border p-8 shadow-xl">
@@ -583,61 +617,65 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
             </div>
 
             {/* FASE 4: FEEDBACK ACCIONABLE (OPERATIONAL MODEL) */}
-            {result.actionableFeedback && result.actionableFeedback.length > 0 && (
-                <div className="bg-slate-900 border-2 border-brand-orange/30 p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-32 bg-brand-orange/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+            {
+                result.actionableFeedback && result.actionableFeedback.length > 0 && (
+                    <div className="bg-slate-900 border-2 border-brand-orange/30 p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-32 bg-brand-orange/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
-                    <h3 className="text-xl font-black uppercase tracking-tight text-white mb-8 flex items-center gap-2 relative z-10">
-                        <span className="material-symbols-outlined text-brand-orange text-3xl">lightbulb_circle</span>
-                        Feedback de Mejora Directa
-                    </h3>
+                        <h3 className="text-xl font-black uppercase tracking-tight text-white mb-8 flex items-center gap-2 relative z-10">
+                            <span className="material-symbols-outlined text-brand-orange text-3xl">lightbulb_circle</span>
+                            Feedback de Mejora Directa
+                        </h3>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
-                        {result.actionableFeedback.map((fb, idx) => (
-                            <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-white/15 transition-all">
-                                <div className="flex justify-between items-start mb-4">
-                                    <h4 className="text-brand-orange font-black uppercase tracking-widest text-xs">Hallazgo #{idx + 1}</h4>
-                                    <span className="text-[10px] bg-white/20 text-white px-2 py-1 rounded-md font-mono">{fb.evidence}</span>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
+                            {result.actionableFeedback.map((fb, idx) => (
+                                <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-white/15 transition-all">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <h4 className="text-brand-orange font-black uppercase tracking-widest text-xs">Hallazgo #{idx + 1}</h4>
+                                        <span className="text-[10px] bg-white/20 text-white px-2 py-1 rounded-md font-mono">{fb.evidence}</span>
+                                    </div>
+                                    <p className="text-white font-bold mb-4">{fb.finding}</p>
+
+                                    <div className="space-y-4">
+                                        <div className="text-xs">
+                                            <span className="text-brand-orange font-black uppercase tracking-tighter block mb-1">Por qué importa:</span>
+                                            <span className="text-slate-300 leading-relaxed">{fb.whyItMatters}</span>
+                                        </div>
+                                        <div className="text-xs bg-slate-800/50 p-3 rounded-lg border border-white/5">
+                                            <span className="text-emerald-400 font-black uppercase tracking-tighter block mb-1">Cómo corregir:</span>
+                                            <span className="text-slate-200">{fb.howToFix}</span>
+                                        </div>
+                                        <div className="text-xs italic text-slate-400 border-l-2 border-brand-orange/50 pl-3">
+                                            <span className="text-[10px] text-brand-orange font-black uppercase block mb-1">Ejemplo:</span>
+                                            "{fb.example}"
+                                        </div>
+                                    </div>
                                 </div>
-                                <p className="text-white font-bold mb-4">{fb.finding}</p>
-
-                                <div className="space-y-4">
-                                    <div className="text-xs">
-                                        <span className="text-brand-orange font-black uppercase tracking-tighter block mb-1">Por qué importa:</span>
-                                        <span className="text-slate-300 leading-relaxed">{fb.whyItMatters}</span>
-                                    </div>
-                                    <div className="text-xs bg-slate-800/50 p-3 rounded-lg border border-white/5">
-                                        <span className="text-emerald-400 font-black uppercase tracking-tighter block mb-1">Cómo corregir:</span>
-                                        <span className="text-slate-200">{fb.howToFix}</span>
-                                    </div>
-                                    <div className="text-xs italic text-slate-400 border-l-2 border-brand-orange/50 pl-3">
-                                        <span className="text-[10px] text-brand-orange font-black uppercase block mb-1">Ejemplo:</span>
-                                        "{fb.example}"
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Principales Riesgos */}
-            {result.globalDiagnosis?.mainRisks && result.globalDiagnosis.mainRisks.length > 0 && (
-                <div className="bg-red-50 dark:bg-red-900/10 border-2 border-red-200 dark:border-red-800/50 rounded-3xl p-8">
-                    <h3 className="text-lg font-black uppercase tracking-tight text-red-900 dark:text-red-200 mb-4 flex items-center gap-2">
-                        <span className="material-symbols-outlined">warning</span>
-                        Principales Riesgos Académicos
-                    </h3>
-                    <ul className="space-y-2">
-                        {result.globalDiagnosis.mainRisks.map((risk, idx) => (
-                            <li key={idx} className="flex items-start gap-3 text-sm text-red-800 dark:text-red-300">
-                                <span className="material-symbols-outlined text-red-500 mt-0.5">error</span>
-                                <span>{risk}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+            {
+                result.globalDiagnosis?.mainRisks && result.globalDiagnosis.mainRisks.length > 0 && (
+                    <div className="bg-red-50 dark:bg-red-900/10 border-2 border-red-200 dark:border-red-800/50 rounded-3xl p-8">
+                        <h3 className="text-lg font-black uppercase tracking-tight text-red-900 dark:text-red-200 mb-4 flex items-center gap-2">
+                            <span className="material-symbols-outlined">warning</span>
+                            Principales Riesgos Académicos
+                        </h3>
+                        <ul className="space-y-2">
+                            {result.globalDiagnosis.mainRisks.map((risk, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-sm text-red-800 dark:text-red-300">
+                                    <span className="material-symbols-outlined text-red-500 mt-0.5">error</span>
+                                    <span>{risk}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
 
             {/* Detail Modal */}
             {
@@ -679,6 +717,6 @@ export const ConsistencyAnalysisResults: React.FC<ConsistencyAnalysisResultsProp
                     </div>
                 )
             }
-        </div >
+        </div>
     );
 };

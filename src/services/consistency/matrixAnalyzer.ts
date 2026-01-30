@@ -56,6 +56,32 @@ export interface ConsistencyAnalysisResult {
         how: string;
     }[];
     rawAnalysis: string;
+    analysisStatus?: 'ok' | 'partial' | 'insufficient_input' | 'model_noncompliant' | 'error';
+
+    // STRICT MODE FIELDS
+    structuralVerification?: {
+        sectionsFound: Record<string, { exists: boolean; pages: string; completeness: number }>;
+        missingSections: string[];
+        misplacedSections: string[];
+    };
+    sourceConsistencySubMatrix?: {
+        citationsFound: { citation: string; inBibliography: boolean; page: string }[];
+        referencesCiting: string[];
+        unusedReferences: string[];
+        missingReferences: string[];
+    };
+    actionableFeedback?: {
+        finding: string;
+        evidence: string;
+        whyItMatters: string;
+        howToFix: string;
+        example: string;
+    }[];
+    normativeComplianceDetailed?: {
+        overallCompliance: number;
+        violations: { rule: string; severity: string; evidence: string; impact: string }[];
+        compliantItems: { rule: string; evidence: string }[];
+    };
 }
 
 export interface DocumentChunk {
