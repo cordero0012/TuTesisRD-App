@@ -1,12 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { GoogleGenerativeAI } from "npm:@google/generative-ai"
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const MODELS = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+// DEFINITIVE GEMINI 2.x MODELS (Post-Sept 2025 Deprecation)
+const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-pro'];
 
 serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -16,7 +16,7 @@ serve(async (req) => {
     try {
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
         if (!GEMINI_API_KEY) {
-            return new Response(JSON.stringify({ error: 'Configuración pendiente: Falta GEMINI_API_KEY en Supabase.' }), {
+            return new Response(JSON.stringify({ error: 'Falta GEMINI_API_KEY en Supabase.' }), {
                 status: 500,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             })
@@ -31,53 +31,66 @@ serve(async (req) => {
             })
         }
 
-        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-
-        // Attempt models in sequence if 404
+        // --- NEW PIPELINE: STABLE v1 API ---
         let lastError = null;
-        const requestedModel = modelName || 'gemini-1.5-flash';
+        let lastStatus = 500;
+        const requestedModel = modelName || 'gemini-2.5-flash';
         const tryModels = [requestedModel, ...MODELS.filter(m => m !== requestedModel)];
 
         for (const mName of tryModels) {
             try {
-                const model = genAI.getGenerativeModel({
-                    model: mName,
-                    systemInstruction: systemInstruction
-                })
+                // Using standard fetch to v1 stable endpoint
+                const url = `https://generativelanguage.googleapis.com/v1/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
 
-                const result = await model.generateContent({
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    generationConfig: {
-                        temperature: temperature ?? 0.7,
-                    }
-                })
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        system_instruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
+                        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            temperature: temperature ?? 0.7,
+                        }
+                    })
+                });
 
-                const text = result.response.text()
-                return new Response(JSON.stringify({ text }), {
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                    status: 200,
-                })
-            } catch (err: any) {
-                lastError = err;
-                // If it's a 404, try next model. If it's something else (429, etc), fail early or continue?
-                // 429 (Rate limit) should probably fail or wait, but 404 (Model not found) should definitely try next.
-                if (!err.message?.includes('404')) {
-                    break;
+                if (response.ok) {
+                    const data = await response.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    return new Response(JSON.stringify({ text }), {
+                        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                        status: 200,
+                    });
                 }
-                console.warn(`Model ${mName} returned 404, trying next...`);
+
+                const errBody = await response.json().catch(() => ({}));
+                lastError = errBody.error?.message || response.statusText;
+                lastStatus = response.status;
+
+                // 404 (Not Found) means model deprecated/unavailable. Rotate.
+                if (response.status === 404) {
+                    console.warn(`[Proxy] Model ${mName} returned 404. Rotating...`);
+                    continue;
+                }
+
+                // 429 (Rate Limit) or 401 (Auth) should fail fast
+                break;
+
+            } catch (err: any) {
+                lastError = err.message;
+                console.error(`[Proxy] Critical failure with ${mName}:`, err);
             }
         }
 
-        // If we get here, all models failed or we hit a non-404 error
         return new Response(
             JSON.stringify({
-                error: lastError?.message || 'Error desconocido en el proveedor AI.',
+                error: lastError || 'No available Gemini model found.',
                 type: 'UPSTREAM_ERROR',
-                status: lastError?.status || 500
+                status: lastStatus
             }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: lastError?.status || 500,
+                status: lastStatus,
             },
         )
     } catch (error: any) {
