@@ -55,7 +55,7 @@ const DarkModeToggle = () => {
 
 const App = () => {
     useEffect(() => {
-        console.log("TuTesisRD App Loaded v1.16 - Security Hardening & Key Rotation");
+        console.log("TuTesisRD App Loaded v1.17 - Gemini Service Restored");
     }, []);
 
     return (
