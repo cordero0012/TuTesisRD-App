@@ -4,7 +4,8 @@ import { useProject } from '../contexts/ProjectContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { detectAiContent, detectAiContentBatch, AiDetectionResult } from '../services/analysis/detection';
 import { generateAuditPDF } from '../services/reports/auditReport';
-import { exportAuditToWord } from '../services/wordExportService';
+import { mapAuditToWordExport } from '../services/export/mapper';
+import { wordExportService } from '../services/wordExportService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { generateText, GROQ_MODEL_FAST } from '../services/ai/client';
 
@@ -651,10 +652,12 @@ export const AiAudit = () => {
                             <span className="material-symbols-outlined">picture_as_pdf</span>
                             Exportar PDF
                         </button>
+
                         <button
                             onClick={async () => {
                                 try {
-                                    await exportAuditToWord(result);
+                                    const dto = mapAuditToWordExport(result);
+                                    await wordExportService.generateWordDocument(dto, 'Auditoria_IA.docx');
                                     showNotification("Documento Word generado correctamente", "success");
                                 } catch (e) {
                                     console.error("Word export error:", e);

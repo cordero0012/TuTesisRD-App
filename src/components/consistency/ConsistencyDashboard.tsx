@@ -1,11 +1,18 @@
 import React from 'react';
 import { ConsistencyAnalysisResult } from '../../services/consistency/matrixAnalyzer';
+import { mapMatrixToWordExport } from '../../services/export/mapper';
+import { wordExportService } from '../../services/wordExportService';
 
 interface ConsistencyDashboardProps {
     result: ConsistencyAnalysisResult;
 }
 
 export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ result }) => {
+
+    const handleExport = () => {
+        const dto = mapMatrixToWordExport(result);
+        wordExportService.generateWordDocument(dto, 'Analisis_Consistencia.docx');
+    };
 
     // Helper colors for scores
     const getScoreColor = (score: number) => {
@@ -14,7 +21,7 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
         return 'text-red-500 bg-red-50 dark:bg-red-900/20';
     };
 
-    const riskLevelColor = {
+    const riskLevelColor: Record<string, string> = {
         'Excelente': 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30',
         'Aceptable': 'text-blue-600 bg-blue-100 dark:bg-blue-900/30',
         'Débil': 'text-amber-600 bg-amber-100 dark:bg-amber-900/30',
@@ -23,6 +30,42 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
 
     return (
         <div className="space-y-8 animate-fade-in p-6 max-w-7xl mx-auto">
+
+            {/* Warning Banner */}
+            {(result.analysisStatus === 'partial' || (result.analysisWarnings && result.analysisWarnings.length > 0)) && (
+                <div className="bg-amber-50 dark:bg-amber-900/10 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg animate-fade-in mx-auto max-w-7xl">
+                    <div className="flex items-start">
+                        <div className="flex-shrink-0">
+                            <span className="material-symbols-outlined text-amber-500">warning</span>
+                        </div>
+                        <div className="ml-3">
+                            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-200">
+                                Análisis Parcialmente Completado
+                            </h3>
+                            <div className="mt-2 text-sm text-amber-700 dark:text-amber-300">
+                                <ul className="list-disc pl-5 space-y-1">
+                                    {result.analysisWarnings && result.analysisWarnings.length > 0 ? (
+                                        result.analysisWarnings.map((w, i) => <li key={i}>{w}</li>)
+                                    ) : (
+                                        <li>Algunas secciones contienen datos genéricos debido a limitaciones en la respuesta del modelo.</li>
+                                    )}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Header Actions */}
+            <div className="flex justify-end mb-4">
+                <button
+                    onClick={handleExport}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold shadow-lg hover:-translate-y-1 transition-transform"
+                >
+                    <span className="material-symbols-outlined text-sm">download</span>
+                    Exportar Informe DOCX
+                </button>
+            </div>
 
             {/* 1. Global Diagnosis Header */}
             <div className="flex flex-col md:flex-row gap-6 items-start">

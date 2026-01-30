@@ -8,120 +8,12 @@ import { CONFIG } from '../../config';
 
 // --- Zod Schemas (Duplicated from matrixAnalyzer due to lack of export) ---
 
-const ConsistencyMatrixRowSchema = z.object({
-    element: z.string(),
-    description: z.string(),
-    coherenceLevel: z.string(), // Relaxed from enum to string to avoid validation errors
-    technicalObservation: z.string(),
-    recommendation: z.string()
-});
+import { MatrixAnalysisSchema, MatrixAnalysisDTO } from '../../types/schemas';
 
-const SectionEvaluationSchema = z.object({
-    section: z.string(),
-    strengths: z.array(z.string()),
-    weaknesses: z.array(z.string()),
-    internalIncoherences: z.array(z.string()),
-    methodologicalMisalignments: z.array(z.string())
-});
+// Re-use the centralized schema for strict analysis
+const EnhancedConsistencyAnalysisResultSchema = MatrixAnalysisSchema;
 
-const GlobalDiagnosisSchema = z.object({
-    level: z.string(), // Relaxed from enum to string
-    mainRisks: z.array(z.string()),
-    internalConsistencyDegree: z.number().min(0).max(100),
-    publishabilityLevel: z.number().min(0).max(100)
-});
-
-// Expanded Schema for Strict Analysis
-// Expanded Schema for Strict Analysis
-const EnhancedConsistencyAnalysisResultSchema = z.object({
-    documentType: z.string().optional().default("Documento Académico"),
-    methodologicalApproach: z.string().optional().default("No especificado"),
-    disciplinaryArea: z.string().optional().default("General"),
-    applicableStandards: z.array(z.string()).optional().default([]),
-
-    // Original Fields
-    consistencyMatrix: z.array(ConsistencyMatrixRowSchema).optional().default([]),
-    sectionEvaluations: z.array(SectionEvaluationSchema).optional().default([]),
-
-    methodologicalAnalysis: z.object({
-        approachCoherent: z.boolean().optional().default(false),
-        designAdequate: z.boolean().optional().default(false),
-        techniquesAppropriate: z.boolean().optional().default(false),
-        resultsDeriveFromMethod: z.boolean().optional().default(false),
-        conclusionsSupportedByResults: z.boolean().optional().default(false),
-        criticalAlerts: z.array(z.string()).optional().default([]),
-        invalidatingIssues: z.array(z.string()).optional().default([])
-    }),
-
-    normativeCompliance: z.object({
-        apa7Score: z.number().min(0).max(100).optional().default(0),
-        academicWritingScore: z.number().min(0).max(100).optional().default(0),
-        terminologyConsistencyScore: z.number().min(0).max(100).optional().default(0),
-        orthographicErrors: z.array(z.string()).optional().default([]),
-        grammaticalErrors: z.array(z.string()).optional().default([]),
-        styleIssues: z.array(z.string()).optional().default([])
-    }).optional().default({}),
-
-    globalDiagnosis: z.object({
-        level: z.string().optional().default("Pendiente"),
-        mainRisks: z.array(z.string()).optional().default([]),
-        internalConsistencyDegree: z.number().min(0).max(100).optional().default(0),
-        publishabilityLevel: z.number().min(0).max(100).optional().default(0)
-    }).optional().default({}),
-
-    prioritizedRecommendations: z.array(z.object({
-        priority: z.string().optional().default("Media"),
-        what: z.string().optional().default("Revisión general"),
-        why: z.string().optional().default("Mejora requerida"),
-        how: z.string().optional().default("Revisar sección")
-    })).optional().default([]),
-
-    // NEW STRICT FIELDS (Operational Model)
-    sourceConsistencySubMatrix: z.object({
-        citationsFound: z.array(z.object({
-            citation: z.string(),
-            inBibliography: z.boolean(),
-            page: z.string()
-        })).optional().default([]),
-        referencesCiting: z.array(z.string()).optional().default([]),
-        unusedReferences: z.array(z.string()).optional().default([]),
-        missingReferences: z.array(z.string()).optional().default([])
-    }).optional().default({ citationsFound: [], referencesCiting: [], unusedReferences: [], missingReferences: [] }),
-
-    actionableFeedback: z.array(z.object({
-        finding: z.string().optional().default("Hallazgo general"),
-        evidence: z.string().optional().default(""), // Empty evidence default
-        whyItMatters: z.string().optional().default("Importancia académica"),
-        howToFix: z.string().optional().default("Revisar"),
-        example: z.string().optional().default("-")
-    })).optional().default([]),
-
-    structuralVerification: z.object({
-        sectionsFound: z.record(z.string(), z.object({
-            exists: z.boolean(),
-            pages: z.string().nullable().optional(),
-            completeness: z.number()
-        })).optional().default({}),
-        missingSections: z.array(z.string()).optional().default([]),
-        misplacedSections: z.array(z.string()).optional().default([])
-    }).optional().default({ sectionsFound: {}, missingSections: [], misplacedSections: [] }),
-
-    normativeComplianceDetailed: z.object({
-        overallCompliance: z.number().optional().default(0),
-        violations: z.array(z.object({
-            rule: z.string(),
-            severity: z.string().optional().default("Medium"),
-            evidence: z.string(),
-            impact: z.string()
-        })).optional().default([]),
-        compliantItems: z.array(z.object({
-            rule: z.string(),
-            evidence: z.string()
-        })).optional().default([])
-    }).optional().default({ overallCompliance: 0, violations: [], compliantItems: [] })
-});
-
-export type StrictAnalysisResult = z.infer<typeof EnhancedConsistencyAnalysisResultSchema>;
+export type StrictAnalysisResult = MatrixAnalysisDTO;
 
 // --- Helper to build normative context ---
 function buildDetailedNormativeContext(
@@ -178,6 +70,12 @@ export async function analyzeConsistencyStrict(
         ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, 20000)}`).join('\n\n')
         : cleanText.substring(0, 100000);
 
+    // TELEMETRY: Chunk Verification
+    console.log(`[StrictAnalyzer] Processing text. Total Length: ${textToProcess.length}, Chunks Used: ${relevantChunks.length > 0 ? relevantChunks.length : 'Full Text'}`);
+    if (textToProcess.length < 500) {
+        console.warn("[StrictAnalyzer] WARNING: Input text is dangerously short (<500 chars). Analysis may fail.");
+    }
+
     // 1. Build context
     const normativeContext = buildDetailedNormativeContext(institutionalRules, regulationMetadata);
 
@@ -197,25 +95,55 @@ export async function analyzeConsistencyStrict(
         // 4. Validate and Return
         const validated = EnhancedConsistencyAnalysisResultSchema.parse(result);
 
+        // TELEMETRY: Result Verification
+        console.log(`[StrictAnalyzer] Validated Result Keys: ${Object.keys(validated).join(', ')}`);
+        console.log(`[StrictAnalyzer] Diagnosis Level: ${validated.globalDiagnosis?.level}, Consistency: ${validated.globalDiagnosis?.internalConsistencyDegree}%`);
+
         // --- STATUS DETERMINATION LOGIC ---
         let status: 'ok' | 'partial' | 'insufficient_input' | 'model_noncompliant' = 'ok';
+        const warnings: string[] = [];
 
-        // 1. Insufficient Input: If document text was tiny or meaningful content wasn't found
+        // 1. Insufficient Input
         if (cleanText.length < 500) {
             status = 'insufficient_input';
+            warnings.push("Texto insuficiente para análisis profundo.");
         }
 
-        // 2. Model Non-Compliant / Partial: Check for critical structural failures
-        // We only mark partial if substantially empty (e.g. no diagnosis level)
-        if (validated.globalDiagnosis.level === 'Pendiente') {
+        // 2. Model Non-Compliant / Partial
+        if (validated.globalDiagnosis?.level === 'Pendiente') {
             status = 'partial';
+            warnings.push("Diagnóstico global incompleto.");
+        }
+
+        // 3. Completeness Check (Detect Defaults > Normalization)
+        let incompleteRecs = 0;
+        if (validated.prioritizedRecommendations) {
+            for (const rec of validated.prioritizedRecommendations) {
+                const isDefaulted = rec.what === '<<MISSING_CONTENT>>' ||
+                    rec.why === '<<MISSING_CONTENT>>' ||
+                    rec.how === '<<MISSING_CONTENT>>';
+
+                if (isDefaulted) {
+                    incompleteRecs++;
+                    // Normalize for UI
+                    if (rec.what === '<<MISSING_CONTENT>>') rec.what = 'Recomendación general';
+                    if (rec.why === '<<MISSING_CONTENT>>') rec.why = 'Justificación no disponible en análisis estricto.';
+                    if (rec.how === '<<MISSING_CONTENT>>') rec.how = 'Consultar revisión manual.';
+                }
+            }
+        }
+
+        if (incompleteRecs > 0) {
+            status = 'partial';
+            warnings.push(`${incompleteRecs} recomendación(es) marcadas como incompletas.`);
         }
 
         // Add raw analysis text if needed by UI
         return {
             ...validated,
             rawAnalysis: "Análisis Forense Completado",
-            analysisStatus: status
+            analysisStatus: status,
+            analysisWarnings: warnings
         } as unknown as ConsistencyAnalysisResult;
 
     } catch (error: any) {

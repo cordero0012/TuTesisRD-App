@@ -1,88 +1,19 @@
 import { generateJSON } from '../ai/client';
 import { CONFIG } from '../../config';
+import {
+    MatrixAnalysisDTO,
+    MatrixAnalysisSchema,
+    ConsistencyMatrixRowSchema,
+    SectionEvaluationSchema
+} from '../../types/schemas';
 import { z } from 'zod';
 
-// --- TYPES AND INTERFACES ---
+// Re-export the DTO as the canonical result type
+export type ConsistencyAnalysisResult = MatrixAnalysisDTO;
+export type ConsistencyMatrixRow = z.infer<typeof ConsistencyMatrixRowSchema>;
+export type SectionEvaluation = z.infer<typeof SectionEvaluationSchema>;
 
-export interface ConsistencyMatrixRow {
-    element: string;
-    description: string;
-    coherenceLevel: 'Alta' | 'Media' | 'Baja' | 'Inexistente';
-    technicalObservation: string;
-    recommendation: string;
-}
-
-export interface SectionEvaluation {
-    section: string;
-    strengths: string[];
-    weaknesses: string[];
-    internalIncoherences: string[];
-    methodologicalMisalignments: string[];
-}
-
-export interface ConsistencyAnalysisResult {
-    documentType: string;
-    methodologicalApproach: string;
-    disciplinaryArea: string;
-    applicableStandards: string[];
-    consistencyMatrix: ConsistencyMatrixRow[];
-    sectionEvaluations: SectionEvaluation[];
-    methodologicalAnalysis: {
-        approachCoherent: boolean;
-        designAdequate: boolean;
-        techniquesAppropriate: boolean;
-        resultsDeriveFromMethod: boolean;
-        conclusionsSupportedByResults: boolean;
-        criticalAlerts: string[];
-    };
-    normativeCompliance: {
-        apa7Score: number;
-        academicWritingScore: number;
-        terminologyConsistencyScore: number;
-        orthographicErrors: string[];
-        grammaticalErrors: string[];
-        styleIssues: string[];
-    };
-    globalDiagnosis: {
-        level: 'Excelente' | 'Aceptable' | 'Débil' | 'Crítico';
-        mainRisks: string[];
-        internalConsistencyDegree: number; // 0-100
-        publishabilityLevel: number; // 0-100
-    };
-    prioritizedRecommendations: {
-        priority: 'Crítica' | 'Alta' | 'Media' | 'Baja';
-        what: string;
-        why: string;
-        how: string;
-    }[];
-    rawAnalysis: string;
-    analysisStatus?: 'ok' | 'partial' | 'insufficient_input' | 'model_noncompliant' | 'error';
-
-    // STRICT MODE FIELDS
-    structuralVerification?: {
-        sectionsFound: Record<string, { exists: boolean; pages: string | null | undefined; completeness: number }>;
-        missingSections: string[];
-        misplacedSections: string[];
-    };
-    sourceConsistencySubMatrix?: {
-        citationsFound: { citation: string; inBibliography: boolean; page: string }[];
-        referencesCiting: string[];
-        unusedReferences: string[];
-        missingReferences: string[];
-    };
-    actionableFeedback?: {
-        finding: string;
-        evidence: string;
-        whyItMatters: string;
-        howToFix: string;
-        example: string;
-    }[];
-    normativeComplianceDetailed?: {
-        overallCompliance: number;
-        violations: { rule: string; severity: string; evidence: string; impact: string }[];
-        compliantItems: { rule: string; evidence: string }[];
-    };
-}
+// Local interfaces removed in favor of DTO exports
 
 export interface DocumentChunk {
     text: string;
@@ -283,9 +214,39 @@ export async function analyzeConsistencyMatrix(
             model: CONFIG.CONSISTENCY_AI_MODEL
         });
 
+        // Apply Schema Parsing to ensure defaults are populated
+        const validated = MatrixAnalysisSchema.parse(aggregationResult);
+
+        // Check for completeness (Zod defaults detection)
+        const warnings: string[] = [];
+        let status: 'ok' | 'partial' = 'ok' as 'ok' | 'partial';
+
+        if (validated.prioritizedRecommendations) {
+            for (const rec of validated.prioritizedRecommendations) {
+                // Check if any field matches the sentinel
+                const isDefaulted = rec.what === '<<MISSING_CONTENT>>' ||
+                    rec.why === '<<MISSING_CONTENT>>' ||
+                    rec.how === '<<MISSING_CONTENT>>';
+
+                if (isDefaulted) {
+                    status = 'partial';
+                    // Late Normalization: Replace sentinel with UI-friendly text
+                    if (rec.what === '<<MISSING_CONTENT>>') rec.what = 'Recomendación general';
+                    if (rec.why === '<<MISSING_CONTENT>>') rec.why = 'Justificación no generada automáticamente.';
+                    if (rec.how === '<<MISSING_CONTENT>>') rec.how = 'Pasos detallados no disponibles.';
+                }
+            }
+        }
+
+        if (status === 'partial') {
+            warnings.push("Se detectaron recomendaciones incompletas (rellenadas por seguridad).");
+        }
+
         return {
-            ...aggregationResult,
-            rawAnalysis: JSON.stringify(aggregationResult)
+            ...validated,
+            rawAnalysis: JSON.stringify(aggregationResult),
+            analysisStatus: status,
+            analysisWarnings: warnings
         } as ConsistencyAnalysisResult;
 
     } catch (error: any) {

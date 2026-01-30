@@ -26,11 +26,14 @@ interface ProjectContextType {
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
+import { supabase } from '../supabaseClient';
+
 export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // Default mock project
+
+    // Default mock project initially, will be hydrated
     const [project, setProject] = useState<Project>({
-        id: 'default-project',
-        content: '', // Start empty
+        id: '',
+        content: '',
         title: 'Mi Tesis'
     });
 
@@ -38,6 +41,56 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         const saved = localStorage.getItem('tutesis_uploaded_file');
         return saved ? JSON.parse(saved) : null;
     });
+
+    // Hydrate Project from Supabase or Create New
+    React.useEffect(() => {
+        const initProject = async () => {
+            const storedId = localStorage.getItem('tutesis_project_uuid');
+
+            if (storedId) {
+                // Fetch existing
+                const { data } = await supabase
+                    .from('scholar_projects')
+                    .select('*')
+                    .eq('id', storedId)
+                    .single();
+
+                if (data) {
+                    setProject({
+                        id: data.id,
+                        title: data.title || 'Mi Tesis',
+                        content: data.content || ''
+                    });
+                    return;
+                }
+            }
+
+            // Create new if none found or not valid
+            const { data, error } = await supabase
+                .from('scholar_projects')
+                .insert({
+                    title: 'Nuevo Proyecto',
+                    content: ''
+                })
+                .select()
+                .single();
+
+            if (data && !error) {
+                localStorage.setItem('tutesis_project_uuid', data.id);
+                setProject({
+                    id: data.id,
+                    title: data.title,
+                    content: data.content || ''
+                });
+            } else {
+                console.error("Failed to initialize project", error);
+                // Fallback to offline/mock
+                setProject(p => ({ ...p, id: 'offline-demo' }));
+            }
+        };
+
+        initProject();
+    }, []);
 
     React.useEffect(() => {
         if (uploadedFile) {

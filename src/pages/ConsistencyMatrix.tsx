@@ -6,6 +6,7 @@ import { ConsistencyAnalysisResult } from '../services/consistency/matrixAnalyze
 import { ConsistencyAnalysisResults } from '../components/consistency/ConsistencyAnalysisResults';
 import { ConsistencyDashboard } from '../components/consistency/ConsistencyDashboard';
 import { MatrixInteractive } from '../components/consistency/MatrixInteractive';
+import { AnalysisErrorBoundary } from '../components/common/AnalysisErrorBoundary';
 import * as pdfjsLib from 'pdfjs-dist';
 // @ts-ignore
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -117,6 +118,15 @@ export const ConsistencyMatrix = () => {
         }
     };
 
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+    useEffect(() => {
+        import('../services/persistenceService').then(({ persistenceService }) => {
+            const unsub = persistenceService.subscribe(setSaveStatus);
+            return unsub;
+        });
+    }, []);
+
     const handleAnalyze = async () => {
         const contentToAnalyze = uploadedFile?.content || project.content;
 
@@ -156,6 +166,14 @@ export const ConsistencyMatrix = () => {
             clearInterval(progressInterval);
             setAnalysisProgress(100);
             setResult(analysis);
+
+            // Persist to Supabase
+            if (project.id && project.id !== 'offline-demo') {
+                import('../services/persistenceService').then(({ persistenceService }) => {
+                    persistenceService.saveAnalysis(project.id, 'consistency', analysis);
+                });
+            }
+
             showNotification("Análisis de consistencia completado", "success");
         } catch (error) {
             console.error('Analysis error:', error);
@@ -276,6 +294,23 @@ export const ConsistencyMatrix = () => {
                                     PDF
                                 </button>
                             )}
+                            <div className="flex items-center gap-2">
+                                {saveStatus === 'saving' && (
+                                    <span className="text-xs font-bold text-slate-400 flex items-center gap-1 animate-pulse">
+                                        <span className="material-symbols-outlined text-sm">cloud_upload</span> Guardando...
+                                    </span>
+                                )}
+                                {saveStatus === 'saved' && (
+                                    <span className="text-xs font-bold text-emerald-500 flex items-center gap-1 animate-fade-in">
+                                        <span className="material-symbols-outlined text-sm">cloud_done</span> Guardado
+                                    </span>
+                                )}
+                                {saveStatus === 'error' && (
+                                    <span className="text-xs font-bold text-red-400 flex items-center gap-1" title="Reintentando...">
+                                        <span className="material-symbols-outlined text-sm">cloud_off</span> Error
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </header>
 
@@ -305,11 +340,13 @@ export const ConsistencyMatrix = () => {
                                     </div>
                                 ) : result ? (
                                     <div className="animate-fade-in pb-10">
-                                        {viewMode === 'dashboard' ? (
-                                            <ConsistencyDashboard result={result} />
-                                        ) : (
-                                            <MatrixInteractive matrix={result.consistencyMatrix} />
-                                        )}
+                                        <AnalysisErrorBoundary componentName="Consistency Display" onReset={() => setViewMode('dashboard')}>
+                                            {viewMode === 'dashboard' ? (
+                                                <ConsistencyDashboard result={result} />
+                                            ) : (
+                                                <MatrixInteractive matrix={result.consistencyMatrix || []} />
+                                            )}
+                                        </AnalysisErrorBoundary>
                                     </div>
                                 ) : (
                                     <div className="h-full flex flex-col items-center justify-center text-center">
