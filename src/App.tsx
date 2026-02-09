@@ -21,6 +21,11 @@ const ConsistencyMatrix = lazy(() => import('./pages/ConsistencyMatrix'));
 const AuditPage = lazy(() => import('./pages/AuditPage'));
 const HistoryPage = lazy(() => import('./pages/HistoryPage'));
 
+// SEO Resources
+const QueEsTesis = lazy(() => import('./pages/Recursos/QueEsTesis'));
+const ComoHacerTesis = lazy(() => import('./pages/Recursos/ComoHacerTesis'));
+const EjemplosTesis = lazy(() => import('./pages/Recursos/EjemplosTesis'));
+
 // Loading Fallback Component
 const LoadingSpinner = () => (
     <div className="flex h-screen w-full items-center justify-center bg-background-light dark:bg-background-dark">
@@ -91,6 +96,12 @@ const App = () => {
                         <Route path="/portal" element={<StudentPortal />} />
                         <Route path="/portal/historial" element={<HistoryPage />} />
                         <Route path="/exito" element={<SuccessScreen />} />
+
+                        {/* SEO Educational Resources */}
+                        <Route path="/recursos/que-es-tesis" element={<QueEsTesis />} />
+                        <Route path="/recursos/como-hacer-tesis" element={<ComoHacerTesis />} />
+                        <Route path="/recursos/ejemplos-tesis" element={<EjemplosTesis />} />
+
                         <Route path="/design" element={<DesignSystem />} />
 
                         {/* Tools */}

@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
     return (
         <footer id="contacto" className="bg-gray-900 text-gray-400 py-16">
             <div className="container mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
                     <div>
                         <span className="text-2xl font-bold text-white block mb-4 flex items-center">
                             <span className="material-icons mr-2 text-brand-orange">school</span>Tu Tesis RD
@@ -27,6 +27,15 @@ const Footer: React.FC = () => {
                                 <span className="material-icons mr-3 text-brand-orange text-sm">chat</span>
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Chat WhatsApp</a>
                             </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="text-white font-bold text-lg mb-6">Recursos</h4>
+                        <ul className="space-y-2">
+                            <li><Link to="/recursos/que-es-tesis" className="hover:text-brand-orange transition">¿Qué es una Tesis?</Link></li>
+                            <li><Link to="/recursos/como-hacer-tesis" className="hover:text-brand-orange transition">Guía Paso a Paso</Link></li>
+                            <li><Link to="/recursos/ejemplos-tesis" className="hover:text-brand-orange transition">Ejemplos y Plantillas</Link></li>
+                            <li><Link to="/tools/ai-audit" className="hover:text-brand-orange transition">Auditoría IA (Gratis)</Link></li>
                         </ul>
                     </div>
                     <div>
