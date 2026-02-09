@@ -1,23 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
-import About from './pages/About';
-import Services from './pages/Services';
-import Universities from './pages/Universities';
-import Blog from './pages/Blog';
-import StudentPortal from './pages/StudentPortal';
-import AdminKanban from './pages/AdminKanban';
-import RegisterWizard from './pages/Register/RegisterWizard';
-import SuccessScreen from './pages/Register/SuccessScreen';
-import AIChat from './components/AIChat';
-import DesignSystem from './pages/DesignSystem';
-import { AiAudit as DocumentAudit } from './pages/AiAudit';
-import UniversityTemplate from './pages/Universities/UniversityTemplate';
-import UniversityDirectory from './pages/Universities/UniversityDirectory';
-import BlogPostTemplate from './pages/BlogPostTemplate';
-import ConsistencyMatrix from './pages/ConsistencyMatrix';
-import AuditPage from './pages/AuditPage';
-import HistoryPage from './pages/HistoryPage';
+
+// Lazy Load Pages
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const About = lazy(() => import('./pages/About'));
+const Services = lazy(() => import('./pages/Services'));
+const Universities = lazy(() => import('./pages/Universities'));
+const Blog = lazy(() => import('./pages/Blog'));
+const StudentPortal = lazy(() => import('./pages/StudentPortal'));
+const AdminKanban = lazy(() => import('./pages/AdminKanban'));
+const RegisterWizard = lazy(() => import('./pages/Register/RegisterWizard'));
+const SuccessScreen = lazy(() => import('./pages/Register/SuccessScreen'));
+const AIChat = lazy(() => import('./components/AIChat'));
+const DesignSystem = lazy(() => import('./pages/DesignSystem'));
+const DocumentAudit = lazy(() => import('./pages/AiAudit').then(module => ({ default: module.AiAudit })));
+const UniversityTemplate = lazy(() => import('./pages/Universities/UniversityTemplate'));
+const UniversityDirectory = lazy(() => import('./pages/Universities/UniversityDirectory'));
+const BlogPostTemplate = lazy(() => import('./pages/BlogPostTemplate'));
+const ConsistencyMatrix = lazy(() => import('./pages/ConsistencyMatrix'));
+const AuditPage = lazy(() => import('./pages/AuditPage'));
+const HistoryPage = lazy(() => import('./pages/HistoryPage'));
+
+// Loading Fallback Component
+const LoadingSpinner = () => (
+    <div className="flex h-screen w-full items-center justify-center bg-background-light dark:bg-background-dark">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600 dark:border-slate-700 dark:border-t-blue-500"></div>
+    </div>
+);
 
 const DarkModeToggle = () => {
     // Initialize state from localStorage or system preference
@@ -64,32 +73,34 @@ const App = () => {
         <HashRouter>
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
-                <Routes>
-                    <Route path="/" element={<LandingPage />} />
+                <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
 
-                    {/* Public Content Pages */}
-                    <Route path="/nosotros" element={<About />} />
-                    <Route path="/servicios" element={<Services />} />
-                    <Route path="/universidades" element={<UniversityDirectory />} />
-                    <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/blog/:postId" element={<BlogPostTemplate />} />
+                        {/* Public Content Pages */}
+                        <Route path="/nosotros" element={<About />} />
+                        <Route path="/servicios" element={<Services />} />
+                        <Route path="/universidades" element={<UniversityDirectory />} />
+                        <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:postId" element={<BlogPostTemplate />} />
 
-                    {/* App Flow */}
-                    <Route path="/registro" element={<RegisterWizard initialMode="register" />} />
-                    <Route path="/monitoreo" element={<RegisterWizard initialMode="monitor" />} />
-                    <Route path="/portal" element={<StudentPortal />} />
-                    <Route path="/portal/historial" element={<HistoryPage />} />
-                    <Route path="/exito" element={<SuccessScreen />} />
-                    <Route path="/design" element={<DesignSystem />} />
+                        {/* App Flow */}
+                        <Route path="/registro" element={<RegisterWizard initialMode="register" />} />
+                        <Route path="/monitoreo" element={<RegisterWizard initialMode="monitor" />} />
+                        <Route path="/portal" element={<StudentPortal />} />
+                        <Route path="/portal/historial" element={<HistoryPage />} />
+                        <Route path="/exito" element={<SuccessScreen />} />
+                        <Route path="/design" element={<DesignSystem />} />
 
-                    {/* Tools */}
-                    <Route path="/herramientas" element={<AuditPage />} />
-                    <Route path="/herramientas/auditor" element={<DocumentAudit />} />
-                    <Route path="/herramientas/matriz" element={<ConsistencyMatrix />} />
+                        {/* Tools */}
+                        <Route path="/herramientas" element={<AuditPage />} />
+                        <Route path="/herramientas/auditor" element={<DocumentAudit />} />
+                        <Route path="/herramientas/matriz" element={<ConsistencyMatrix />} />
 
-                    {/* <Route path="/admin/dashboard" element={<AdminKanban />} /> */}
-                </Routes>
+                        {/* <Route path="/admin/dashboard" element={<AdminKanban />} /> */}
+                    </Routes>
+                </Suspense>
                 {/* <AIChat /> */}
             </div>
         </HashRouter>

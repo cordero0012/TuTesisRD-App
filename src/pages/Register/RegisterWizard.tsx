@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { RegistrationFormData, RegisterMode } from '../../types/register';
@@ -39,12 +39,12 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
     const [notification, setNotification] = useState<{ message: string, type: 'error' | 'success' } | null>(null);
     const [searchResult, setSearchResult] = useState<any>(null);
 
-    const showNotification = (message: string, type: 'error' | 'success' = 'error') => {
+    const showNotification = useCallback((message: string, type: 'error' | 'success' = 'error') => {
         setNotification({ message, type });
         setTimeout(() => setNotification(null), 3000);
-    };
+    }, []);
 
-    const submitRegistration = async () => {
+    const submitRegistration = useCallback(async () => {
         setIsSubmitting(true);
         try {
             // 1. Insert Student
@@ -89,12 +89,12 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
         } finally {
             setIsSubmitting(false);
         }
-    };
+    }, [formData, navigate, showNotification]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    }, []);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -105,7 +105,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
         }
     }, [location, initialMode]);
 
-    const handleSearch = async (trackingCode: string) => {
+    const handleSearch = useCallback(async (trackingCode: string) => {
         if (!trackingCode.trim()) return;
 
         // Sanitize input
@@ -151,7 +151,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
             showNotification("No se encontró ningún proyecto con este código.", 'error');
             setSearchResult(null);
         }
-    };
+    }, [showNotification]);
 
     const nextStep = () => {
         // Validation Logic

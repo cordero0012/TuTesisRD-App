@@ -10,42 +10,86 @@ const LandingPage: React.FC = () => {
     const toggleService = (index: number) => {
         setExpandedService(expandedService === index ? null : index);
     };
-    const mainSchema = {
+    const organizationSchema = {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
+        "@type": "EducationalOrganization",
+        "@id": "https://www.tutesisrd.online/#organization",
         "name": "TuTesisRD",
-        "image": "https://www.tutesisrd.online/favicon.png",
-        "@id": "https://www.tutesisrd.online",
+        "alternateName": "Tu Tesis RD",
         "url": "https://www.tutesisrd.online",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.tutesisrd.online/logo.png",
+            "width": "600",
+            "height": "60"
+        },
+        "description": "Asesoría experta en tesis de grado, tesis doctoral y anteproyectos en República Dominicana. Más de 7 años ayudando a estudiantes universitarios a graduarse con éxito.",
         "telephone": "+18294435985",
         "address": {
             "@type": "PostalAddress",
-            "streetAddress": "República Dominicana",
             "addressLocality": "Santo Domingo",
+            "addressRegion": "Distrito Nacional",
             "addressCountry": "DO"
         },
         "geo": {
             "@type": "GeoCoordinates",
-            "latitude": 18.4861,
-            "longitude": -69.9312
+            "latitude": "18.4861",
+            "longitude": "-69.9312"
         },
-        "openingHoursSpecification": {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            "opens": "09:00",
-            "closes": "18:00"
+        "areaServed": {
+            "@type": "Country",
+            "name": "República Dominicana"
         },
         "sameAs": [
             "https://wa.me/message/YESJDSE3MZ3IM1"
-        ]
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+18294435985",
+            "contactType": "Customer Service",
+            "areaServed": "DO",
+            "availableLanguage": "Spanish"
+        }
     };
+
+    const serviceSchema = {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "Asesoría de Tesis Universitarias",
+        "provider": { "@id": "https://www.tutesisrd.online/#organization" },
+        "areaServed": "DO",
+        "description": "Servicio de asesoría completa para tesis de grado, tesis doctoral, maestría y anteproyectos académicos en República Dominicana.",
+        "offers": {
+            "@type": "Offer",
+            "availability": "https://schema.org/InStock",
+            "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "priceCurrency": "DOP"
+            }
+        }
+    };
+
+    // Target keywords from Google Trends
+    const targetKeywords = [
+        'tesis',
+        'tesis de grado',
+        'tesis doctoral',
+        'anteproyecto de tesis',
+        'cómo hacer una tesis',
+        'asesoría tesis República Dominicana',
+        'tesis ejemplo',
+        'qué es tesis',
+        'tesis RD'
+    ];
 
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             <SEO
                 title="Inicio"
-                description="Tu Tesis Aprobada, Sin Estrés. Expertos en redacción académica y metodología en República Dominicana."
-                schema={mainSchema}
+                description="Asesoría de Tesis de Grado, Tesis Doctoral y Anteproyectos en RD. Expertos en metodología de investigación. +7 años ayudando estudiantes. ¡Aprueba sin estrés!"
+                keywords={targetKeywords}
+                schema={[organizationSchema, serviceSchema]}
+                ogImage="https://www.tutesisrd.online/og-image.png"
             />
             <Navbar />
 

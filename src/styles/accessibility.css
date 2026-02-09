@@ -1,0 +1,92 @@
+/* Global Accessibility Styles */
+
+/* Enhanced focus indicators for keyboard navigation - WCAG 2.4.7 */
+*:focus-visible {
+  outline: 3px solid #d97706;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default outline but keep for keyboard users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Ensure buttons have visible focus states */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #d97706;
+  outline-offset: 2px;
+}
+
+/* Skip to main content link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #d97706;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Ensure sufficient color contrast for text */
+.text-brand-orange {
+  color: #d97706 !important; /* WCAG AA compliant */
+}
+
+.bg-brand-orange {
+  background-color: #d97706 !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px !important;
+  }
+  
+  *:focus-visible {
+    outline-width: 4px !important;
+  }
+}
+
+/* Reduced motion support for users with vestibular disorders */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Ensure aria-live regions are announced */
+[aria-live="polite"],
+[aria-live="assertive"],
+[role="alert"],
+[role="status"] {
+  position: relative;
+}

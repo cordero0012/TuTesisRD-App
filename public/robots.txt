@@ -1,4 +1,15 @@
+# robots.txt for TuTesisRD
+# Optimized for SEO - Allow all search engines
+
 User-agent: *
 Allow: /
 
+# Block sensitive areas
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
 Sitemap: https://www.tutesisrd.online/sitemap.xml
+
+# Crawl-delay (optional, for servers with limited resources)
+# Crawl-delay: 10

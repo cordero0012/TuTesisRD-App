@@ -28,7 +28,13 @@ create table public.projects (
 alter table public.students enable row level security;
 alter table public.projects enable row level security;
 
--- Create Policies (Simplified for Initial Rollout)
+-- Create Indexes for Performance
+create index if not exists students_email_idx on public.students(email);
+create index if not exists projects_student_id_idx on public.projects(student_id);
+create index if not exists projects_status_idx on public.projects(status);
+create index if not exists projects_tracking_code_idx on public.projects(tracking_code);
+
+-- Create Policies
 -- Allow anyone to insert (register)
 create policy "Enable insert for all users" on public.students
   for insert with check (true);
@@ -36,6 +42,6 @@ create policy "Enable insert for all users" on public.students
 create policy "Enable insert for all users" on public.projects
   for insert with check (true);
 
--- Allow public read access (for monitoring by code) - In production, restrict this further
+-- Allow public read access (for monitoring by code)
 create policy "Enable read access for all users" on public.projects
   for select using (true);
