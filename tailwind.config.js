@@ -8,20 +8,21 @@ export default {
         extend: {
             colors: {
                 "brand": {
-                    orange: '#ea9a23',
+                    orange: '#d97706', // Updated from #ea9a23 for better contrast (WCAG AA compliant)
+                    'orange-light': '#f59e0b', // For backgrounds where contrast isn't critical
                     dark: '#1a1a1a',
                     gray: '#f7f7f8',
                     light: '#ffffff',
                     // Compat for new components
                     50: '#f7f7f8',
                     100: '#ffdaa8',
-                    500: '#ea9a23',
-                    600: '#d98a12',
+                    500: '#d97706', // Updated
+                    600: '#b45309',
                     900: '#1a1a1a',
                     950: '#1a1a1a',
                 },
-                "primary": "#ea9a23",
-                "primary-dark": "#d98a12",
+                "primary": "#d97706", // Updated for contrast
+                "primary-dark": "#b45309",
                 "accent": "#FBBF24",
                 "background-light": "#f6f7f8",
                 "background-dark": "#101822",

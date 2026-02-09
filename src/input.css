@@ -5,19 +5,30 @@
 /* Global Styles */
 html {
     scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    background-color: #f6f7f8;
+    background-color: #f8fafc; /* Slightly better shade */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .dark body {
-    background-color: #101822;
+    background-color: #0f172a; /* Slate 900 for better contrast */
+    color: #e2e8f0;
+}
+
+/* Premium Standard Styles */
+a, button, [role="button"] {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 }
 
 /* Custom Scrollbar for Premium Feel */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px; /* Slimmer for modern look */
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -26,11 +37,24 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+    border-radius: 9999px; /* Pill shape */
+    transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
     background: #475569;
+}
+
+/* Accessibility Focus Ring */
+:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
 }

@@ -74,7 +74,36 @@ class PersistenceService {
         projectId: string,
         type: AnalysisType,
         result: MatrixAnalysisDTO | AuditResultDTO
-    ): Promise<void> {
+    ): Promise<{ success: boolean; error?: string }> {
+        // Validate input using Zod schema
+        const { validateInput, SaveAnalysisSchema } = await import('../types/validation');
+
+        // Extract status and warnings if available (only MatrixAnalysisDTO has these)
+        let derivedStatus: string = 'ok';
+        let derivedWarnings: string[] = [];
+
+        if (type === 'consistency' && 'analysisStatus' in result) {
+            derivedStatus = result.analysisStatus || 'ok';
+            derivedWarnings = result.analysisWarnings || [];
+        }
+
+        const validationResult = validateInput(SaveAnalysisSchema, {
+            project_id: projectId,
+            type,
+            result,
+            status: derivedStatus,
+            warnings: derivedWarnings,
+            version: '1.0'
+        });
+
+        if (!validationResult.success) {
+            const errorMsg = Object.entries(validationResult.errors)
+                .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+                .join('; ');
+            console.error('[Persistence] Validation failed:', errorMsg);
+            return { success: false, error: errorMsg };
+        }
+
         const item: QueueItem = {
             id: crypto.randomUUID(),
             projectId,
@@ -91,11 +120,14 @@ class PersistenceService {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
             this.notify('pending');
+            return { success: false, error: 'No active session. Analysis queued for later.' };
         } else {
             this.notify('saving');
             this.processQueue();
+            return { success: true };
         }
     }
+
 
     /**
      * Updates the projectId of all items in the queue.
@@ -177,8 +209,10 @@ class PersistenceService {
                     console.error('[Persistence] Max retries reached. Dropping item:', item.id);
                     this.queue.shift(); // Remove dead item
                 } else {
-                    // Wait before retry (simple backoff)
-                    await new Promise(r => setTimeout(r, 1000 * item.attempts));
+                    // Exponential backoff: 1s, 2s, 4s
+                    const backoffMs = Math.pow(2, item.attempts - 1) * 1000;
+                    console.log(`[Persistence] Retrying in ${backoffMs}ms (attempt ${item.attempts}/${maxRetries})`);
+                    await new Promise(r => setTimeout(r, backoffMs));
                 }
             } else {
                 // Success

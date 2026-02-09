@@ -9,7 +9,7 @@ interface RegisterStep2Props {
     prevStep: () => void;
 }
 
-export const RegisterStep2: React.FC<RegisterStep2Props> = ({ formData, handleInputChange, setFormData, nextStep, prevStep }) => {
+export const RegisterStep2: React.FC<RegisterStep2Props> = React.memo(({ formData, handleInputChange, setFormData, nextStep, prevStep }) => {
     return (
         <div className="animate-fade-in-right">
             <h2 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Detalles del Servicio</h2>
@@ -18,33 +18,39 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = ({ formData, handleIn
             <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-5">
                     <div>
-                        <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Universidad</label>
+                        <label htmlFor="project-university" className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Universidad</label>
                         <input
+                            id="project-university"
                             type="text"
                             name="university"
                             value={formData.university}
                             onChange={handleInputChange}
                             className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                             placeholder="Ej. UASD"
+                            required
+                            aria-required="true"
                         />
                     </div>
                     <div>
-                        <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Carrera / Programa</label>
+                        <label htmlFor="project-career" className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Carrera / Programa</label>
                         <input
+                            id="project-career"
                             type="text"
                             name="career"
                             value={formData.career}
                             onChange={handleInputChange}
                             className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                             placeholder="Ej. Derecho / Maestría en..."
+                            required
+                            aria-required="true"
                         />
                     </div>
                 </div>
 
                 {/* Nivel Académico / Tipo de Trabajo */}
                 <div>
-                    <label className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Tipo de Proyecto</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <label id="project-type-label" className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Tipo de Proyecto</label>
+                    <div role="group" aria-labelledby="project-type-label" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         {[
                             { label: 'Tesis de Grado', icon: 'school' },
                             { label: 'Monográfico', icon: 'article' },
@@ -55,7 +61,11 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = ({ formData, handleIn
                         ].map((item) => (
                             <div
                                 key={item.label}
+                                role="button"
+                                tabIndex={0}
+                                aria-pressed={formData.type === item.label}
                                 onClick={() => setFormData(prev => ({ ...prev, type: item.label }))}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFormData(prev => ({ ...prev, type: item.label })); } }}
                                 className={`p-3 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 ${formData.type === item.label ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
                             >
                                 {formData.type === item.label && <div className="absolute top-2 right-2 text-primary"><span className="material-symbols-outlined text-base">check_circle</span></div>}
@@ -180,4 +190,6 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = ({ formData, handleIn
             </div>
         </div>
     );
-};
+});
+
+RegisterStep2.displayName = 'RegisterStep2';

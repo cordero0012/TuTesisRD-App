@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles.css';
+import './styles/accessibility.css';
 import App from './App';
 import { ProjectProvider } from './contexts/ProjectContext';
 import { NotificationProvider } from './contexts/NotificationContext';
