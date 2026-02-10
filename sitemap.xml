@@ -6,65 +6,83 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   
-  <!-- Homepage - Highest Priority -->
+  <!-- Homepage -->
   <url>
     <loc>https://www.tutesisrd.online/</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Main Services Pages -->
+  <!-- Main Pages -->
   <url>
-    <loc>https://www.tutesisrd.online/register</loc>
-    <lastmod>2026-02-09</lastmod>
+    <loc>https://www.tutesisrd.online/nosotros</loc>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tutesisrd.online/servicios</loc>
+    <lastmod>2026-02-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://www.tutesisrd.online/blog</loc>
+    <lastmod>2026-02-10</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Educational Resources - High Value for SEO -->
+  <!-- Blog Posts -->
+  <url><loc>https://www.tutesisrd.online/blog/estructura-anteproyecto-dom</loc><lastmod>2024-03-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/errores-apa-7</loc><lastmod>2024-03-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/gestion-tiempo-tesis</loc><lastmod>2024-03-25</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/blog-4</loc><lastmod>2026-02-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/blog-5</loc><lastmod>2026-02-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/blog-6</loc><lastmod>2026-02-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/blog-7</loc><lastmod>2026-02-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/blog-8</loc><lastmod>2026-02-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.tutesisrd.online/blog/blog-9</loc><lastmod>2026-02-10</lastmod><priority>0.8</priority></url>
+
+  <!-- Educational Resources -->
   <url>
     <loc>https://www.tutesisrd.online/recursos/que-es-tesis</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://www.tutesisrd.online/recursos/ejemplos-tesis</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://www.tutesisrd.online/recursos/como-hacer-tesis</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Tools & Features -->
+  <!-- Tools -->
   <url>
-    <loc>https://www.tutesisrd.online/tools/ai-audit</loc>
-    <lastmod>2026-02-09</lastmod>
+    <loc>https://www.tutesisrd.online/herramientas/auditor</loc>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.tutesisrd.online/tools/consistency-matrix</loc>
-    <lastmod>2026-02-09</lastmod>
+    <loc>https://www.tutesisrd.online/herramientas/matriz</loc>
+    <lastmod>2026-02-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-
-  <!-- Secondary Pages -->
-  <url>
-    <loc>https://www.tutesisrd.online/history</loc>
-    <lastmod>2026-02-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
   </url>
 
 </urlset>
