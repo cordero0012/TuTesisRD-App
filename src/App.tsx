@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { useAnalytics } from './hooks/useAnalytics';
+import AnalyticsTracker from './components/AnalyticsTracker';
 
 // Lazy Load Pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -74,11 +74,10 @@ const App = () => {
         console.log("TuTesisRD App Loaded v1.17 - Gemini Service Restored");
     }, []);
 
-    useAnalytics();
-
     return (
         /* Cache Buster: v4 */
         <HashRouter>
+            <AnalyticsTracker />
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
                 <Suspense fallback={<LoadingSpinner />}>
