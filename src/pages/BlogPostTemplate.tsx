@@ -29,10 +29,15 @@ const BlogPostTemplate: React.FC = () => {
                 description={post.excerpt}
                 schema={{
                     "@context": "https://schema.org",
-                    "@type": "BlogPosting",
+                    "@type": post.schemaType || "BlogPosting",
                     "headline": post.title,
+                    "description": post.excerpt,
                     "image": `${window.location.origin}${import.meta.env.BASE_URL}blog/${post.image}`,
                     "datePublished": post.date,
+                    "mainEntityOfPage": {
+                        "@type": "WebPage",
+                        "@id": window.location.href
+                    },
                     "author": {
                         "@type": "Organization",
                         "name": "TuTesisRD"
@@ -81,10 +86,20 @@ const BlogPostTemplate: React.FC = () => {
 
                     <div
                         className="prose prose-lg dark:prose-invert max-w-none 
-                        prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:font-black
-                        prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed
-                        prose-strong:text-brand-orange
-                        prose-a:text-brand-orange"
+                        prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:font-black prose-headings:tracking-tight
+                        prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:pb-4 prose-h2:border-b prose-h2:border-slate-100 dark:prose-h2:border-slate-800
+                        prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-brand-orange
+                        prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-8 prose-p:mb-6
+                        prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6 prose-li:mb-2 prose-li:text-slate-600 dark:prose-li:text-slate-300
+                        prose-strong:text-slate-900 dark:prose-strong:text-white prose-strong:font-bold
+                        prose-a:text-brand-blue hover:prose-a:text-brand-orange prose-a:transition-colors
+                        
+                         /* References Section Styling */
+                        [&>.references-section]:mt-16 [&>.references-section]:p-8 [&>.references-section]:bg-slate-50 dark:[&>.references-section]:bg-slate-800/50 
+                        [&>.references-section]:rounded-3xl [&>.references-section]:border [&>.references-section]:border-slate-100 dark:[&>.references-section]:border-slate-700
+                        [&>.references-section>h3]:text-xl [&>.references-section>h3]:mb-4 [&>.references-section>h3]:text-slate-400 [&>.references-section>h3]:uppercase [&>.references-section>h3]:tracking-widest
+                        [&>.references-section>ul]:list-none [&>.references-section>ul]:ml-0
+                        [&>.references-section>ul>li]:text-sm [&>.references-section>ul>li]:mb-3 [&>.references-section>ul>li]:pl-4 [&>.references-section>ul>li]:border-l-2 [&>.references-section>ul>li]:border-brand-orange"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     />
 

@@ -40,6 +40,8 @@ export const logPageView = (url: string) => {
         window.gtag('config', GA_MEASUREMENT_ID, {
             page_path: url,
         });
+    } else {
+        console.log(`[Analytics Dev] Page View: ${url}`);
     }
 };
 
