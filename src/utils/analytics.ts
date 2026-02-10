@@ -1,12 +1,3 @@
-
-declare global {
-    interface Window {
-        gtag: (...args: any[]) => void;
-        dataLayer: any[];
-    }
-}
-
-// Environment variable for GA4 Measurement ID
 // Environment variable for GA4 Measurement ID
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
