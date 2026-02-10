@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { useAnalytics } from './hooks/useAnalytics';
 
 // Lazy Load Pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -72,6 +73,8 @@ const App = () => {
     useEffect(() => {
         console.log("TuTesisRD App Loaded v1.17 - Gemini Service Restored");
     }, []);
+
+    useAnalytics();
 
     return (
         /* Cache Buster: v4 */

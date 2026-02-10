@@ -20,6 +20,18 @@ const EjemplosTesis: React.FC = () => {
         { name: 'Biblioteca Digital BNPHU', url: 'https://bd.bnphu.gob.do/home', description: 'Biblioteca Nacional Pedro Henríquez Ureña' },
     ];
 
+    const repoSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": repositories.map((repo, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "name": repo.name,
+            "description": repo.description,
+            "url": repo.url
+        }))
+    };
+
     const structures = [
         {
             title: "Estructura Clásica (APA 7)",
@@ -59,6 +71,7 @@ const EjemplosTesis: React.FC = () => {
                 title="Ejemplos de Tesis y Repositorios Académicos RD (2026)"
                 description="Accede a los mejores ejemplos de tesis de grado y maestría en República Dominicana. Enlaces a repositorios de UASD, PUCMM, INTEC y más."
                 keywords={['ejemplos de tesis', 'repositorio tesis uasd', 'tesis pucmm', 'estructuras de tesis', 'modelos de tesis']}
+                schema={repoSchema}
                 type="article"
                 publishedTime="2026-02-09"
                 author="TuTesisRD Académico"

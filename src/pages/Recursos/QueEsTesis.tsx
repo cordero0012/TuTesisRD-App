@@ -21,12 +21,26 @@ const QueEsTesis: React.FC = () => {
         }
     ];
 
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqData.map(item => ({
+            "@type": "Question",
+            "name": item.question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": item.answer
+            }
+        }))
+    };
+
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             <SEO
                 title="Qué es una Tesis: Definición, Tipos y Características (2026)"
                 description="Descubre qué es una tesis, sus características principales y la diferencia entre tesis de grado y doctoral. Explicación académica con referencias APA 7."
                 keywords={['qué es una tesis', 'definición de tesis', 'tipos de tesis', 'tesis de grado', 'tesis doctoral', 'características de una tesis']}
+                schema={faqSchema}
                 type="article"
                 publishedTime="2026-02-09"
                 author="TuTesisRD Académico"

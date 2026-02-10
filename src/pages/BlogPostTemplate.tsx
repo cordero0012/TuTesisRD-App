@@ -4,6 +4,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 import blogData from '../data/blogPosts.json';
+import { logEvent } from '../utils/analytics';
 
 const BlogPostTemplate: React.FC = () => {
     const { postId } = useParams<{ postId: string }>();
@@ -12,6 +13,14 @@ const BlogPostTemplate: React.FC = () => {
     if (!post) {
         return <Navigate to="/blog" replace />;
     }
+
+    React.useEffect(() => {
+        logEvent('view_item', 'Blog', post.title);
+    }, [post.id]);
+
+    const handleConversion = () => {
+        logEvent('generate_lead', 'Blog Conversion', `Post: ${post.title}`);
+    };
 
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
@@ -88,6 +97,7 @@ const BlogPostTemplate: React.FC = () => {
                         </div>
                         <Link
                             to="/registro"
+                            onClick={handleConversion}
                             className="bg-brand-orange text-white px-8 py-4 rounded-full font-black shadow-glow hover:shadow-glow-lg transition-all transform hover:scale-105 whitespace-nowrap"
                         >
                             Empezar Ahora
