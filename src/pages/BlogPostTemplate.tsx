@@ -65,6 +65,7 @@ const BlogPostTemplate: React.FC = () => {
                         <img
                             src={`${import.meta.env.BASE_URL}blog/${post.image}`}
                             alt={post.title}
+                            loading="lazy"
                             className="w-full h-auto object-cover"
                         />
                     </div>

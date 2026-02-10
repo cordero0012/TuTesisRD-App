@@ -17,6 +17,7 @@ const LandingPage: React.FC = () => {
         "name": "TuTesisRD",
         "alternateName": "Tu Tesis RD",
         "url": "https://www.tutesisrd.online",
+        "image": "https://www.tutesisrd.online/logo.png",
         "logo": {
             "@type": "ImageObject",
             "url": "https://www.tutesisrd.online/logo.png",
@@ -27,8 +28,10 @@ const LandingPage: React.FC = () => {
         "telephone": "+18294435985",
         "address": {
             "@type": "PostalAddress",
-            "addressLocality": "Santo Domingo",
-            "addressRegion": "Distrito Nacional",
+            "streetAddress": "Higüey, La Altagracia",
+            "addressLocality": "Higüey",
+            "addressRegion": "La Altagracia",
+            "postalCode": "23000",
             "addressCountry": "DO"
         },
         "geo": {
@@ -143,6 +146,7 @@ const LandingPage: React.FC = () => {
                             <img
                                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                                 alt="Estudiante celebrando graduación con éxito"
+                                loading="lazy"
                                 className="relative rounded-[2rem] shadow-2xl transform transition-transform duration-500 group-hover:scale-[1.02] border border-white/20"
                             />
 
@@ -415,7 +419,7 @@ const LandingPage: React.FC = () => {
                     <div className="bg-white dark:bg-background-dark rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
                         <div className="flex flex-col lg:flex-row">
                             <div className="lg:w-2/5 bg-gray-100 dark:bg-gray-800 relative min-h-[300px] lg:min-h-full">
-                                <img src="/miguel-cordero.jpg" alt="Miguel Ángel Cordero Trinidad" className="absolute inset-0 w-full h-full object-cover object-top" />
+                                <img src="/miguel-cordero.webp" alt="Miguel Ángel Cordero Trinidad" loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 text-white lg:hidden">
                                     <h3 className="text-2xl font-bold">Miguel Ángel Cordero</h3>
                                     <p className="text-brand-orange font-medium">CEO & Especialista Académico</p>
