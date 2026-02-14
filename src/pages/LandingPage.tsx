@@ -427,7 +427,7 @@ const LandingPage: React.FC = () => {
                                     loading="lazy"
                                     width="600"
                                     height="800"
-                                    className="absolute inset-0 w-full h-full object-cover object-top lg:object-center"
+                                    className="absolute inset-0 w-full h-full object-cover object-top"
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 text-white lg:hidden">
                                     <h3 className="text-2xl font-bold">Miguel Ángel Cordero</h3>
