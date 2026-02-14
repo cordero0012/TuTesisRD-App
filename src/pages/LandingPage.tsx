@@ -144,9 +144,11 @@ const LandingPage: React.FC = () => {
                         <div className="md:w-1/2 relative animate-fade-in group perspective-1000 mt-8 md:mt-0">
                             <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-yellow-400 rounded-[2rem] transform rotate-3 scale-105 opacity-20 blur-2xl group-hover:rotate-6 transition-transform duration-500"></div>
                             <img
-                                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                                src="/images/hero-student.webp"
                                 alt="Estudiante celebrando graduación con éxito"
-                                loading="lazy"
+                                width="800"
+                                height="600"
+                                fetchPriority="high"
                                 className="relative rounded-[2rem] shadow-2xl transform transition-transform duration-500 group-hover:scale-[1.02] border border-white/20"
                             />
 
@@ -418,8 +420,15 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <div className="bg-white dark:bg-background-dark rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
                         <div className="flex flex-col lg:flex-row">
-                            <div className="lg:w-2/5 bg-gray-100 dark:bg-gray-800 relative min-h-[300px] lg:min-h-full">
-                                <img src="/miguel-cordero.webp" alt="Miguel Ángel Cordero Trinidad" loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
+                            <div className="lg:w-2/5 bg-gray-200 dark:bg-gray-800 relative min-h-[300px] lg:min-h-full flex items-end justify-center overflow-hidden">
+                                <img
+                                    src="/miguel-cordero.webp"
+                                    alt="Miguel Ángel Cordero Trinidad"
+                                    loading="lazy"
+                                    width="600"
+                                    height="800"
+                                    className="absolute inset-0 w-full h-full object-cover object-top lg:object-center"
+                                />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 text-white lg:hidden">
                                     <h3 className="text-2xl font-bold">Miguel Ángel Cordero</h3>
                                     <p className="text-brand-orange font-medium">CEO & Especialista Académico</p>

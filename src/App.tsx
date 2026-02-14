@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AnalyticsTracker from './components/AnalyticsTracker';
 
 // Lazy Load Pages
@@ -76,7 +76,7 @@ const App = () => {
 
     return (
         /* Cache Buster: v4 */
-        <HashRouter>
+        <BrowserRouter>
             <AnalyticsTracker />
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
                 <DarkModeToggle />
@@ -91,6 +91,9 @@ const App = () => {
                         <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:postId" element={<BlogPostTemplate />} />
+
+                        {/* Redirect Legacy or Missing Pages */}
+                        <Route path="/blog-monografico" element={<Navigate to="/blog" replace />} />
 
                         {/* App Flow */}
                         <Route path="/registro" element={<RegisterWizard initialMode="register" />} />
@@ -116,7 +119,7 @@ const App = () => {
                 </Suspense>
                 {/* <AIChat /> */}
             </div>
-        </HashRouter>
+        </BrowserRouter>
     );
 };
 

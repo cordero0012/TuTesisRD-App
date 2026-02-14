@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
 /* Global Styles */
 html {
     scroll-behavior: smooth;
@@ -9,52 +12,103 @@ html {
 }
 
 body {
-    background-color: #f8fafc; /* Slightly better shade */
+    background-color: #f8fafc; /* Academic Cream equivalent */
+    color: #334155; /* Academic Slate */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 .dark body {
-    background-color: #0f172a; /* Slate 900 for better contrast */
-    color: #e2e8f0;
+    background-color: #020617; /* Deep Slate (OLED friendly) */
+    color: #E2E8F0; /* Light Slate */
 }
 
-/* Premium Standard Styles */
-a, button, [role="button"] {
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+/* Premium Layout Utilities */
+.prose-container {
+  display: grid;
+  grid-template-columns: 
+    1fr 
+    min(65ch, 100%) 
+    1fr;
+  gap: 1rem;
 }
 
-/* Custom Scrollbar for Premium Feel */
-::-webkit-scrollbar {
-    width: 6px; /* Slimmer for modern look */
-    height: 6px;
+.prose-container > * {
+  grid-column: 2;
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+.prose-container > .full-bleed {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 9999px; /* Pill shape */
-    transition: background 0.2s;
+.prose-container > .wide-media {
+  grid-column: 1 / -1;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
+@layer components {
+  .blog-content {
+    /* mejora general de legibilidad */
+    line-height: 1.75;
+  }
 
-.dark ::-webkit-scrollbar-thumb {
-    background: #334155;
-}
+  .blog-content :where(p) {
+    margin-top: 0;
+    margin-bottom: 1.15em;
+  }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
-}
+  .blog-content :where(h2) {
+    margin-top: 2.2em;
+    margin-bottom: 0.8em;
+    line-height: 1.15;
+    font-size: 1.875rem; /* 30px */
+    font-weight: 800;
+  }
 
-/* Accessibility Focus Ring */
-:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
+  .blog-content :where(h3) {
+    margin-top: 1.8em;
+    margin-bottom: 0.7em;
+    line-height: 1.2;
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+  }
+
+  .blog-content :where(ul, ol) {
+    margin-top: 0.9em;
+    margin-bottom: 1.2em;
+    padding-left: 1.25em;
+  }
+
+  .blog-content :where(li) {
+    margin-top: 0.35em;
+    margin-bottom: 0.35em;
+  }
+
+  .blog-content :where(hr) {
+    margin: 2.5em 0;
+  }
+
+  .blog-content :where(blockquote) {
+    margin: 1.6em 0;
+    padding-left: 1em;
+    border-left: 4px solid #f97316; /* Brand orange */
+    font-style: italic;
+  }
+
+  .blog-content :where(img, figure) {
+    margin: 1.6em 0;
+  }
+
+  .blog-content :where(table) {
+    margin: 1.6em 0;
+  }
+
+  /* evita que dos saltos seguidos “colapsen” visualmente */
+  .blog-content :where(p + p) {
+    margin-top: 0;
+  }
 }

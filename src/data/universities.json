@@ -4,7 +4,7 @@
         "name": "Universidad Autónoma de Santo Domingo (UASD)",
         "shortName": "UASD",
         "color": "#003366",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Escudo_de_la_UASD.svg/1200px-Escudo_de_la_UASD.svg.png",
+        "logo": "/logos/uasd.png",
         "description": "Expertos en Monográficos, Tesis de Grado y Postgrado para la Primada de América.",
         "regulations": {
             "style": "APA 7ma Edición",
@@ -29,7 +29,7 @@
         "name": "Pontificia Universidad Católica Madre y Maestra (PUCMM)",
         "shortName": "PUCMM",
         "color": "#00539B",
-        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/8/84/PUCMM_Logo.svg/1200px-PUCMM_Logo.svg.png",
+        "logo": "/logos/pucmm.png",
         "description": "Normativa rigurosa y calidad académica. Te ayudamos con tu Proyecto de Grado o Tesis Doctoral.",
         "regulations": {
             "style": "APA 7ma Edición (Adaptado)",
@@ -53,7 +53,7 @@
         "name": "Instituto Tecnológico de Santo Domingo (INTEC)",
         "shortName": "INTEC",
         "color": "#E31837",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/9/98/Logo_INTEC.png",
+        "logo": "/logos/intec.png",
         "description": "Innovación y Ciencia. Asesoría especializada para proyectos de ingeniería y técnicos.",
         "regulations": {
             "style": "IEEE / APA",
@@ -77,7 +77,7 @@
         "name": "Universidad Iberoamericana (UNIBE)",
         "shortName": "UNIBE",
         "color": "#002855",
-        "logo": "https://www.unibe.edu.do/wp-content/uploads/2019/10/logo_unibe_web.png",
+        "logo": "/logos/unibe.png",
         "description": "Liderazgo y Emprendimiento. Potencia tu trabajo final con nuestra asesoría personalizada.",
         "regulations": {
             "style": "APA 7ma",
@@ -100,7 +100,7 @@
         "name": "Universidad O&M",
         "shortName": "O&M",
         "color": "#FFC72C",
-        "logo": "https://udoym.edu.do/wp-content/uploads/2020/07/Logo-OM-1.png",
+        "logo": "/logos/oym.png",
         "description": "Saber y Pensar. Asesoría práctica para monográficos y cursos de grado.",
         "regulations": {
             "style": "APA 6ta/7ma",
@@ -123,7 +123,7 @@
         "name": "Universidad Nacional Pedro Henríquez Ureña (UNPHU)",
         "shortName": "UNPHU",
         "color": "#006837",
-        "logo": "https://unphu.edu.do/wp-content/uploads/2020/06/Logo-UNPHU-Vertical.png",
+        "logo": "/logos/unphu.png",
         "description": "Excelencia Académica. Te apoyamos en tu tesis de Arquitectura, Medicina y más.",
         "regulations": {
             "style": "APA / Vancouver",
@@ -139,6 +139,75 @@
             "Medicina",
             "Veterinaria",
             "Educación"
+        ]
+    },
+    {
+        "id": "uapa",
+        "name": "Universidad Abierta para Adultos (UAPA)",
+        "shortName": "UAPA",
+        "color": "#004B87",
+        "logo": "/logos/uapa.jpg",
+        "description": "Educación a distancia y superior. Expertos en metodología para adultos.",
+        "regulations": {
+            "style": "APA 7ma",
+            "minPages": 60,
+            "maxPages": 120
+        },
+        "tips": [
+            "La UAPA valora mucho la aplicación práctica de los conocimientos.",
+            "Asegúrate de cumplir con el formato específico para la modalidad virtual."
+        ],
+        "programs": [
+            "Derecho",
+            "Psicología",
+            "Educación",
+            "Negocios"
+        ]
+    },
+    {
+        "id": "ucateci",
+        "name": "Universidad Católica del Cibao (UCATECI)",
+        "shortName": "UCATECI",
+        "color": "#800000",
+        "logo": "/logos/ucateci.png",
+        "description": "Formación integral y valores. Asesoría para tesis y proyectos de grado.",
+        "regulations": {
+            "style": "APA 7ma",
+            "minPages": 50,
+            "maxPages": 100
+        },
+        "tips": [
+            "Enfócate en la coherencia entre los objetivos y las conclusiones.",
+            "La UCATECI suele requerir una defensa oral rigurosa."
+        ],
+        "programs": [
+            "Ingeniería",
+            "Salud",
+            "Negocios",
+            "Humanidades"
+        ]
+    },
+    {
+        "id": "unev",
+        "name": "Universidad Nacional Evangélica (UNEV)",
+        "shortName": "UNEV",
+        "color": "#003399",
+        "logo": "/logos/unev.png",
+        "description": "Excelencia y servicio. Te acompañamos en tu proceso de graduación.",
+        "regulations": {
+            "style": "APA 7ma",
+            "minPages": 50,
+            "maxPages": 120
+        },
+        "tips": [
+            "La UNEV pone énfasis en la ética y los valores en la investigación.",
+            "Revisa bien los requisitos de formato para la presentación final."
+        ],
+        "programs": [
+            "Teología",
+            "Psicología",
+            "Educación",
+            "Salud"
         ]
     }
 ]

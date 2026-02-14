@@ -28,10 +28,17 @@ export default {
                 "background-dark": "#101822",
                 "surface-light": "#ffffff",
                 "surface-dark": "#1a2430",
+                "academic": {
+                    "navy": "#0F172A",
+                    "gold": "#D97706",
+                    "cream": "#F8FAFC",
+                    "slate": "#334155",
+                },
             },
             fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                display: ['Outfit', 'Inter', 'sans-serif'],
+                serif: ['"Playfair Display"', 'serif'],
+                sans: ['"Inter"', 'sans-serif'],
+                display: ['"Outfit"', '"Inter"', 'sans-serif'],
             },
             boxShadow: {
                 'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
@@ -77,5 +84,7 @@ export default {
             }
         },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/typography'),
+    ],
 }

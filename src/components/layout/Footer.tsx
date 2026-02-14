@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
                             <li><Link to="/recursos/que-es-tesis" className="hover:text-brand-orange transition">¿Qué es una Tesis?</Link></li>
                             <li><Link to="/recursos/como-hacer-tesis" className="hover:text-brand-orange transition">Guía Paso a Paso</Link></li>
                             <li><Link to="/recursos/ejemplos-tesis" className="hover:text-brand-orange transition">Ejemplos y Plantillas</Link></li>
-                            <li><Link to="/tools/ai-audit" className="hover:text-brand-orange transition">Auditoría IA (Gratis)</Link></li>
+                            <li><Link to="/herramientas/auditor" className="hover:text-brand-orange transition">Auditoría IA (Gratis)</Link></li>
                         </ul>
                     </div>
                     <div>
@@ -55,9 +55,9 @@ const Footer: React.FC = () => {
                         © {new Date().getFullYear()} TuTesisRD. Todos los derechos reservados.
                     </div>
                     <div className="flex items-center gap-6">
-                        <a href="#" className="hover:text-white transition"><i className="fab fa-instagram text-xl"></i></a>
-                        <a href="#" className="hover:text-white transition"><i className="fab fa-facebook text-xl"></i></a>
-                        <a href="#" className="hover:text-white transition"><i className="fab fa-linkedin text-xl"></i></a>
+                        <a href="https://instagram.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram"><i className="fab fa-instagram text-xl"></i></a>
+                        <a href="https://facebook.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Facebook"><i className="fab fa-facebook text-xl"></i></a>
+                        <a href="javascript:void(0)" className="hover:text-white transition cursor-not-allowed opacity-50" aria-label="LinkedIn"><i className="fab fa-linkedin text-xl"></i></a>
                     </div>
                 </div>
             </div>
