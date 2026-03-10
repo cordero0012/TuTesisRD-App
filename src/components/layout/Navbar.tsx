@@ -43,7 +43,10 @@ const Navbar: React.FC = () => {
                     <Link to="/herramientas" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/herramientas') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Herramientas</Link>
                     <Link to="/universidades" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/universidades') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Universidades</Link>
                     <Link to="/blog" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/blog') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Blog</Link>
-                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="ml-4 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
+                    <Link to="/registro" className="ml-4 px-6 py-2.5 bg-brand-orange text-white rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
+                        <span className="material-icons text-lg">person_add</span> Registrarse
+                    </Link>
+                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="ml-2 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
                         <i className="fab fa-whatsapp text-lg"></i> Contactar
                     </a>
                 </nav>
@@ -64,6 +67,9 @@ const Navbar: React.FC = () => {
                 <Link to="/herramientas" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Herramientas</Link>
                 <Link to="/universidades" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Universidades</Link>
                 <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Blog</Link>
+                <Link to="/registro" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-white font-bold bg-brand-orange">
+                    <span className="material-icons mr-2">person_add</span> Registrarse Ahora
+                </Link>
                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-brand-orange font-bold bg-orange-50/50 dark:bg-orange-900/10">
                     <i className="fab fa-whatsapp mr-2"></i> Contactar por WhatsApp
                 </a>
