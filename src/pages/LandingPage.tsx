@@ -156,7 +156,7 @@ const LandingPage: React.FC = () => {
 
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="flex flex-col md:flex-row items-center gap-10 md:gap-12 lg:gap-20">
-                        <div className="w-full md:w-1/2 animate-fade-in-up text-center md:text-left order-2 md:order-1 mt-6 md:mt-0">
+                        <div className="w-full md:w-1/2 animate-fade-in-up text-center md:text-left order-1 md:order-1 mt-6 md:mt-0">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 shadow-sm mb-4 md:mb-8">
                                 <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
                                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-200">Disponible para nuevos proyectos</span>
@@ -172,10 +172,10 @@ const LandingPage: React.FC = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
+                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-3.5 md:py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
                                     <span className="material-icons mr-2" aria-hidden="true">fact_check</span> Solicitar diagnóstico
                                 </a>
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
+                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-3.5 md:py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
                                     <span className="material-icons mr-2 text-brand-orange" aria-hidden="true">chat</span> Hablar por WhatsApp
                                 </a>
                             </div>
@@ -198,7 +198,7 @@ const LandingPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="w-full md:w-1/2 relative animate-fade-in group perspective-1000 order-1 md:order-2">
+                        <div className="w-full md:w-1/2 relative animate-fade-in group perspective-1000 order-2 md:order-2">
                             <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-xl md:shadow-2xl border border-gray-100 dark:border-slate-800 relative z-20 mx-auto w-full max-w-md md:max-w-full">
                                 <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 text-center">Diagnóstico Rápido</h3>
                                 <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm text-center mb-6">Completa este breve formulario y evaluaremos exactamente en qué necesitas ayuda.</p>
