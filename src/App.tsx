@@ -6,16 +6,38 @@ import AnalyticsTracker from './components/AnalyticsTracker';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<any>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
+        const checkAuth = async () => {
+            const { data: { session: currentSession } } = await supabase.auth.getSession();
+            setSession(currentSession);
+
+            if (currentSession) {
+                const { data: teamMember, error } = await supabase
+                    .from('team_members')
+                    .select('id, is_active')
+                    .eq('auth_user_id', currentSession.user.id)
+                    .single();
+
+                setIsAdmin(!!teamMember && teamMember.is_active);
+            } else {
+                setIsAdmin(false);
+            }
             setLoading(false);
-        });
+        };
+
+        checkAuth();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
+            if (!session) {
+                setIsAdmin(false);
+                setLoading(false);
+            } else {
+                checkAuth();
+            }
         });
 
         return () => subscription.unsubscribe();
@@ -25,7 +47,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         return <LoadingSpinner />;
     }
 
-    if (!session) {
+    if (!session || !isAdmin) {
         return <Navigate to="/admin/login" replace />;
     }
 

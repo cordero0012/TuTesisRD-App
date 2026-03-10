@@ -249,13 +249,63 @@ export function Settings() {
                                 </div>
                             )}
 
-                            {(activeTab === "Seguridad" || activeTab === "Facturacion") && (
+                            {activeTab === "Seguridad" && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div>
+                                            <h3 className="text-lg font-bold">Gestión de Acceso y Equipo</h3>
+                                            <p className="text-sm text-muted-foreground">Administra las credenciales y roles de los colaboradores.</p>
+                                        </div>
+                                        <Button className="rounded-xl font-bold flex gap-2">
+                                            <Shield className="h-4 w-4" /> Nuevo Colaborador
+                                        </Button>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {[
+                                            { name: "Miguel Sánchez", email: "miguel@tutesisrd.com", role: "Super Admin", active: true },
+                                            { name: "Equipo Soporte", email: "soporte@tutesisrd.com", role: "Admin", active: true },
+                                        ].map((member, idx) => (
+                                            <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-all group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
+                                                        {member.name.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-sm">{member.name} {member.role === 'Super Admin' && <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">Pro</span>}</h4>
+                                                        <p className="text-xs text-muted-foreground">{member.email}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`h-2 w-2 rounded-full ${member.active ? 'bg-emerald-500' : 'bg-rose-500'} shadow-[0_0_8px_rgba(16,185,129,0.5)]`}></span>
+                                                    <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Editar</Button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="pt-6 border-t border-border/50">
+                                        <h4 className="font-bold text-sm mb-4">Seguridad de la Cuenta</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <Button variant="outline" className="rounded-2xl h-12 font-bold justify-start px-6 border-slate-200 dark:border-slate-800">
+                                                <Shield className="mr-2 h-4 w-4 text-primary" /> Cambiar Contraseña
+                                            </Button>
+                                            <Button variant="outline" className="rounded-2xl h-12 font-bold justify-start px-6 border-slate-200 dark:border-slate-800">
+                                                <Database className="mr-2 h-4 w-4 text-primary" /> Auditoría de Accesos
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === "Facturacion" && (
                                 <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl bg-accent/5 max-w-2xl">
                                     <div className="h-16 w-16 rounded-full bg-accent/50 flex items-center justify-center mb-4">
-                                        <Shield className="h-8 w-8 text-muted-foreground opacity-50" />
+                                        <Bell className="h-8 w-8 text-muted-foreground opacity-50" />
                                     </div>
-                                    <h3 className="text-lg font-bold text-foreground">Sección bajo seguridad administrativa</h3>
-                                    <p className="text-sm text-muted-foreground mt-1 mb-4 max-w-sm">Esta área se encuentra protegida por políticas de infraestructura. Contacta a soporte para cambios estructurales.</p>
+                                    <h3 className="text-lg font-bold text-foreground">Planes y Facturación</h3>
+                                    <p className="text-sm text-muted-foreground mt-1 mb-4 max-w-sm">Esta sección te permite gestionar tu suscripción y ver el historial de pagos de la plataforma.</p>
+                                    <Button variant="outline" className="rounded-xl font-bold">Ver Detalles del Plan</Button>
                                 </div>
                             )}
 

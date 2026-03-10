@@ -72,7 +72,21 @@ export const RegisterStep1: React.FC<RegisterStep1Props> = React.memo(({ formDat
                         required
                         aria-required="true"
                     />
+                    <div>
+                    <label htmlFor="student-password" className="font-bold text-sm block mb-2 text-slate-700 dark:text-slate-300">Contraseña (Mínimo 6 caracteres)</label>
+                    <input
+                        id="student-password"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                        placeholder="••••••••"
+                        required
+                        aria-required="true"
+                    />
                 </div>
+            </div>
             </div>
             <div className="mt-10 flex flex-col-reverse md:flex-row justify-between items-center gap-4">
                 <Link to="/" className="w-full md:w-auto py-3 text-center text-slate-500 hover:text-slate-800 font-medium">Cancelar</Link>

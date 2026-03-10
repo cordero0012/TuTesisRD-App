@@ -11,6 +11,7 @@ export interface RegistrationFormData {
     career: string;
     type: string;
     plan: string;
+    password?: string;
 }
 
 export type RegisterMode = 'register' | 'monitor';

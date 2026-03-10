@@ -32,7 +32,8 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
         dueDate: '',
         career: '',
         type: 'Tesis de Grado',
-        plan: 'asesoria'
+        plan: 'asesoria',
+        password: ''
     });
 
     // Notification state
@@ -47,7 +48,21 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
     const submitRegistration = useCallback(async () => {
         setIsSubmitting(true);
         try {
-            // 1. Insert Student
+            // 1. Sign up user in Supabase Auth
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password || '',
+                options: {
+                    data: {
+                        name: formData.name,
+                        lastname: formData.lastname
+                    }
+                }
+            });
+
+            if (authError) throw authError;
+
+            // 2. Insert Student linked to Auth User
             const { data: studentData, error: studentError } = await supabase
                 .from('students')
                 .insert([{
@@ -56,14 +71,15 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                     email: formData.email,
                     phone: formData.phone,
                     university: formData.university,
-                    career: formData.career
+                    career: formData.career,
+                    auth_user_id: authData.user?.id
                 }])
                 .select()
                 .single();
 
             if (studentError) throw studentError;
 
-            // 2. Insert Project
+            // 3. Insert Project
             const { data: projectData, error: projectError } = await supabase
                 .from('projects')
                 .insert([{
@@ -156,8 +172,12 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
     const nextStep = () => {
         // Validation Logic
         if (step === 1) {
-            if (!formData.name || !formData.lastname || !formData.email || !formData.phone) {
-                showNotification("Por favor completa todos los campos personales.");
+            if (!formData.name || !formData.lastname || !formData.email || !formData.phone || !formData.password) {
+                showNotification("Por favor completa todos los campos personales y de acceso.");
+                return;
+            }
+            if (formData.password.length < 6) {
+                showNotification("La contraseña debe tener al menos 6 caracteres.");
                 return;
             }
         }
