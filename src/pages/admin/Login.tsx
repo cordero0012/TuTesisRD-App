@@ -41,13 +41,10 @@ export function Login() {
             
             <div className="w-full max-w-md relative z-10">
                 <div className="text-center mb-10">
-                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-orange/10 ring-1 ring-brand-orange/20 mb-6 mx-auto">
-                        <Sparkles className="h-8 w-8 text-brand-orange" />
-                    </div>
                     <img 
                         src="/logos/Logo-TuTesis-Color.png" 
                         alt="TuTesisRD" 
-                        className="h-10 mx-auto mb-2"
+                        className="h-16 mx-auto mb-4"
                     />
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Portal Administrativo</p>
                 </div>
