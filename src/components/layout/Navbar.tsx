@@ -11,8 +11,9 @@ const Navbar: React.FC = () => {
     return (
         <header className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-800 shadow-sm">
             <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                <Link to="/" className="flex items-center group">
-                    <img src="/logos/Logo-TuTesis-Color.png" alt="TuTesisRD" className="h-8 md:h-10 group-hover:scale-105 transition-transform duration-300" />
+                <Link to="/" className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center group">
+                    <span className="material-icons mr-2 text-brand-orange group-hover:rotate-12 transition-transform duration-300" aria-hidden="true">school</span>
+                    TuTesis<span className="text-brand-orange">RD</span>
                 </Link>
                 {/* Mobile Menu Button */}
                 <button

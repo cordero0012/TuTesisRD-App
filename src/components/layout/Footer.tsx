@@ -7,9 +7,9 @@ const Footer: React.FC = () => {
             <div className="container mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
                     <div>
-                        <Link to="/" className="inline-block mb-6">
-                            <img src="/logos/Logo-TuTesis-Color.png" alt="TuTesisRD" className="h-10 brightness-0 invert" />
-                        </Link>
+                        <span className="text-2xl font-bold text-white block mb-4 flex items-center">
+                            <span className="material-icons mr-2 text-brand-orange">school</span>Tu Tesis RD
+                        </span>
                         <p className="text-sm mb-6">Tu aliado académico número uno en República Dominicana. Calidad, confianza y resultados garantizados.</p>
                     </div>
                     <div>
