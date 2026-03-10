@@ -45,9 +45,9 @@ export function Login() {
                         <Sparkles className="h-8 w-8 text-brand-orange" />
                     </div>
                     <img 
-                        src="/logos/Logo-Horizontal.png" 
+                        src="/logos/Logo-TuTesis-Color.png" 
                         alt="TuTesisRD" 
-                        className="h-10 mx-auto mb-2 dark:brightness-200"
+                        className="h-10 mx-auto mb-2"
                     />
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Portal Administrativo</p>
                 </div>

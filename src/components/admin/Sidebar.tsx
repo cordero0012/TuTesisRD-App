@@ -62,7 +62,7 @@ export function Sidebar({ theme, setTheme }: { theme: string; setTheme: (t: "lig
     <aside className="border-r border-border bg-card px-5 py-6 h-screen flex flex-col sticky top-0">
       <div className="mb-8 px-2 flex items-center">
         <Link to="/" className="block">
-          <img src="/logos/Logo-Horizontal.png" alt="TuTesisRD" className="h-8 dark:brightness-200" />
+          <img src="/logos/Logo-TuTesis-Color.png" alt="TuTesisRD" className="h-8" />
         </Link>
       </div>
 
