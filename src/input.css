@@ -6,43 +6,115 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 /* Global Styles */
-html {
-    scroll-behavior: smooth;
+/* Light Theme (Tu Tesis RD Light) */
+:root {
+  --background: 0 0% 98%;
+  --foreground: 0 0% 9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 9%;
+  --primary: 33 88% 50%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 92%;
+  --secondary-foreground: 0 0% 15%;
+  --muted: 0 0% 93%;
+  --muted-foreground: 0 0% 35%;
+  --accent: 0 0% 92%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84.2% 55.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 85%;
+  --input: 0 0% 85%;
+  --ring: 33 88% 50%;
+  --radius: 0.75rem;
+}
+
+/* Dark Theme (Tu Tesis RD Dark) */
+.dark {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 8%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 33 88% 55%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 95%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 65%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 95%;
+  --destructive: 0 62.8% 45.6%;
+  --destructive-foreground: 0 0% 95%;
+  --border: 0 0% 18%;
+  --input: 0 0% 18%;
+  --ring: 33 88% 55%;
+}
+
+/* Gray Theme (Neutral Option) */
+.gray {
+  --background: 220 14% 96%;
+  --foreground: 220 10% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 10% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 10% 10%;
+  --primary: 220 10% 20%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 10% 90%;
+  --secondary-foreground: 220 10% 20%;
+  --muted: 220 10% 90%;
+  --muted-foreground: 220 10% 40%;
+  --accent: 220 10% 90%;
+  --accent-foreground: 220 10% 20%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 220 10% 85%;
+  --input: 220 10% 85%;
+  --ring: 220 10% 20%;
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border) / 1);
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 body {
-    background-color: #f8fafc; /* Academic Cream equivalent */
-    color: #334155; /* Academic Slate */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.dark body {
-    background-color: #020617; /* Deep Slate (OLED friendly) */
-    color: #E2E8F0; /* Light Slate */
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Premium Layout Utilities */
 .prose-container {
   display: grid;
-  grid-template-columns: 
-    1fr 
-    min(65ch, 100%) 
-    1fr;
+  grid-template-columns:
+    1fr min(65ch, 100%) 1fr;
   gap: 1rem;
 }
 
-.prose-container > * {
+.prose-container>* {
   grid-column: 2;
 }
 
-.prose-container > .full-bleed {
+.prose-container>.full-bleed {
   grid-column: 1 / -1;
   width: 100%;
 }
 
-.prose-container > .wide-media {
+.prose-container>.wide-media {
   grid-column: 1 / -1;
   max-width: 1200px;
   margin-left: auto;
@@ -65,7 +137,8 @@ body {
     margin-top: 2.2em;
     margin-bottom: 0.8em;
     line-height: 1.15;
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
+    /* 30px */
     font-weight: 800;
   }
 
@@ -73,7 +146,8 @@ body {
     margin-top: 1.8em;
     margin-bottom: 0.7em;
     line-height: 1.2;
-    font-size: 1.5rem; /* 24px */
+    font-size: 1.5rem;
+    /* 24px */
     font-weight: 700;
   }
 
@@ -95,7 +169,8 @@ body {
   .blog-content :where(blockquote) {
     margin: 1.6em 0;
     padding-left: 1em;
-    border-left: 4px solid #f97316; /* Brand orange */
+    border-left: 4px solid #f97316;
+    /* Brand orange */
     font-style: italic;
   }
 

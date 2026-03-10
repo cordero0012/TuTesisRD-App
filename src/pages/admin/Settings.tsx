@@ -1,0 +1,269 @@
+import React, { useState } from "react";
+import {
+    Settings as SettingsIcon,
+    User,
+    Bell,
+    Shield,
+    Palette,
+    Layout,
+    Database,
+    Globe,
+    LogOut,
+    ChevronRight,
+    Sparkles,
+    CreditCard,
+    CheckCircle2,
+    Loader2
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+
+export function Settings() {
+    const [activeTab, setActiveTab] = useState("General");
+    const [isSaving, setIsSaving] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    // Form States
+    const [profileData, setProfileData] = useState({
+        name: "Miguel Sánchez",
+        email: "miguel@tutesisrd.com",
+        role: "Administrador Master",
+        language: "Español (RD)",
+        theme: "Sistema (Auto)"
+    });
+
+    const [toggles, setToggles] = useState({
+        pushOn: true,
+        emailOn: true,
+        dailyBackup: true,
+        aiEnabled: true,
+        twoFactor: false
+    });
+
+    const handleSave = () => {
+        setIsSaving(true);
+        // Simulate API call
+        setTimeout(() => {
+            setIsSaving(false);
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 3000);
+        }, 1200);
+    };
+
+    const navItems = [
+        { id: "General", icon: User, label: "Perfil General" },
+        { id: "Operaciones", icon: Layout, label: "Preferencias" },
+        { id: "Notificaciones", icon: Bell, label: "Notificaciones" },
+        { id: "Seguridad", icon: Shield, label: "Seguridad y Acceso" },
+        { id: "Facturacion", icon: CreditCard, label: "Suscripción" }
+    ];
+
+    return (
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Ajusta las preferencias de tu cuenta y los módulos de la plataforma.
+                    </p>
+                </div>
+                <div className="flex items-center gap-3">
+                    {showSuccess && (
+                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-500/10 px-3 py-1.5 rounded-xl text-sm font-bold animate-in fade-in slide-in-from-right-4">
+                            <CheckCircle2 className="h-4 w-4" /> Cambios guardados
+                        </div>
+                    )}
+                    <Button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="rounded-2xl font-bold px-6 shadow-lg shadow-primary/20 min-w-[140px] cursor-pointer"
+                    >
+                        {isSaving ? (
+                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Guardando...</>
+                        ) : (
+                            "Guardar Cambios"
+                        )}
+                    </Button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                {/* Menú de Navegación Lateral */}
+                <div className="xl:col-span-1 space-y-6">
+                    <Card className="rounded-3xl border-border bg-card shadow-sm p-2">
+                        <nav className="flex flex-col space-y-1">
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveTab(item.id)}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all cursor-pointer ${activeTab === item.id
+                                            ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                                        }`}
+                                >
+                                    <item.icon className="h-4 w-4" />
+                                    {item.label}
+                                </button>
+                            ))}
+                        </nav>
+                    </Card>
+
+                    <Card className="rounded-3xl border-border bg-gradient-to-br from-primary/10 to-transparent border-primary/20 shadow-sm p-6 relative overflow-hidden group">
+                        <div className="absolute -top-4 -right-4 bg-primary/20 p-6 rounded-full group-hover:scale-110 transition-transform duration-500 blur-xl"></div>
+                        <Sparkles className="absolute top-4 right-4 h-8 w-8 text-primary opacity-60 group-hover:rotate-12 transition-transform" />
+                        <h4 className="font-bold text-foreground">TuTesisRD AI Activo</h4>
+                        <p className="text-xs text-muted-foreground mt-2 font-medium">Gemini Pro está impulsando los análisis de proyectos.</p>
+                        <Button variant="outline" className="mt-4 w-full rounded-xl h-9 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 cursor-pointer">
+                            Configurar Motor AI
+                        </Button>
+                    </Card>
+
+                    <Button variant="ghost" className="w-full rounded-2xl h-12 font-bold flex gap-2 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer">
+                        <LogOut className="h-4 w-4" /> Cerrar Sesión
+                    </Button>
+                </div>
+
+                {/* Contenido Principal de Ajustes */}
+                <div className="xl:col-span-3">
+                    <Card className="rounded-3xl border-border bg-card shadow-sm min-h-[500px]">
+                        <CardHeader className="border-b border-border/50 pb-6 mb-6">
+                            <CardTitle className="text-xl font-bold">{navItems.find(i => i.id === activeTab)?.label}</CardTitle>
+                            <CardDescription className="text-sm font-medium">Actualiza tu información y personaliza tu entorno de trabajo.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-8 animate-in fade-in duration-300">
+
+                            {activeTab === "General" && (
+                                <div className="space-y-6 max-w-2xl">
+                                    <div className="flex items-center gap-6">
+                                        <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary text-3xl font-black shadow-inner ring-4 ring-background">
+                                            {profileData.name.charAt(0)}
+                                        </div>
+                                        <div className="space-y-2">
+                                            <h3 className="font-bold text-foreground">Avatar del Perfil</h3>
+                                            <div className="flex gap-2">
+                                                <Button size="sm" className="rounded-xl cursor-pointer">Subir Nueva Foto</Button>
+                                                <Button size="sm" variant="outline" className="rounded-xl cursor-pointer">Remover</Button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border/50">
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-muted-foreground">Nombre Completo</label>
+                                            <Input
+                                                className="rounded-xl bg-accent/30"
+                                                value={profileData.name}
+                                                onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-muted-foreground">Correo Electrónico</label>
+                                            <Input
+                                                className="rounded-xl bg-accent/30"
+                                                type="email"
+                                                value={profileData.email}
+                                                onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-muted-foreground">Rol Asignado</label>
+                                            <Input className="rounded-xl bg-accent/30 opacity-70" value={profileData.role} disabled />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-muted-foreground">Idioma Regional</label>
+                                            <select
+                                                className="w-full rounded-xl border border-border bg-accent/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring h-10 font-medium"
+                                                value={profileData.language}
+                                                onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
+                                            >
+                                                <option>Español (RD)</option>
+                                                <option>English (US)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === "Operaciones" && (
+                                <div className="space-y-6 max-w-2xl">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, aiEnabled: !toggles.aiEnabled })}>
+                                            <div>
+                                                <h4 className="font-bold text-foreground">Asistencia AI Global</h4>
+                                                <p className="text-xs text-muted-foreground mt-1">Permitir a Gemini analizar tablas e interpretar documentos PDF cargados.</p>
+                                            </div>
+                                            <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.aiEnabled ? 'bg-primary' : 'bg-muted'}`}>
+                                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.aiEnabled ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, dailyBackup: !toggles.dailyBackup })}>
+                                            <div>
+                                                <h4 className="font-bold text-foreground">Copias de Seguridad (Backups)</h4>
+                                                <p className="text-xs text-muted-foreground mt-1">Realizar vaciado automático de la base de datos a un clúster seguro cada 24 horas.</p>
+                                            </div>
+                                            <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.dailyBackup ? 'bg-primary' : 'bg-muted'}`}>
+                                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.dailyBackup ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2 pt-2">
+                                        <label className="text-xs font-bold uppercase text-muted-foreground">Apariencia Visual (Bento UI)</label>
+                                        <select
+                                            className="w-full rounded-xl border border-border bg-accent/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring h-10 font-medium"
+                                            value={profileData.theme}
+                                            onChange={(e) => setProfileData({ ...profileData, theme: e.target.value })}
+                                        >
+                                            <option>Sistema (Auto)</option>
+                                            <option>Bento Light Mode</option>
+                                            <option>Bento Dark Mode</option>
+                                            <option>Minimal Gray</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === "Notificaciones" && (
+                                <div className="space-y-4 max-w-2xl">
+                                    <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, pushOn: !toggles.pushOn })}>
+                                        <div>
+                                            <h4 className="font-bold text-foreground">Alertas Push del Navegador</h4>
+                                            <p className="text-xs text-muted-foreground mt-1">Recibir notificaciones flotantes en el escritorio sobre nuevos hitos de proyectos.</p>
+                                        </div>
+                                        <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.pushOn ? 'bg-primary' : 'bg-muted'}`}>
+                                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.pushOn ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, emailOn: !toggles.emailOn })}>
+                                        <div>
+                                            <h4 className="font-bold text-foreground">Resumen Semanal por Email</h4>
+                                            <p className="text-xs text-muted-foreground mt-1">Recibir un correo todos los lunes con los ingresos, gastos y proyectos finalizados.</p>
+                                        </div>
+                                        <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.emailOn ? 'bg-primary' : 'bg-muted'}`}>
+                                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.emailOn ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {(activeTab === "Seguridad" || activeTab === "Facturacion") && (
+                                <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl bg-accent/5 max-w-2xl">
+                                    <div className="h-16 w-16 rounded-full bg-accent/50 flex items-center justify-center mb-4">
+                                        <Shield className="h-8 w-8 text-muted-foreground opacity-50" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-foreground">Sección bajo seguridad administrativa</h3>
+                                    <p className="text-sm text-muted-foreground mt-1 mb-4 max-w-sm">Esta área se encuentra protegida por políticas de infraestructura. Contacta a soporte para cambios estructurales.</p>
+                                </div>
+                            )}
+
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    );
+}
+

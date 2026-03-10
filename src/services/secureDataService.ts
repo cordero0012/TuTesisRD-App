@@ -38,8 +38,8 @@ export async function registerStudent(
     const validation = validateInput(StudentRegistrationSchema, data);
 
     if (!validation.success) {
-        const errorMsg = Object.entries(validation.errors)
-            .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+        const errorMsg = Object.entries((validation as any).errors)
+            .map(([field, errors]: any) => `${field}: ${errors.join(', ')}`)
             .join('; ');
         return { success: false, error: errorMsg };
     }
@@ -69,8 +69,8 @@ export async function createProject(
     const validation = validateInput(ProjectCreationSchema, data);
 
     if (!validation.success) {
-        const errorMsg = Object.entries(validation.errors)
-            .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+        const errorMsg = Object.entries((validation as any).errors)
+            .map(([field, errors]: any) => `${field}: ${errors.join(', ')}`)
             .join('; ');
         return { success: false, error: errorMsg };
     }

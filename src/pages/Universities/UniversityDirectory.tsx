@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import SEO from '../../components/SEO';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 import universitiesData from '../../data/universities.json';
 
 const UniversityDirectory: React.FC = () => {

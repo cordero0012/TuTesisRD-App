@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
-import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
-import Input from '../components/ui/Input';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { Input } from '../components/ui/Input';
 
 const DesignSystem: React.FC = () => {
     const [activeTab, setActiveTab] = useState('colors');
@@ -137,15 +137,15 @@ const DesignSystem: React.FC = () => {
                             <section>
                                 <h3 className="text-xl font-bold mb-6">Buttons</h3>
                                 <div className="flex flex-wrap gap-4 items-center p-8 bg-surface-light dark:bg-surface-dark rounded-3xl border border-gray-100 dark:border-gray-800">
-                                    <Button variant="primary">Primary Application</Button>
+                                    <Button variant="default">Primary Application</Button>
                                     <Button variant="secondary">Secondary Action</Button>
                                     <Button variant="outline">Outline</Button>
                                     <Button variant="ghost">Ghost Option</Button>
-                                    <Button variant="glass">Glass Button</Button>
-                                    <Button variant="gradient" rightIcon={<span className="material-icons text-sm">arrow_forward</span>}>
-                                        Get Started
+                                    <Button variant="secondary">Secondary View</Button>
+                                    <Button variant="default">
+                                        Get Started <span className="material-icons text-sm ml-2">arrow_forward</span>
                                     </Button>
-                                    <Button variant="primary" isLoading>Loading</Button>
+                                    <Button variant="default">Loading</Button>
                                     <Button variant="secondary" className="rounded-full w-12 h-12 !p-0 flex items-center justify-center">
                                         <span className="material-icons">add</span>
                                     </Button>
@@ -155,17 +155,17 @@ const DesignSystem: React.FC = () => {
                             <section>
                                 <h3 className="text-xl font-bold mb-6">Inputs</h3>
                                 <div className="grid md:grid-cols-2 gap-6 p-8 bg-surface-light dark:bg-surface-dark rounded-3xl border border-gray-100 dark:border-gray-800">
-                                    <Input label="Full Name" placeholder="e.g. Juan Perez" />
-                                    <Input label="Email Address" type="email" placeholder="juan@example.com" icon={<span className="material-icons">email</span>} />
-                                    <Input label="Password" type="password" error="Password must be at least 8 characters" />
-                                    <Input label="Search" placeholder="Search..." className="rounded-full" icon={<span className="material-icons">search</span>} />
+                                    <Input placeholder="e.g. Juan Perez" />
+                                    <Input type="email" placeholder="juan@example.com" />
+                                    <Input type="password" />
+                                    <Input placeholder="Search..." className="rounded-full" />
                                 </div>
                             </section>
 
                             <section>
                                 <h3 className="text-xl font-bold mb-6">Glassmorphic Cards</h3>
                                 <div className="grid md:grid-cols-2 gap-6">
-                                    <Card variant="glass" className="p-8">
+                                    <Card className="p-8">
                                         <h4 className="text-xl font-bold mb-2">Glass Card</h4>
                                         <p className="text-slate-500 dark:text-slate-400">
                                             This component uses <code>variant="glass"</code>. Perfect for overlaying on complex backgrounds.
@@ -173,7 +173,7 @@ const DesignSystem: React.FC = () => {
                                         <Button variant="outline" size="sm" className="mt-4">Learn More</Button>
                                     </Card>
 
-                                    <Card variant="gradient" className="p-8 relative group">
+                                    <Card className="p-8 relative group">
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
                                         <h4 className="text-xl font-bold mb-2">Gradient Card</h4>
                                         <p className="text-white/90">
@@ -181,7 +181,7 @@ const DesignSystem: React.FC = () => {
                                         </p>
                                     </Card>
 
-                                    <Card variant="default" hoverEffect className="p-8">
+                                    <Card className="p-8 hover:shadow-lg transition-all duration-300">
                                         <h4 className="text-xl font-bold mb-2">Default Interactive</h4>
                                         <p className="text-slate-500 dark:text-slate-400">
                                             Standard card with <code>hoverEffect</code> enabled. Smooth lift on hover.

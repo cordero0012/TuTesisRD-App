@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from '../components/layout/Navbar';
 import { useProject } from '../contexts/ProjectContext';
 import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../contexts/NotificationContext';
@@ -14,19 +15,30 @@ export const AuditPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-white pt-20 px-8 pb-12">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-white pt-28 px-8 pb-12">
+            <Navbar />
             <div className="max-w-6xl mx-auto space-y-12">
-                {/* Header */}
-                <header className="space-y-4">
-                    <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                        Centro de Auditoría de Tesis
-                    </h1>
-                    <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-                        Evaluación integral de tu investigación. Verifica la originalidad, consistencia metodológica y cumplimiento normativo en un solo lugar.
-                    </p>
+                {/* Header Section with Back Button */}
+                <header className="space-y-6">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="group flex items-center gap-2 text-slate-500 hover:text-brand-orange transition-all font-bold text-sm uppercase tracking-widest"
+                    >
+                        <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        Volver al Inicio
+                    </button>
+
+                    <div className="space-y-2">
+                        <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
+                            Centro de <span className="text-brand-orange">Herramientas</span>
+                        </h1>
+                        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+                            Evaluación integral de tu investigación. Verifica la originalidad, consistencia metodológica y cumplimiento normativo en un solo lugar.
+                        </p>
+                    </div>
                 </header>
 
-                {/* Tools Grid */}
+                {/* Tools Grid - This is the "franja principal" */}
                 <div className="grid md:grid-cols-2 gap-8">
                     {/* Card: AI Detection */}
                     <div

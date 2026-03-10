@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import Navbar from '../components/layout/Navbar';
 import { useProject } from '../contexts/ProjectContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { detectAiContent, detectAiContentBatch, AiDetectionResult } from '../services/analysis/detection';
@@ -144,16 +144,26 @@ export const AiAudit = () => {
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] w-full bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-white overflow-hidden">
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-white overflow-hidden">
+            <Navbar />
+            <main className="flex-1 flex flex-col h-full overflow-hidden relative pt-16">
                 {/* Header Section */}
                 <header className="h-20 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 bg-white dark:bg-slate-900 shrink-0 z-40">
-                    <div>
-                        <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary">security</span>
-                            Laboratorio de Auditoría Forense
-                        </h2>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Análisis Estratégico de Texto y Verificación de Integridad Académica</p>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => navigate('/herramientas')}
+                            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 transition-colors"
+                            title="Volver a Herramientas"
+                        >
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <div>
+                            <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary">security</span>
+                                Laboratorio de Auditoría Forense
+                            </h2>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Análisis Estratégico de Texto y Verificación de Integridad Académica</p>
+                        </div>
                     </div>
                     <div className="flex items-center gap-6">
                         {/* Mode Selector */}

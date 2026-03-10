@@ -35,7 +35,8 @@ describe('RegisterWizard Accessibility', () => {
         );
 
         const results = await axe(container);
-        expect(results).toHaveNoViolations();
+        // @ts-ignore - jest-axe types are missing
+        expect((results as any)).toHaveNoViolations();
     });
 
     it('should have proper form labels', () => {

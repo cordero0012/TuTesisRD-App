@@ -7,33 +7,79 @@ export default {
     theme: {
         extend: {
             colors: {
+                border: "hsl(var(--border))",
+                input: "hsl(var(--input))",
+                ring: "hsl(var(--ring))",
+                background: "hsl(var(--background))",
+                foreground: "hsl(var(--foreground))",
+                primary: {
+                    DEFAULT: "hsl(var(--primary))",
+                    foreground: "hsl(var(--primary-foreground))",
+                },
+                secondary: {
+                    DEFAULT: "hsl(var(--secondary))",
+                    foreground: "hsl(var(--secondary-foreground))",
+                },
+                destructive: {
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))",
+                },
+                muted: {
+                    DEFAULT: "hsl(var(--muted))",
+                    foreground: "hsl(var(--muted-foreground))",
+                },
+                accent: {
+                    DEFAULT: "hsl(var(--accent))",
+                    foreground: "hsl(var(--accent-foreground))",
+                },
+                popover: {
+                    DEFAULT: "hsl(var(--popover))",
+                    foreground: "hsl(var(--popover-foreground))",
+                },
+                card: {
+                    DEFAULT: "hsl(var(--card))",
+                    foreground: "hsl(var(--card-foreground))",
+                },
+                "tutesis": {
+                    orange: '#F29727',
+                    white: '#F7F7F7',
+                    gold: '#D99A4E',
+                    light: '#F2F2F2',
+                    black: '#0D0D0D',
+                },
+                "admin": {
+                    "bg": "var(--admin-bg)",
+                    "surface": "var(--admin-surface)",
+                    "card": "var(--admin-card)",
+                    "border": "var(--admin-border)",
+                    "border-strong": "var(--admin-border-strong)",
+                    "text": "var(--admin-text)",
+                    "muted": "var(--admin-text-muted)",
+                    "accent": "var(--admin-accent)",
+                    "accent-hover": "var(--admin-accent-hover)",
+                    "success": "var(--admin-success)",
+                    "warning": "var(--admin-warning)",
+                    "danger": "var(--admin-danger)",
+                    "info": "var(--admin-info)",
+                },
                 "brand": {
-                    orange: '#d97706', // Updated from #ea9a23 for better contrast (WCAG AA compliant)
-                    'orange-light': '#f59e0b', // For backgrounds where contrast isn't critical
-                    dark: '#1a1a1a',
-                    gray: '#f7f7f8',
+                    orange: '#F29727',
+                    'orange-light': '#D99A4E',
+                    dark: '#0D0D0D',
+                    gray: '#F7F7F7',
                     light: '#ffffff',
-                    // Compat for new components
-                    50: '#f7f7f8',
-                    100: '#ffdaa8',
-                    500: '#d97706', // Updated
-                    600: '#b45309',
-                    900: '#1a1a1a',
-                    950: '#1a1a1a',
-                },
-                "primary": "#d97706", // Updated for contrast
-                "primary-dark": "#b45309",
-                "accent": "#FBBF24",
-                "background-light": "#f6f7f8",
-                "background-dark": "#101822",
-                "surface-light": "#ffffff",
-                "surface-dark": "#1a2430",
-                "academic": {
-                    "navy": "#0F172A",
-                    "gold": "#D97706",
-                    "cream": "#F8FAFC",
-                    "slate": "#334155",
-                },
+                    50: '#F7F7F7',
+                    100: '#F2F2F2',
+                    500: '#F29727',
+                    600: '#D99A4E',
+                    900: '#0D0D0D',
+                    950: '#020617',
+                }
+            },
+            borderRadius: {
+                lg: "var(--radius)",
+                md: "calc(var(--radius) - 2px)",
+                sm: "calc(var(--radius) - 4px)",
             },
             fontFamily: {
                 serif: ['"Playfair Display"', 'serif'],
@@ -81,10 +127,10 @@ export default {
             },
             backdropBlur: {
                 'xs': '2px',
-            }
+            },
         },
+        plugins: [
+            require('@tailwindcss/typography'),
+        ],
     },
-    plugins: [
-        require('@tailwindcss/typography'),
-    ],
-}
+};

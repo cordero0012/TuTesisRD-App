@@ -40,7 +40,7 @@ describe('Validation Schemas', () => {
             const result = validateInput(StudentRegistrationSchema, invalidData);
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.errors.email).toBeDefined();
+                expect((result as any).errors.email).toBeDefined();
             }
         });
 
@@ -99,7 +99,7 @@ describe('Validation Schemas', () => {
             const result = validateInput(ProjectCreationSchema, invalidData);
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.errors.paid_amount).toBeDefined();
+                expect((result as any).errors.paid_amount).toBeDefined();
             }
         });
 

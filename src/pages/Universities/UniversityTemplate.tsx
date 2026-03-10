@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import SEO from '../../components/SEO';
-import Button from '../../components/ui/Button';
-import Card from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
 import universitiesData from '../../data/universities.json';
 
 // Type definition matches the JSON structure
@@ -40,7 +40,7 @@ const UniversityTemplate: React.FC = () => {
                 <h1 className="text-3xl font-bold mb-4">Universidad no encontrada</h1>
                 <p className="mb-4">Lo sentimos, no tenemos información específica para esta universidad todavía.</p>
                 <Link to="/">
-                    <Button variant="primary">Volver al Inicio</Button>
+                    <Button variant="default">Volver al Inicio</Button>
                 </Link>
             </div>
         );
@@ -76,11 +76,12 @@ const UniversityTemplate: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '0.2s' }}>
                         <a href="https://wa.me/18296392033" target="_blank" rel="noopener noreferrer">
-                            <Button variant="primary" size="lg" className="w-full md:w-auto" rightIcon={<span className="material-icons">whatsapp</span>}>
+                            <Button variant="default" size="lg" className="w-full md:w-auto">
+                                Escuchar un audio de Asesoría <span className="material-icons ml-2">whatsapp</span>
                                 Cotizar mi Tesis {university.shortName}
                             </Button>
                         </a>
-                        <Link to="/herramientas/auditor">
+                        <Link to="/herramientas/matriz">
                             <Button variant="outline" size="lg" className="w-full md:w-auto">
                                 Auditar Borrador Gratis
                             </Button>
@@ -94,17 +95,17 @@ const UniversityTemplate: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold mb-12 text-center">Normativa {university.shortName}</h2>
                     <div className="grid md:grid-cols-3 gap-6">
-                        <Card className="p-8 text-center" hoverEffect>
+                        <Card className="p-8 text-center hover:shadow-lg transition-all duration-300">
                             <div className="material-icons text-4xl mb-4" style={{ color: university.color }}>gavel</div>
                             <h3 className="text-xl font-bold mb-2">Estilo Requerido</h3>
                             <p className="text-slate-500">{university.regulations.style}</p>
                         </Card>
-                        <Card className="p-8 text-center" hoverEffect>
+                        <Card className="p-8 text-center hover:shadow-lg transition-all duration-300">
                             <div className="material-icons text-4xl mb-4" style={{ color: university.color }}>description</div>
                             <h3 className="text-xl font-bold mb-2">Extensión</h3>
                             <p className="text-slate-500">{university.regulations.minPages} - {university.regulations.maxPages} páginas</p>
                         </Card>
-                        <Card className="p-8 text-center" hoverEffect>
+                        <Card className="p-8 text-center hover:shadow-lg transition-all duration-300">
                             <div className="material-icons text-4xl mb-4" style={{ color: university.color }}>school</div>
                             <h3 className="text-xl font-bold mb-2">Programas Top</h3>
                             <p className="text-slate-500">{university.programs.join(', ')}</p>
@@ -138,7 +139,7 @@ const UniversityTemplate: React.FC = () => {
                                 Nuestros asesores son egresados de {university.shortName} y conocen lo que exigen los jurados.
                             </p>
                             <Link to="/registro">
-                                <Button variant="gradient" className="w-full">
+                                <Button variant="default" className="w-full">
                                     Agendar Asesoría Gratuita
                                 </Button>
                             </Link>
@@ -148,7 +149,7 @@ const UniversityTemplate: React.FC = () => {
             </section>
 
             <Footer />
-        </div>
+        </div >
     );
 };
 

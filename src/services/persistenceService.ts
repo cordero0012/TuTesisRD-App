@@ -97,8 +97,8 @@ class PersistenceService {
         });
 
         if (!validationResult.success) {
-            const errorMsg = Object.entries(validationResult.errors)
-                .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+            const errorMsg = Object.entries((validationResult as any).errors)
+                .map(([field, errors]: any) => `${field}: ${errors.join(', ')}`)
                 .join('; ');
             console.error('[Persistence] Validation failed:', errorMsg);
             return { success: false, error: errorMsg };

@@ -1,6 +1,12 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AnalyticsTracker from './components/AnalyticsTracker';
+// import { AdminAuthProvider } from './contexts/AdminAuthContext';
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    // Audit Note: Temporary guard for professional structure. Allows access for now.
+    return <>{children}</>;
+};
 
 // Lazy Load Pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -9,7 +15,7 @@ const Services = lazy(() => import('./pages/Services'));
 const Universities = lazy(() => import('./pages/Universities'));
 const Blog = lazy(() => import('./pages/Blog'));
 const StudentPortal = lazy(() => import('./pages/StudentPortal'));
-const AdminKanban = lazy(() => import('./pages/AdminKanban'));
+// const AdminKanban = lazy(() => import('./pages/AdminKanban'));
 const RegisterWizard = lazy(() => import('./pages/Register/RegisterWizard'));
 const SuccessScreen = lazy(() => import('./pages/Register/SuccessScreen'));
 const AIChat = lazy(() => import('./components/AIChat'));
@@ -27,6 +33,17 @@ const QueEsTesis = lazy(() => import('./pages/Recursos/QueEsTesis'));
 const ComoHacerTesis = lazy(() => import('./pages/Recursos/ComoHacerTesis'));
 const EjemplosTesis = lazy(() => import('./pages/Recursos/EjemplosTesis'));
 
+// Admin Panel Pages
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard').then(m => ({ default: m.Dashboard })));
+const AdminProjects = lazy(() => import('./pages/admin/Projects').then(m => ({ default: m.Projects })));
+const AdminFinances = lazy(() => import('./pages/admin/Finances').then(m => ({ default: m.Finances })));
+const AdminAgenda = lazy(() => import('./pages/admin/Agenda').then(m => ({ default: m.Agenda })));
+const AdminTeam = lazy(() => import('./pages/admin/Team').then(m => ({ default: m.Team })));
+const AdminClients = lazy(() => import('./pages/admin/Clients').then(m => ({ default: m.Clients })));
+const AdminUniversities = lazy(() => import('./pages/admin/Universities').then(m => ({ default: m.Universities })));
+const AdminSettings = lazy(() => import('./pages/admin/Settings').then(m => ({ default: m.Settings })));
+
 // Loading Fallback Component
 const LoadingSpinner = () => (
     <div className="flex h-screen w-full items-center justify-center bg-background-light dark:bg-background-dark">
@@ -42,7 +59,8 @@ const DarkModeToggle = () => {
             if (savedTheme) {
                 return savedTheme === 'dark';
             }
-            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+            // User request: Default to light mode as primary layout
+            return false;
         }
         return false;
     });
@@ -79,7 +97,6 @@ const App = () => {
         <BrowserRouter>
             <AnalyticsTracker />
             <div className="min-h-screen bg-background-light dark:bg-background-dark">
-                <DarkModeToggle />
                 <Suspense fallback={<LoadingSpinner />}>
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
@@ -114,7 +131,17 @@ const App = () => {
                         <Route path="/herramientas/auditor" element={<DocumentAudit />} />
                         <Route path="/herramientas/matriz" element={<ConsistencyMatrix />} />
 
-                        {/* <Route path="/admin/dashboard" element={<AdminKanban />} /> */}
+                        {/* Admin Panel - 1:1 Bento Executive Audit */}
+                        <Route path="/admin" element={<AdminLayout />}>
+                            <Route index element={<AdminDashboard />} />
+                            <Route path="proyectos" element={<AdminProjects />} />
+                            <Route path="finanzas" element={<AdminFinances />} />
+                            <Route path="agenda" element={<AdminAgenda />} />
+                            <Route path="equipo" element={<AdminTeam />} />
+                            <Route path="clientes" element={<AdminClients />} />
+                            <Route path="universidades" element={<AdminUniversities />} />
+                            <Route path="settings" element={<AdminSettings />} />
+                        </Route>
                     </Routes>
                 </Suspense>
                 {/* <AIChat /> */}

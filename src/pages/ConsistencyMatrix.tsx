@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import Navbar from '../components/layout/Navbar';
 import { useProject } from '../contexts/ProjectContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { analyzeConsistencyStrict } from '../services/consistency/strictAnalyzer';
@@ -195,58 +196,11 @@ export const ConsistencyMatrix = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 font-sans text-slate-700 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-            {/* Hidden File Input */}
-            <input
-                type="file"
-                className="hidden"
-                accept=".pdf,.docx"
-                onChange={handleFileUpload}
-                id="hidden-file-upload"
-            />
+        <div className="min-h-screen font-sans text-slate-700 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+            <Navbar />
 
             {/* BEGIN: Main Dashboard Container */}
-            <div className="w-full max-w-[1600px] h-[90vh] min-h-[700px] rounded-[2.5rem] flex overflow-hidden relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl shadow-2xl border border-white/50 dark:border-slate-800/50">
-
-                {/* BEGIN: Sidebar */}
-                <aside className="w-20 lg:w-64 flex flex-col p-6 border-r border-slate-200/50 dark:border-slate-700/50 hidden md:flex z-10 bg-white/50 dark:bg-slate-900/50">
-                    {/* Logo Section */}
-                    <Link to="/portal" className="flex items-center gap-3 mb-10 pl-1 hover:opacity-80 transition-opacity">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-brand-orange/20">
-                            <span className="material-symbols-outlined text-xl">school</span>
-                        </div>
-                        <span className="text-lg font-black tracking-tight text-slate-800 dark:text-white hidden lg:block">TuTesisRD</span>
-                    </Link>
-
-                    {/* Navigation Links */}
-                    <nav className="flex-1 space-y-2">
-                        <Link className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-bold shadow-sm transition-all" to="/herramientas/matriz">
-                            <span className="material-symbols-outlined">grid_view</span>
-                            <span className="hidden lg:block">Matriz</span>
-                        </Link>
-
-                        <Link to="/portal/historial" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-brand-orange/10 hover:text-brand-orange transition-all">
-                            <span className="material-symbols-outlined">history</span>
-                            <span className="hidden lg:block">Historial</span>
-                        </Link>
-
-                        <div className="opacity-40 pointer-events-none hidden lg:block border-t border-slate-100 dark:border-slate-800 pt-4 mt-4">
-                            <p className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Próximamente</p>
-                            <div className="flex items-center gap-3 px-4 py-3 text-slate-500">
-                                <span className="material-symbols-outlined">chat</span>
-                                <span>IA Chat</span>
-                            </div>
-                        </div>
-                    </nav>
-
-                    {/* Bottom Settings */}
-                    <div className="mt-auto pt-6 border-t border-slate-200 dark:border-slate-700 space-y-4">
-                        <div className="flex items-center gap-3 px-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer">
-                            <span className="material-symbols-outlined">settings</span>
-                            <span className="text-sm font-medium hidden lg:block">Configuración</span>
-                        </div>
-                    </div>
-                </aside>
+            <div className="w-full max-w-[1600px] mx-auto h-[85vh] min-h-[700px] mt-24 rounded-[2.5rem] flex overflow-hidden relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl shadow-2xl border border-white/50 dark:border-slate-800/50">
 
                 {/* BEGIN: Main Content Area */}
                 <main className="flex-1 flex flex-col p-4 md:p-8 relative overflow-hidden">
@@ -254,7 +208,10 @@ export const ConsistencyMatrix = () => {
                     {/* Header Section */}
                     <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 shrink-0">
                         <div>
-                            <h1 className="text-3xl md:text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                            <h1 className="text-3xl md:text-3xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-4">
+                                <Link to="/herramientas" className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                                    <span className="material-symbols-outlined text-slate-600 dark:text-slate-300">arrow_back</span>
+                                </Link>
                                 Matriz de Consistencia
                             </h1>
                             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
