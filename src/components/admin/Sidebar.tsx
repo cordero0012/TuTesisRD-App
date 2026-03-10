@@ -60,14 +60,10 @@ export function Sidebar({ theme, setTheme }: { theme: string; setTheme: (t: "lig
 
   return (
     <aside className="border-r border-border bg-card px-5 py-6 h-screen flex flex-col sticky top-0">
-      <div className="mb-8 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
-          <Sparkles className="h-5 w-5 text-primary" />
-        </div>
-        <div>
-          <p className="text-lg font-bold tracking-tight text-foreground">TuTesisRD</p>
-          <p className="text-xs font-medium text-muted-foreground">Admin Portal 2.0</p>
-        </div>
+      <div className="mb-8 px-2 flex items-center">
+        <Link to="/" className="block">
+          <img src="/logos/Logo-Horizontal.png" alt="TuTesisRD" className="h-8 dark:brightness-200" />
+        </Link>
       </div>
 
       <nav className="space-y-2 flex-1">

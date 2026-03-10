@@ -1,10 +1,34 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import AnalyticsTracker from './components/AnalyticsTracker';
 // import { AdminAuthProvider } from './contexts/AdminAuthContext';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    // Audit Note: Temporary guard for professional structure. Allows access for now.
+    const [session, setSession] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            setLoading(false);
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
+    if (!session) {
+        return <Navigate to="/admin/login" replace />;
+    }
+
     return <>{children}</>;
 };
 
@@ -35,6 +59,7 @@ const EjemplosTesis = lazy(() => import('./pages/Recursos/EjemplosTesis'));
 
 // Admin Panel Pages
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
+const AdminLogin = lazy(() => import('./pages/admin/Login').then(m => ({ default: m.Login })));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard').then(m => ({ default: m.Dashboard })));
 const AdminProjects = lazy(() => import('./pages/admin/Projects').then(m => ({ default: m.Projects })));
 const AdminFinances = lazy(() => import('./pages/admin/Finances').then(m => ({ default: m.Finances })));
@@ -132,7 +157,12 @@ const App = () => {
                         <Route path="/herramientas/matriz" element={<ConsistencyMatrix />} />
 
                         {/* Admin Panel - 1:1 Bento Executive Audit */}
-                        <Route path="/admin" element={<AdminLayout />}>
+                        <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/admin" element={
+                            <ProtectedRoute>
+                                <AdminLayout />
+                            </ProtectedRoute>
+                        }>
                             <Route index element={<AdminDashboard />} />
                             <Route path="proyectos" element={<AdminProjects />} />
                             <Route path="finanzas" element={<AdminFinances />} />
