@@ -9,6 +9,12 @@ export interface TeamMember {
     is_active: boolean;
     auth_user_id?: string;
     created_at: string;
+    notification_preferences: {
+        new_projects: boolean;
+        project_milestones: boolean;
+        financial_summaries: boolean;
+        system_alerts: boolean;
+    };
 }
 
 export const adminService = {
@@ -64,5 +70,31 @@ export const adminService = {
             .eq('id', memberId);
 
         if (error) throw error;
+    },
+
+    /**
+     * Update notification preferences for a member
+     */
+    async updateNotificationPreferences(memberId: string, preferences: Partial<TeamMember['notification_preferences']>): Promise<void> {
+        const { error } = await supabase
+            .from('team_members')
+            .update({ notification_preferences: preferences })
+            .eq('id', memberId);
+
+        if (error) throw error;
+    },
+
+    /**
+     * Get recent notifications for the logged in member
+     */
+    async getMyNotifications(limit = 10): Promise<any[]> {
+        const { data, error } = await supabase
+            .from('notification_logs')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (error) throw error;
+        return data || [];
     }
 };

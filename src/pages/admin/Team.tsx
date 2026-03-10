@@ -20,6 +20,8 @@ import {
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { adminService, TeamMember } from "@/services/admin/adminService";
+import { notificationService } from "@/services/notifications/notificationService";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -47,11 +49,26 @@ const INITIAL_TEAM = [
 ];
 
 export function Team() {
-    const [team, setTeam] = useState(INITIAL_TEAM);
+    const [team, setTeam] = useState<any[]>(INITIAL_TEAM);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("Todos");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [newMember, setNewMember] = useState({ name: "", email: "", role: "Redactor Científico" });
+
+    React.useEffect(() => {
+        const fetchTeam = async () => {
+            try {
+                const members = await adminService.getTeamMembers();
+                if (members.length > 0) setTeam(members);
+            } catch (err) {
+                console.error("Error fetching team:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchTeam();
+    }, []);
 
     const filteredTeam = useMemo(() => {
         return team.filter(member => {
@@ -63,21 +80,32 @@ export function Team() {
         });
     }, [team, searchTerm, statusFilter]);
 
-    const handleInviteMember = () => {
+    const handleInviteMember = async () => {
         if (!newMember.name || !newMember.email) return;
 
-        const member = {
-            id: team.length + 1,
-            ...newMember,
-            status: "Activo",
-            avatar: newMember.name.charAt(0).toUpperCase(),
-            rating: 5.0,
-            activeProjects: 0
-        };
+        try {
+            const member = await adminService.createTeamMember({
+                name: newMember.name,
+                email: newMember.email,
+                role: newMember.role as any,
+                is_active: true
+            });
 
-        setTeam([member, ...team]);
-        setNewMember({ name: "", email: "", role: "Redactor Científico" });
-        setIsDialogOpen(false);
+            setTeam([member, ...team]);
+            
+            // Notify via integrated system
+            await notificationService.sendToMember({
+                member_id: member.id,
+                title: "¡Bienvenido al Equipo!",
+                message: `Hola ${member.name}, has sido invitado a TuTesisRD como ${member.role}. Revisa tu correo para activar tu acceso.`,
+                type: 'success'
+            });
+
+            setNewMember({ name: "", email: "", role: "Redactor Científico" });
+            setIsDialogOpen(false);
+        } catch (err) {
+            console.error("Error inviting member:", err);
+        }
     };
 
     const handleDeleteMember = (id: number) => {

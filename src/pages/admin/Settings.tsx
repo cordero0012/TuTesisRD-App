@@ -54,7 +54,7 @@ export function Settings() {
     const navItems = [
         { id: "General", icon: User, label: "Perfil General" },
         { id: "Operaciones", icon: Layout, label: "Preferencias" },
-        { id: "Notificaciones", icon: Bell, label: "Notificaciones" },
+        { id: "Notificaciones", icon: Bell, label: "Mis Notificaciones" },
         { id: "Seguridad", icon: Shield, label: "Seguridad y Acceso" },
         { id: "Facturacion", icon: CreditCard, label: "Suscripción" }
     ];
@@ -226,24 +226,41 @@ export function Settings() {
                             )}
 
                             {activeTab === "Notificaciones" && (
-                                <div className="space-y-4 max-w-2xl">
-                                    <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, pushOn: !toggles.pushOn })}>
-                                        <div>
-                                            <h4 className="font-bold text-foreground">Alertas Push del Navegador</h4>
-                                            <p className="text-xs text-muted-foreground mt-1">Recibir notificaciones flotantes en el escritorio sobre nuevos hitos de proyectos.</p>
-                                        </div>
-                                        <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.pushOn ? 'bg-primary' : 'bg-muted'}`}>
-                                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.pushOn ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                                        </div>
+                                <div className="space-y-6 max-w-2xl">
+                                    <div>
+                                        <h3 className="text-lg font-bold">Alertas por Correo Electrónico</h3>
+                                        <p className="text-sm text-muted-foreground">Configura cómo y cuándo deseas recibir avisos en tu bandeja de entrada.</p>
                                     </div>
-
-                                    <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, emailOn: !toggles.emailOn })}>
-                                        <div>
-                                            <h4 className="font-bold text-foreground">Resumen Semanal por Email</h4>
-                                            <p className="text-xs text-muted-foreground mt-1">Recibir un correo todos los lunes con los ingresos, gastos y proyectos finalizados.</p>
+                                    
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, pushOn: !toggles.pushOn })}>
+                                            <div>
+                                                <h4 className="font-bold text-foreground">Nuevos Proyectos Asignados</h4>
+                                                <p className="text-xs text-muted-foreground mt-1">Recibir un correo cuando el director te asigne una nueva tesis.</p>
+                                            </div>
+                                            <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.pushOn ? 'bg-primary' : 'bg-muted'}`}>
+                                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.pushOn ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                            </div>
                                         </div>
-                                        <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.emailOn ? 'bg-primary' : 'bg-muted'}`}>
-                                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.emailOn ? 'translate-x-5' : 'translate-x-0'}`}></div>
+
+                                        <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, emailOn: !toggles.emailOn })}>
+                                            <div>
+                                                <h4 className="font-bold text-foreground">Actualizaciones de Hitos</h4>
+                                                <p className="text-xs text-muted-foreground mt-1">Notificar cuando un estudiante suba un avance o hito de proyecto.</p>
+                                            </div>
+                                            <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.emailOn ? 'bg-primary' : 'bg-muted'}`}>
+                                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.emailOn ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setToggles({ ...toggles, dailyBackup: !toggles.dailyBackup })}>
+                                            <div>
+                                                <h4 className="font-bold text-foreground">Recordatorios de Entrega</h4>
+                                                <p className="text-xs text-muted-foreground mt-1">Avisos 48 horas antes de la fecha límite de un proyecto.</p>
+                                            </div>
+                                            <div className={`w-11 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${toggles.dailyBackup ? 'bg-primary' : 'bg-muted'}`}>
+                                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${toggles.dailyBackup ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
