@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import AnalyticsTracker from './components/AnalyticsTracker';
 // import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import { PersistenceProvider } from './contexts/PersistenceContext';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<any>(null);
@@ -157,9 +158,10 @@ const App = () => {
     return (
         /* Cache Buster: v4 */
         <BrowserRouter>
-            <AnalyticsTracker />
-            <div className="min-h-screen bg-background-light dark:bg-background-dark">
-                <Suspense fallback={<LoadingSpinner />}>
+            <PersistenceProvider>
+                <AnalyticsTracker />
+                <div className="min-h-screen bg-background-light dark:bg-background-dark">
+                    <Suspense fallback={<LoadingSpinner />}>
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
 
@@ -210,9 +212,10 @@ const App = () => {
                             <Route path="settings" element={<AdminSettings />} />
                         </Route>
                     </Routes>
-                </Suspense>
-                {/* <AIChat /> */}
-            </div>
+                    </Suspense>
+                    {/* <AIChat /> */}
+                </div>
+            </PersistenceProvider>
         </BrowserRouter>
     );
 };

@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useProject } from '../contexts/ProjectContext';
+import { usePersistence } from '../contexts/PersistenceContext';
 
 const StudentPortal: React.FC = () => {
+    const { status } = usePersistence();
     const { session } = useProject();
     const user = session?.user;
     const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Estudiante';
@@ -27,10 +29,22 @@ const StudentPortal: React.FC = () => {
                     <a href="#" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"><span className="material-symbols-outlined">chat</span>Asesoría IA</a>
                 </nav>
             </aside>
-            <main className="flex-1 flex flex-col h-full overflow-y-auto p-8">
+            <main className="flex-1 flex flex-col h-full overflow-y-auto p-4 lg:p-8">
                 <header className="flex justify-between items-center mb-8">
-                    <h2 className="text-3xl font-bold animate-fade-in">¡Hola, <span className="text-primary">{displayName}!</span> 👋</h2>
-                    <div className="flex items-center gap-4">
+                    <h2 className="text-2xl md:text-3xl font-bold animate-fade-in">¡Hola, <span className="text-primary">{displayName}!</span> 👋</h2>
+                    <div className="flex items-center gap-3 md:gap-4">
+                        {status === 'saving' && (
+                            <div className="flex items-center gap-2 text-xs font-bold text-brand-orange bg-brand-orange/10 px-3 py-1.5 rounded-full animate-pulse">
+                                <span className="material-symbols-outlined text-sm animate-spin">sync</span>
+                                <span className="hidden sm:inline">Guardando...</span>
+                            </div>
+                        )}
+                        {status === 'saved' && (
+                            <div className="flex items-center gap-2 text-xs font-bold text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                <span className="hidden sm:inline">Sincronizado</span>
+                            </div>
+                        )}
                         <div className="bg-white dark:bg-slate-700 p-2 rounded-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"><span className="material-symbols-outlined">notifications</span></div>
                         <div className="size-10 rounded-full bg-cover ring-2 ring-white dark:ring-slate-700 shadow-md bg-center" style={{ backgroundImage: `url('${avatarUrl}')` }}></div>
                     </div>
