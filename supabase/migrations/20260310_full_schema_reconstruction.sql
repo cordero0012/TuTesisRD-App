@@ -66,6 +66,19 @@ CREATE TABLE IF NOT EXISTS public.team_members (
     }'::jsonb
 );
 
+-- Fix for existing tables:
+ALTER TABLE public.team_members ADD COLUMN IF NOT EXISTS auth_user_id UUID REFERENCES auth.users(id);
+ALTER TABLE public.team_members ADD COLUMN IF NOT EXISTS is_super_admin BOOLEAN DEFAULT false;
+ALTER TABLE public.team_members ADD COLUMN IF NOT EXISTS notification_preferences JSONB DEFAULT '{
+  "new_projects": true,
+  "project_milestones": true,
+  "financial_summaries": false,
+  "system_alerts": true
+}'::jsonb;
+
+-- Also check students
+ALTER TABLE public.students ADD COLUMN IF NOT EXISTS auth_user_id UUID REFERENCES auth.users(id);
+
 -- 5. Analysis Reports (AI Persistence)
 CREATE TABLE IF NOT EXISTS public.analysis_reports (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

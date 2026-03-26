@@ -11,32 +11,47 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const { data: { session: currentSession } } = await supabase.auth.getSession();
-            setSession(currentSession);
+            try {
+                console.log("[ProtectedRoute] Checking auth and role...");
+                const { data: { session: currentSession } } = await supabase.auth.getSession();
+                setSession(currentSession);
 
-            if (currentSession) {
-                const { data: teamMember, error } = await supabase
-                    .from('team_members')
-                    .select('id, is_active')
-                    .eq('auth_user_id', currentSession.user.id)
-                    .single();
+                if (currentSession) {
+                    const { data: teamMember, error } = await supabase
+                        .from('team_members')
+                        .select('id, is_active')
+                        .eq('auth_user_id', currentSession.user.id)
+                        .single();
 
-                setIsAdmin(!!teamMember && teamMember.is_active);
-            } else {
+                    if (error) {
+                        console.warn("[ProtectedRoute] Role check failed or no member found:", error.message);
+                        setIsAdmin(false);
+                    } else {
+                        console.log("[ProtectedRoute] Member found:", teamMember);
+                        setIsAdmin(!!teamMember && teamMember.is_active);
+                    }
+                } else {
+                    console.log("[ProtectedRoute] No session found");
+                    setIsAdmin(false);
+                }
+            } catch (err) {
+                console.error("[ProtectedRoute] Critical auth check error:", err);
                 setIsAdmin(false);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         checkAuth();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            if (!session) {
+            console.log(`[ProtectedRoute] Auth event: ${_event}`);
+            if (session) {
+                checkAuth();
+            } else {
+                setSession(null);
                 setIsAdmin(false);
                 setLoading(false);
-            } else {
-                checkAuth();
             }
         });
 
