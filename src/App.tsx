@@ -96,8 +96,8 @@ const ComoHacerTesis = lazy(() => import('./pages/Recursos/ComoHacerTesis'));
 const EjemplosTesis = lazy(() => import('./pages/Recursos/EjemplosTesis'));
 
 // Admin Panel Pages
-const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
-const AdminLogin = lazy(() => import('./pages/admin/Login').then(m => ({ default: m.Login })));
+import { AdminLayout } from './components/admin/AdminLayout';
+import { Login as AdminLogin } from './pages/admin/Login';
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard').then(m => ({ default: m.Dashboard })));
 const AdminProjects = lazy(() => import('./pages/admin/Projects').then(m => ({ default: m.Projects })));
 const AdminFinances = lazy(() => import('./pages/admin/Finances').then(m => ({ default: m.Finances })));
