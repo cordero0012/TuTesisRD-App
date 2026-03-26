@@ -96,6 +96,19 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
 
             if (projectError) throw projectError;
 
+            // Push to GTM dataLayer
+            if (typeof window !== 'undefined') {
+                (window as any).dataLayer = (window as any).dataLayer || [];
+                (window as any).dataLayer.push({
+                    event: 'form_submit',
+                    'dlv - service_type': formData.type,
+                    user_data: {
+                        email: formData.email,
+                        phone_number: formData.phone
+                    }
+                });
+            }
+
             // Success
             navigate('/student/success', { state: { trackingCode: projectData.tracking_code } });
 

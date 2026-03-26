@@ -205,6 +205,14 @@ const LandingPage: React.FC = () => {
 
                                 <form className="space-y-4" onSubmit={(e) => {
                                     e.preventDefault();
+                                    // Push to GTM dataLayer
+                                    if (typeof window !== 'undefined') {
+                                        (window as any).dataLayer = (window as any).dataLayer || [];
+                                        (window as any).dataLayer.push({
+                                            event: 'form_submit',
+                                            'dlv - service_type': 'Diagnostico Rapido'
+                                        });
+                                    }
                                     window.open('https://wa.me/message/YESJDSE3MZ3IM1', '_blank');
                                 }}>
                                     <div>
