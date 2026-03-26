@@ -173,7 +173,7 @@ const LandingPage: React.FC = () => {
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-3.5 md:py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
-                                    <span className="material-icons mr-2" aria-hidden="true">fact_check</span> 👉 Inicia tu Diagnóstico Gratis
+                                    <span className="material-icons mr-2" aria-hidden="true">fact_check</span> Inicia tu Diagnóstico Gratis
                                 </a>
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-3.5 md:py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
                                     <span className="material-icons mr-2 text-brand-orange" aria-hidden="true">chat</span> Hablar por WhatsApp
