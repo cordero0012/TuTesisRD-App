@@ -140,8 +140,8 @@ const LandingPage: React.FC = () => {
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             <SEO
-                title="TuTesisRD | Asesoría de Tesis en República Dominicana"
-                description="Asesoría de tesis en República Dominicana. Acompañamiento metodológico, corrección por capítulos y apoyo hasta la defensa. Atención online y presencial en Higüey."
+                title="Asesoría de Tesis en República Dominicana y Normas APA | TuTesisRD"
+                description="¿Problemas con tu tesis universitaria? Ofrecemos asesoría garantizada en República Dominicana (Online y presencial en Higüey) para grado, maestría y doctorado. ¡Habla con un experto!"
                 keywords={targetKeywords}
                 schema={[organizationSchema, serviceSchema, websiteSchema, faqSchema]}
                 ogImage="https://www.tutesisrd.online/og-image.png"
@@ -173,7 +173,7 @@ const LandingPage: React.FC = () => {
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-3.5 md:py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
-                                    <span className="material-icons mr-2" aria-hidden="true">fact_check</span> Solicitar diagnóstico
+                                    <span className="material-icons mr-2" aria-hidden="true">fact_check</span> 👉 Inicia tu Diagnóstico Gratis
                                 </a>
                                 <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-3.5 md:py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
                                     <span className="material-icons mr-2 text-brand-orange" aria-hidden="true">chat</span> Hablar por WhatsApp
@@ -362,8 +362,8 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24">
                         <span className="inline-block py-1 px-3 rounded-full bg-white/10 text-brand-orange font-bold uppercase tracking-[0.2em] text-xs mb-6 backdrop-blur-sm border border-white/5">Nuestra Trayectoria</span>
-                        <h2 className="text-3xl sm:text-4xl md:text-6xl font-black mb-6 leading-[1.1]">
-                            ¿Por qué elegir <span className="text-brand-orange relative whitespace-nowrap">TuTesisRD?</span>
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 leading-[1.1]">
+                            ¿Por qué elegir nuestra asesoría de tesis en <span className="text-brand-orange relative whitespace-nowrap">Higüey y toda RD?</span>
                         </h2>
                         <p className="text-lg md:text-xl text-slate-400 leading-relaxed font-light">
                             Más de 7 años transformando el estrés de las universidades dominicanas en éxito profesional. Nuestra metodología garantiza resultados con aval científico.
@@ -400,8 +400,8 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <span className="text-brand-orange font-black uppercase tracking-[0.2em] text-sm mb-4 block">Soluciones Integrales</span>
-                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
-                            Nuestros Servicios <span className="text-slate-400 dark:text-slate-600">Premium</span>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+                            Servicios integrales: Desde el anteproyecto hasta la <span className="text-brand-orange">corrección APA 7</span>
                         </h2>
                         <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
                             Diseñamos un ecosistema de servicios para cubrir cada etapa de tu investigación, desde la idea inicial hasta la sustentación.
@@ -602,7 +602,7 @@ const LandingPage: React.FC = () => {
             <section className="py-16 bg-white dark:bg-black border-y border-slate-100 dark:border-slate-800 overflow-hidden">
                 <div className="container mx-auto px-6">
                     <p className="text-center text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-10">
-                        Estudiantes exitosos de estas universidades confían en nosotros
+                        Soporte metodológico garantizado para estudiantes de UASD, UAPA, PUCMM, UTESA y más
                     </p>
                     <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
                         {/* Placeholder text tags for universities (Consider replacing with actual logos later) */}
