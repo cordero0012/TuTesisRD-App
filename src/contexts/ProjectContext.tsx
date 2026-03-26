@@ -172,6 +172,11 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
 
     // Auth & Init Sync
+    const projectIdRef = React.useRef(project.id);
+    React.useEffect(() => {
+        projectIdRef.current = project.id;
+    }, [project.id]);
+
     React.useEffect(() => {
         let isMounted = true;
 
@@ -185,8 +190,9 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
             await initProject(session);
 
             // If we have a session AND a real project ID, sync the queue
-            if (session && project.id && project.id !== 'offline-demo') {
-                persistenceService.updateQueueProjectId(project.id);
+            const pId = projectIdRef.current;
+            if (session && pId && pId !== 'offline-demo') {
+                persistenceService.updateQueueProjectId(pId);
                 persistenceService.flushQueue();
             }
         });
@@ -195,7 +201,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
             isMounted = false;
             subscription.unsubscribe();
         };
-    }, [project.id]); // Re-run if project.id changes to ensure we flush with current ID
+    }, []); // Empty dependency! Stop rapid re-subscribing
 
 
     React.useEffect(() => {
