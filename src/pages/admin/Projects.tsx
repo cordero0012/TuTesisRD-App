@@ -43,20 +43,20 @@ import {
 } from "@/services/admin/adminDataService";
 
 // ---- Status helpers ----
-const STATUS_MAP: Record<string, { label: string; bg: string; text: string; ring: string }> = {
-    pending: { label: "Pendiente", bg: "bg-slate-500/10", text: "text-slate-600", ring: "ring-slate-500/20" },
-    assigned: { label: "Asignado", bg: "bg-blue-500/10", text: "text-blue-600", ring: "ring-blue-500/20" },
-    in_progress: { label: "En curso", bg: "bg-primary/10", text: "text-primary", ring: "ring-primary/20" },
-    review: { label: "Revisión", bg: "bg-amber-500/10", text: "text-amber-600", ring: "ring-amber-500/20" },
-    completed: { label: "Entregado", bg: "bg-emerald-500/10", text: "text-emerald-600", ring: "ring-emerald-500/20" },
+const STATUS_MAP: Record<string, { label: string; cls: string }> = {
+    pending:    { label: "Pendiente", cls: "badge-slate" },
+    assigned:   { label: "Asignado",  cls: "badge-blue" },
+    in_progress:{ label: "En curso",  cls: "badge-blue" },
+    review:     { label: "Revisión",  cls: "badge-amber" },
+    completed:  { label: "Entregado", cls: "badge-emerald" },
 };
 
 function StatusBadge({ status }: { status: string }) {
-    const cfg = STATUS_MAP[status] || { label: status, bg: "bg-slate-500/10", text: "text-slate-600", ring: "ring-slate-500/20" };
+    const cfg = STATUS_MAP[status] || { label: status, cls: "badge-slate" };
     return (
-        <div className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase ring-1 ${cfg.bg} ${cfg.text} ${cfg.ring}`}>
+        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${cfg.cls}`}>
             {cfg.label}
-        </div>
+        </span>
     );
 }
 
@@ -143,22 +143,15 @@ export function Projects() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground text-wrap">Gestión de Proyectos</h1>
-                    <p className="mt-2 text-base font-medium text-foreground/80">
-                        Administra y supervisa el progreso de todas las investigaciones activas.
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" className="rounded-2xl gap-2 hidden md:flex" onClick={loadProjects}>
-                        <RefreshCw className="h-4 w-4" />
+            {/* Header actions */}
+            <div className="flex items-center justify-end gap-2">
+                    <Button variant="outline" className="rounded-xl h-9 hidden md:flex items-center gap-2" onClick={loadProjects}>
+                        <RefreshCw className="h-3.5 w-3.5" />
                     </Button>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button className="rounded-2xl gap-2 font-bold shadow-lg shadow-primary/20">
-                                <Plus className="h-4 w-4" /> Nuevo Proyecto
+                            <Button className="rounded-xl h-9 text-sm font-semibold gap-2">
+                                <Plus className="h-3.5 w-3.5" /> Nuevo Proyecto
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -250,7 +243,7 @@ export function Projects() {
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
                     {[...Array(6)].map((_, i) => (
-                        <div key={i} className="h-52 rounded-3xl bg-accent/30" />
+                        <div key={i} className="h-52 rounded-2xl bg-accent/30" />
                     ))}
                 </div>
             ) : error ? (
@@ -271,7 +264,7 @@ export function Projects() {
                                 : project.status === "pending" ? "bg-slate-500"
                                 : "bg-primary";
                             return (
-                                <Card key={project.id} className="rounded-3xl border-border bg-card hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden">
+                                <Card key={project.id} className="rounded-2xl border-border bg-card hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden">
                                     <div className={`h-1.5 w-full ${barColor}`} />
                                     <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0">
                                         <div className="space-y-1">

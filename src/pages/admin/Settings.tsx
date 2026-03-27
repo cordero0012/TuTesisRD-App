@@ -61,23 +61,16 @@ export function Settings() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Ajusta las preferencias de tu cuenta y los módulos de la plataforma.
-                    </p>
-                </div>
-                <div className="flex items-center gap-3">
+            <div className="flex items-center justify-end gap-3">
                     {showSuccess && (
-                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-500/10 px-3 py-1.5 rounded-xl text-sm font-bold animate-in fade-in slide-in-from-right-4">
+                        <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl text-sm font-semibold">
                             <CheckCircle2 className="h-4 w-4" /> Cambios guardados
                         </div>
                     )}
                     <Button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="rounded-2xl font-bold px-6 shadow-lg shadow-primary/20 min-w-[140px] cursor-pointer"
+                        className="rounded-xl h-9 text-sm font-semibold px-5 min-w-[130px] cursor-pointer"
                     >
                         {isSaving ? (
                             <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Guardando...</>
@@ -91,15 +84,15 @@ export function Settings() {
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                 {/* Menú de Navegación Lateral */}
                 <div className="xl:col-span-1 space-y-6">
-                    <Card className="rounded-3xl border-border bg-card shadow-sm p-2">
+                    <Card className="rounded-2xl border-border bg-card shadow-sm p-2">
                         <nav className="flex flex-col space-y-1">
                             {navItems.map((item) => (
                                 <button
                                     key={item.id}
                                     onClick={() => setActiveTab(item.id)}
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all cursor-pointer ${activeTab === item.id
-                                            ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer border-l-2 ${activeTab === item.id
+                                            ? "bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] border-[hsl(var(--primary))]"
+                                            : "text-muted-foreground hover:bg-accent/60 hover:text-foreground border-transparent"
                                         }`}
                                 >
                                     <item.icon className="h-4 w-4" />
@@ -109,7 +102,7 @@ export function Settings() {
                         </nav>
                     </Card>
 
-                    <Card className="rounded-3xl border-border bg-gradient-to-br from-primary/10 to-transparent border-primary/20 shadow-sm p-6 relative overflow-hidden group">
+                    <Card className="rounded-2xl border-border bg-gradient-to-br from-primary/10 to-transparent border-primary/20 shadow-sm p-6 relative overflow-hidden group">
                         <div className="absolute -top-4 -right-4 bg-primary/20 p-6 rounded-full group-hover:scale-110 transition-transform duration-500 blur-xl"></div>
                         <Sparkles className="absolute top-4 right-4 h-8 w-8 text-primary opacity-60 group-hover:rotate-12 transition-transform" />
                         <h4 className="font-bold text-foreground">TuTesisRD AI Activo</h4>
@@ -126,7 +119,7 @@ export function Settings() {
 
                 {/* Contenido Principal de Ajustes */}
                 <div className="xl:col-span-3">
-                    <Card className="rounded-3xl border-border bg-card shadow-sm min-h-[500px]">
+                    <Card className="rounded-2xl border-border bg-card shadow-sm min-h-[500px]">
                         <CardHeader className="border-b border-border/50 pb-6 mb-6">
                             <CardTitle className="text-xl font-bold">{navItems.find(i => i.id === activeTab)?.label}</CardTitle>
                             <CardDescription className="text-sm font-medium">Actualiza tu información y personaliza tu entorno de trabajo.</CardDescription>
@@ -316,7 +309,7 @@ export function Settings() {
                             )}
 
                             {activeTab === "Facturacion" && (
-                                <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl bg-accent/5 max-w-2xl">
+                                <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-2xl bg-accent/5 max-w-2xl">
                                     <div className="h-16 w-16 rounded-full bg-accent/50 flex items-center justify-center mb-4">
                                         <Bell className="h-8 w-8 text-muted-foreground opacity-50" />
                                     </div>

@@ -111,35 +111,28 @@ export function Clients() {
     };
 
     const statusBadgeClass = (status: string) => {
-        if (status === "Activo") return "bg-emerald-500/10 text-emerald-600 ring-emerald-500/20";
-        if (status === "Pendiente Pago") return "bg-amber-500/10 text-amber-600 ring-amber-500/20";
-        return "bg-slate-500/10 text-slate-600 ring-slate-500/20";
+        if (status === "Activo") return "badge-emerald";
+        if (status === "Pendiente Pago") return "badge-amber";
+        return "badge-slate";
     };
 
     const statusDotClass = (status: string) => {
-        if (status === "Activo") return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
-        if (status === "Pendiente Pago") return "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]";
-        return "bg-slate-500";
+        if (status === "Activo") return "bg-emerald-500";
+        if (status === "Pendiente Pago") return "bg-amber-500";
+        return "bg-slate-400";
     };
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Directorio de Clientes</h1>
-                    <p className="mt-2 text-base font-medium text-foreground/80">
-                        Gestión centralizada de estudiantes, investigadores y tesistas.
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" className="rounded-2xl hidden md:flex items-center" onClick={loadStudents}>
-                        <RefreshCw className="mr-2 h-4 w-4" /> Actualizar
+            {/* Header actions */}
+            <div className="flex items-center justify-end gap-2">
+                    <Button variant="outline" className="rounded-xl h-9 hidden md:flex items-center gap-2" onClick={loadStudents}>
+                        <RefreshCw className="h-3.5 w-3.5" /> Actualizar
                     </Button>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button className="rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
-                                <UserPlus className="mr-2 h-4 w-4" /> Nuevo Cliente
+                            <Button className="rounded-xl h-9 text-sm font-semibold gap-2 cursor-pointer">
+                                <UserPlus className="h-3.5 w-3.5" /> Nuevo Cliente
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -243,18 +236,18 @@ export function Clients() {
             </div>
 
             {/* Table */}
-            <Card className="rounded-3xl border-border bg-card overflow-hidden shadow-sm">
+            <Card className="rounded-2xl border-border bg-card overflow-hidden shadow-sm">
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-accent/30 text-xs uppercase tracking-wider text-muted-foreground font-black border-b border-border/50">
-                                    <th className="px-6 py-4">Cliente</th>
-                                    <th className="px-6 py-4">Universidad</th>
-                                    <th className="px-6 py-4">Proyectos</th>
-                                    <th className="px-6 py-4">Estado</th>
-                                    <th className="px-6 py-4">Registro</th>
-                                    <th className="px-6 py-4 text-right">Acciones</th>
+                                <tr className="border-b border-border/50">
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Cliente</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Universidad</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Proyectos</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Estado</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Registro</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
@@ -363,7 +356,7 @@ export function Clients() {
 
             {/* Bottom widgets */}
             <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <Card className="rounded-3xl border-border bg-gradient-to-br from-primary/5 to-transparent border-primary/20 shadow-sm">
+                <Card className="rounded-2xl border-border bg-gradient-to-br from-primary/5 to-transparent border-primary/20 shadow-sm">
                     <CardContent className="p-6 flex items-center gap-6">
                         <div className="h-16 w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center ring-1 ring-amber-500/20">
                             <ShieldAlert className="h-8 w-8 text-amber-500" />
@@ -379,7 +372,7 @@ export function Clients() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="rounded-3xl border-border bg-card shadow-sm">
+                <Card className="rounded-2xl border-border bg-card shadow-sm">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-base font-bold">Total de Clientes</CardTitle>
                     </CardHeader>

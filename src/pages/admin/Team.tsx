@@ -118,18 +118,11 @@ export function Team() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-wrap">Equipo de Trabajo</h1>
-                    <p className="mt-2 text-base font-medium text-foreground/80">
-                        Gestión de asesores, redactores y personal administrativo.
-                    </p>
-                </div>
-
+            <div className="flex items-center justify-end gap-2">
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="rounded-2xl gap-2 font-bold shadow-lg shadow-primary/20">
-                            <UserPlus className="mr-2 h-4 w-4" /> Invitar Miembro
+                        <Button className="rounded-xl h-9 text-sm font-semibold gap-2">
+                            <UserPlus className="h-3.5 w-3.5" /> Invitar Miembro
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
@@ -223,11 +216,11 @@ export function Team() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredTeam.length > 0 ? (
                     filteredTeam.map((member) => (
-                        <Card key={member.id} className="rounded-3xl border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 group">
+                        <Card key={member.id} className="rounded-2xl border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 group">
                             <CardContent className="p-0">
-                                <div className="h-20 bg-primary/10 w-full relative">
+                                <div className="h-16 bg-[hsl(var(--primary)/0.08)] w-full relative border-b border-border/40">
                                     <div className="absolute -bottom-6 left-6">
-                                        <div className="h-16 w-16 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold border-4 border-card ring-1 ring-border/50 shadow-sm">
+                                        <div className="h-16 w-16 rounded-xl bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] flex items-center justify-center text-2xl font-bold border-4 border-card shadow-sm">
                                             {member.avatar}
                                         </div>
                                     </div>

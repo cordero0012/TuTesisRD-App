@@ -8,26 +8,34 @@
 /* Global Styles */
 /* Light Theme (Tu Tesis RD Light) */
 :root {
-  --background: 0 0% 98%;
-  --foreground: 0 0% 9%;
+  --background: 0 0% 97%;
+  --foreground: 0 0% 8%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
+  --card-foreground: 0 0% 8%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --primary: 33 88% 50%;
+  --popover-foreground: 0 0% 8%;
+  /* Darkened for WCAG AA on light backgrounds (~5:1 on white) */
+  --primary: 33 90% 33%;
   --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 92%;
-  --secondary-foreground: 0 0% 15%;
-  --muted: 0 0% 93%;
-  --muted-foreground: 0 0% 35%;
-  --accent: 0 0% 92%;
-  --accent-foreground: 0 0% 9%;
-  --destructive: 0 84.2% 55.2%;
+  --secondary: 0 0% 91%;
+  --secondary-foreground: 0 0% 12%;
+  --muted: 0 0% 92%;
+  /* Darkened from 35% → 28% for better body text contrast */
+  --muted-foreground: 0 0% 28%;
+  --accent: 0 0% 91%;
+  --accent-foreground: 0 0% 8%;
+  --destructive: 0 78% 42%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 85%;
-  --input: 0 0% 85%;
-  --ring: 33 88% 50%;
+  /* Slightly darker border for better visibility */
+  --border: 0 0% 80%;
+  --input: 0 0% 80%;
+  --ring: 33 90% 33%;
   --radius: 0.75rem;
+  /* Semantic tokens (light mode) */
+  --success: 142 71% 35%;
+  --warning: 38 92% 38%;
+  --info: 217 91% 42%;
+  --sidebar: 0 0% 100%;
 }
 
 /* Dark Theme (Tu Tesis RD Dark) */
@@ -197,4 +205,24 @@ body {
   .blog-content :where(p + p) {
     margin-top: 0;
   }
+}
+
+/* ─── Semantic badge utilities (light/dark aware) ───────────────────────────
+   Use these instead of hardcoding text-*-400 which fails WCAG AA in light mode.
+   Each class applies the correct text shade per theme automatically.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .badge-blue    { @apply bg-blue-500/12    text-blue-700    dark:text-blue-400    ring-1 ring-inset ring-blue-500/25; }
+  .badge-emerald { @apply bg-emerald-500/12 text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-500/25; }
+  .badge-amber   { @apply bg-amber-500/12   text-amber-700   dark:text-amber-400   ring-1 ring-inset ring-amber-500/25; }
+  .badge-rose    { @apply bg-rose-500/12    text-rose-700    dark:text-rose-400    ring-1 ring-inset ring-rose-500/25; }
+  .badge-violet  { @apply bg-violet-500/12  text-violet-700  dark:text-violet-400  ring-1 ring-inset ring-violet-500/25; }
+  .badge-slate   { @apply bg-slate-500/12   text-slate-600   dark:text-slate-400   ring-1 ring-inset ring-slate-500/25; }
+
+  /* Icon containers with semantic bg + text, WCAG AA in both modes */
+  .icon-blue    { @apply bg-blue-500/10    text-blue-700    dark:text-blue-400; }
+  .icon-emerald { @apply bg-emerald-500/10 text-emerald-700 dark:text-emerald-400; }
+  .icon-amber   { @apply bg-amber-500/10   text-amber-700   dark:text-amber-400; }
+  .icon-rose    { @apply bg-rose-500/10    text-rose-700    dark:text-rose-400; }
+  .icon-violet  { @apply bg-violet-500/10  text-violet-700  dark:text-violet-400; }
 }

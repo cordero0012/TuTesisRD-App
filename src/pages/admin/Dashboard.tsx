@@ -42,11 +42,11 @@ import {
 
 // ─── Status config with semantic colors ────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
-    pending:    { label: "Pendiente",    cls: "bg-slate-500/15 text-slate-400 ring-1 ring-inset ring-slate-500/25" },
-    assigned:   { label: "Asignado",    cls: "bg-violet-500/15 text-violet-400 ring-1 ring-inset ring-violet-500/25" },
-    in_progress:{ label: "En curso",    cls: "bg-blue-500/15  text-blue-400  ring-1 ring-inset ring-blue-500/25" },
-    review:     { label: "En revisión", cls: "bg-amber-500/15 text-amber-400 ring-1 ring-inset ring-amber-500/25" },
-    completed:  { label: "Listo",       cls: "bg-emerald-500/15 text-emerald-400 ring-1 ring-inset ring-emerald-500/25" },
+    pending:    { label: "Pendiente",    cls: "badge-slate" },
+    assigned:   { label: "Asignado",    cls: "badge-violet" },
+    in_progress:{ label: "En curso",    cls: "badge-blue" },
+    review:     { label: "En revisión", cls: "badge-amber" },
+    completed:  { label: "Listo",       cls: "badge-emerald" },
 };
 
 // ─── KPI card config with semantic colors ──────────────────────────────────────
@@ -57,7 +57,7 @@ const KPI_CONFIG = [
         hint: "en curso actualmente",
         icon: FolderKanban,
         color: "blue",
-        iconCls: "bg-blue-500/12 text-blue-400",
+        iconCls: "icon-blue",
         valueCls: "text-foreground",
     },
     {
@@ -66,7 +66,7 @@ const KPI_CONFIG = [
         hint: "pagos recibidos",
         icon: TrendingUp,
         color: "emerald",
-        iconCls: "bg-emerald-500/12 text-emerald-400",
+        iconCls: "icon-emerald",
         valueCls: "text-foreground",
     },
     {
@@ -75,7 +75,7 @@ const KPI_CONFIG = [
         hint: "rendimiento operativo",
         icon: CheckCircle2,
         color: "violet",
-        iconCls: "bg-violet-500/12 text-violet-400",
+        iconCls: "icon-violet",
         valueCls: "text-foreground",
     },
     {
@@ -84,7 +84,7 @@ const KPI_CONFIG = [
         hint: "proyectos vencidos",
         icon: AlertTriangle,
         color: "rose",
-        iconCls: "bg-rose-500/12 text-rose-400",
+        iconCls: "icon-rose",
         valueCls: "text-foreground",
     },
 ] as const;

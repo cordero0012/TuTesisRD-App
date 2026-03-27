@@ -126,21 +126,14 @@ export function Finances() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight">Centro Financiero</h1>
-                    <p className="mt-2 text-base font-medium text-foreground/80">
-                        Control de ingresos, egresos y proyecciones de rentabilidad.
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" className="rounded-2xl hidden md:flex">
-                        <Download className="mr-2 h-4 w-4" /> Exportar
+            <div className="flex items-center justify-end gap-2">
+                    <Button variant="outline" className="rounded-xl h-9 text-sm hidden md:flex items-center gap-2">
+                        <Download className="h-3.5 w-3.5" /> Exportar
                     </Button>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button className="rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
-                                <Plus className="mr-2 h-4 w-4" /> Nuevo Movimiento
+                            <Button className="rounded-xl h-9 text-sm font-semibold gap-2 cursor-pointer">
+                                <Plus className="h-3.5 w-3.5" /> Nuevo Movimiento
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -237,21 +230,18 @@ export function Finances() {
 
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {formattedStats.map((stat) => (
-                    <Card key={stat.title} className="rounded-3xl border-border bg-card shadow-sm overflow-hidden relative group hover:shadow-md transition-shadow">
-                        <div className="absolute -top-4 -right-4 p-4 opacity-[0.03] transition-transform duration-500 group-hover:scale-110 group-hover:opacity-[0.06]">
-                            <stat.icon className={`h-32 w-32 ${stat.color}`} />
-                        </div>
-                        <CardContent className="p-6 relative z-10">
-                            <div className="flex justify-between items-start">
-                                <div className={`p-2 rounded-xl mb-4 ${stat.color.replace('text-', 'bg-').replace('-500', '-500/10')}`}>
-                                    <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                    <Card key={stat.title} className="rounded-2xl border-border bg-card shadow-none">
+                        <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                                <div className={`inline-flex h-8 w-8 items-center justify-center rounded-xl ${stat.color.replace('text-', 'bg-').replace('-500', '-500/10')}`}>
+                                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
                                 </div>
                             </div>
-                            <p className="text-sm font-black text-foreground/70 uppercase tracking-widest">{stat.title}</p>
-                            <h3 className={`text-3xl sm:text-4xl font-black mt-2 tracking-tighter ${stat.title === 'Balance Neto' ? 'text-primary' : 'text-foreground'}`}>{stat.value}</h3>
-                            <div className={`flex items-center gap-1.5 mt-3 text-[11px] font-black uppercase ${stat.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                {stat.trend.startsWith('+') ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
-                                {stat.trend} <span className="text-muted-foreground font-semibold ml-1">vs mes anterior</span>
+                            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{stat.title}</p>
+                            <p className="mt-1 text-2xl font-black tracking-tight text-foreground">{stat.value}</p>
+                            <div className={`flex items-center gap-1 mt-2 text-[11px] font-semibold ${stat.trend.startsWith('+') ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}`}>
+                                {stat.trend.startsWith('+') ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                                {stat.trend} <span className="text-muted-foreground font-normal ml-1">vs mes anterior</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -259,11 +249,11 @@ export function Finances() {
             </section>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <Card className="xl:col-span-2 rounded-3xl border-border bg-card shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-6 mb-4">
+                <Card className="xl:col-span-2 rounded-2xl border-border bg-card shadow-sm">
+                    <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-4 mb-0">
                         <div>
-                            <CardTitle className="text-lg font-bold">Flujo de Caja Mensual</CardTitle>
-                            <CardDescription className="font-medium">Comparativa de ingresos y gastos operativos</CardDescription>
+                            <CardTitle className="text-sm font-semibold">Flujo de Caja Mensual</CardTitle>
+                            <CardDescription className="text-xs mt-0.5">Comparativa de ingresos y gastos operativos</CardDescription>
                         </div>
                         <Button variant="ghost" size="sm" className="rounded-xl font-bold text-primary hover:bg-primary/10 transition-colors cursor-pointer">
                             Más Detalles <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
@@ -293,10 +283,10 @@ export function Finances() {
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-3xl border-border bg-card shadow-sm">
-                    <CardHeader className="border-b border-border/50 pb-6 mb-4">
-                        <CardTitle className="text-lg font-bold">Ingresos por Categoría</CardTitle>
-                        <CardDescription className="font-medium">Distribución de ventas por servicio</CardDescription>
+                <Card className="rounded-2xl border-border bg-card shadow-sm">
+                    <CardHeader className="border-b border-border/50 pb-4 mb-0">
+                        <CardTitle className="text-sm font-semibold">Ingresos por Categoría</CardTitle>
+                        <CardDescription className="text-xs mt-0.5">Distribución de ventas por servicio</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center">
                         <div className="h-[200px] w-full">
@@ -339,11 +329,11 @@ export function Finances() {
             </div>
 
             {/* Historial de Transacciones */}
-            <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-                <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/50 pb-6 px-6 pt-6 gap-4">
+            <Card className="rounded-2xl border-border bg-card shadow-sm overflow-hidden">
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/50 pb-4 px-5 pt-5 gap-3">
                     <div>
-                        <CardTitle className="text-lg font-bold">Historial de Transacciones</CardTitle>
-                        <CardDescription className="font-medium">Registro detallado de ingresos y gastos recientes</CardDescription>
+                        <CardTitle className="text-sm font-semibold">Historial de Transacciones</CardTitle>
+                        <CardDescription className="text-xs mt-0.5">Registro detallado de ingresos y gastos recientes</CardDescription>
                     </div>
                     <div className="relative w-full sm:w-64">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -359,13 +349,13 @@ export function Finances() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-accent/20 text-xs uppercase tracking-widest text-muted-foreground font-black border-b border-border/50">
-                                    <th className="px-6 py-4">Fecha</th>
-                                    <th className="px-6 py-4">Concepto</th>
-                                    <th className="px-6 py-4">Tipo</th>
-                                    <th className="px-6 py-4">Monto</th>
-                                    <th className="px-6 py-4">Estado</th>
-                                    <th className="px-6 py-4 text-right">Acciones</th>
+                                <tr className="border-b border-border/50">
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Fecha</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Concepto</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Tipo</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Monto</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Estado</th>
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
@@ -383,8 +373,7 @@ export function Finances() {
                                                 <p className="text-xs font-bold text-foreground/60 mt-1 uppercase tracking-tight">{tx.category}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase ring-1 ${tx.type === 'Ingreso' ? 'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20' : 'bg-rose-500/10 text-rose-600 ring-rose-500/20'
-                                                    }`}>
+                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase ring-1 ${tx.type === 'Ingreso' ? 'badge-emerald' : 'badge-rose'}`}>
                                                     {tx.type === 'Ingreso' ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpLeft className="h-3 w-3" />}
                                                     {tx.type}
                                                 </div>
@@ -395,8 +384,7 @@ export function Finances() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className={`inline-flex items-center gap-1.5 text-xs font-bold ${tx.status === 'Pagado' ? 'text-emerald-500' : 'text-amber-500'
-                                                    }`}>
+                                                <div className={`inline-flex items-center gap-1.5 text-xs font-semibold ${tx.status === 'Pagado' ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'}`}>
                                                     {tx.status === 'Pagado' ? <CheckCircle className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
                                                     {tx.status}
                                                 </div>
