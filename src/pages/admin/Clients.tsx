@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
     Users,
     Search,
     UserPlus,
     MessageSquare,
-    Mail,
     History,
     MoreHorizontal,
     GraduationCap,
@@ -15,9 +14,11 @@ import {
     Clock,
     XCircle,
     Edit3,
-    Trash2
+    Trash2,
+    Loader,
+    RefreshCw,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import {
@@ -37,58 +38,93 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/Dialog";
-
-const INITIAL_CLIENTS = [
-    { id: 1, name: "Ana Isabel Martínez", university: "UASD", projectCount: 2, status: "Activo", email: "ana.m@email.com", lastContact: "Hoy, 10:30 AM" },
-    { id: 2, name: "José Manuel Polanco", university: "PUCMM", projectCount: 1, status: "Pendiente Pago", email: "jose.p@email.com", lastContact: "Ayer" },
-    { id: 3, name: "Katherine Sosa", university: "UNIBE", projectCount: 3, status: "Activo", email: "kathy.s@email.com", lastContact: "Hace 2 días" },
-    { id: 4, name: "Ricardo Tavarez", university: "INTEC", projectCount: 1, status: "Finalizado", email: "rtav@email.com", lastContact: "Hace 1 semana" },
-    { id: 5, name: "Lisbeth Pérez", university: "UAPA", projectCount: 2, status: "Activo", email: "lperez@email.com", lastContact: "Hoy, 09:15 AM" },
-];
+import {
+    fetchStudents,
+    createStudent,
+    deleteStudent,
+    AdminStudent,
+    getStudentDisplayStatus,
+    formatRelativeTime,
+} from "@/services/admin/adminDataService";
 
 export function Clients() {
-    const [clients, setClients] = useState(INITIAL_CLIENTS);
+    const [students, setStudents] = useState<AdminStudent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("Todos");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [newClient, setNewClient] = useState({ name: "", email: "", university: "UASD" });
+    const [newClient, setNewClient] = useState({ name: "", lastname: "", email: "", university: "UASD" });
 
-    const filteredClients = useMemo(() => {
-        return clients.filter(client => {
-            const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                client.university.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesStatus = statusFilter === "Todos" || client.status === statusFilter;
+    const loadStudents = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await fetchStudents();
+            setStudents(data);
+        } catch (err: any) {
+            setError(err?.message || "Error al cargar los clientes");
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => { loadStudents(); }, [loadStudents]);
+
+    const filteredStudents = useMemo(() => {
+        return students.filter(s => {
+            const fullName = `${s.name} ${s.lastname}`;
+            const matchesSearch =
+                fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                s.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (s.university || "").toLowerCase().includes(searchTerm.toLowerCase());
+            const status = getStudentDisplayStatus(s.projects);
+            const matchesStatus = statusFilter === "Todos" || status === statusFilter;
             return matchesSearch && matchesStatus;
         });
-    }, [clients, searchTerm, statusFilter]);
+    }, [students, searchTerm, statusFilter]);
 
-    const handleCreateClient = () => {
-        if (!newClient.name || !newClient.email) return;
-
-        const client = {
-            id: clients.length + 1,
-            ...newClient,
-            projectCount: 0,
-            status: "Pendiente Pago",
-            lastContact: "Recién añadido"
-        };
-
-        setClients([client, ...clients]);
-        setNewClient({ name: "", email: "", university: "UASD" });
-        setIsDialogOpen(false);
+    const handleCreateClient = async () => {
+        if (!newClient.name || !newClient.email || !newClient.lastname) return;
+        try {
+            setSaving(true);
+            const created = await createStudent(newClient);
+            setStudents(prev => [created, ...prev]);
+            setNewClient({ name: "", lastname: "", email: "", university: "UASD" });
+            setIsDialogOpen(false);
+        } catch (err: any) {
+            alert(`Error al crear cliente: ${err.message}`);
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const handleDeleteClient = (id: number) => {
-        setClients(clients.filter(c => c.id !== id));
+    const handleDeleteClient = async (id: string) => {
+        if (!confirm("¿Eliminar este cliente? Esta acción no se puede deshacer.")) return;
+        try {
+            await deleteStudent(id);
+            setStudents(prev => prev.filter(s => s.id !== id));
+        } catch (err: any) {
+            alert(`Error al eliminar: ${err.message}`);
+        }
     };
 
-    const handleStatusUpdate = (id: number, newStatus: string) => {
-        setClients(clients.map(c => c.id === id ? { ...c, status: newStatus } : c));
+    const statusBadgeClass = (status: string) => {
+        if (status === "Activo") return "bg-emerald-500/10 text-emerald-600 ring-emerald-500/20";
+        if (status === "Pendiente Pago") return "bg-amber-500/10 text-amber-600 ring-amber-500/20";
+        return "bg-slate-500/10 text-slate-600 ring-slate-500/20";
+    };
+
+    const statusDotClass = (status: string) => {
+        if (status === "Activo") return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
+        if (status === "Pendiente Pago") return "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]";
+        return "bg-slate-500";
     };
 
     return (
         <div className="space-y-6">
+            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Directorio de Clientes</h1>
@@ -97,8 +133,8 @@ export function Clients() {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" className="rounded-2xl hidden md:flex items-center">
-                        <Download className="mr-2 h-4 w-4" /> Exportar
+                    <Button variant="outline" className="rounded-2xl hidden md:flex items-center" onClick={loadStudents}>
+                        <RefreshCw className="mr-2 h-4 w-4" /> Actualizar
                     </Button>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
@@ -114,18 +150,32 @@ export function Clients() {
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-muted-foreground">Nombre Completo</label>
-                                    <Input
-                                        placeholder="Ej: Laura Castro"
-                                        className="rounded-xl"
-                                        value={newClient.name}
-                                        onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-                                    />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label htmlFor="client-name" className="text-xs font-bold uppercase text-muted-foreground">Nombre</label>
+                                        <Input
+                                            id="client-name"
+                                            placeholder="Ej: Laura"
+                                            className="rounded-xl"
+                                            value={newClient.name}
+                                            onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="client-lastname" className="text-xs font-bold uppercase text-muted-foreground">Apellido</label>
+                                        <Input
+                                            id="client-lastname"
+                                            placeholder="Ej: Castro"
+                                            className="rounded-xl"
+                                            value={newClient.lastname}
+                                            onChange={(e) => setNewClient({ ...newClient, lastname: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-muted-foreground">Correo de Contacto</label>
+                                    <label htmlFor="client-email" className="text-xs font-bold uppercase text-muted-foreground">Correo de Contacto</label>
                                     <Input
+                                        id="client-email"
                                         placeholder="laura@ejemplo.com"
                                         type="email"
                                         className="rounded-xl"
@@ -134,8 +184,9 @@ export function Clients() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-muted-foreground">Universidad</label>
+                                    <label htmlFor="client-university" className="text-xs font-bold uppercase text-muted-foreground">Universidad</label>
                                     <select
+                                        id="client-university"
                                         className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                                         value={newClient.university}
                                         onChange={(e) => setNewClient({ ...newClient, university: e.target.value })}
@@ -153,13 +204,16 @@ export function Clients() {
                             </div>
                             <DialogFooter>
                                 <Button variant="outline" className="rounded-xl cursor-pointer" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-                                <Button className="rounded-xl cursor-pointer" onClick={handleCreateClient}>Registrar Cliente</Button>
+                                <Button className="rounded-xl cursor-pointer" onClick={handleCreateClient} disabled={saving}>
+                                    {saving ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : "Registrar Cliente"}
+                                </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
                 </div>
             </div>
 
+            {/* Filters */}
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -170,7 +224,6 @@ export function Clients() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="rounded-2xl h-11 px-6 border-border hover:bg-accent hover:text-accent-foreground font-semibold gap-2 transition-all cursor-pointer">
@@ -184,10 +237,12 @@ export function Clients() {
                         <DropdownMenuItem onClick={() => setStatusFilter("Activo")} className="cursor-pointer">Activo</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setStatusFilter("Pendiente Pago")} className="cursor-pointer">Pendiente Pago</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setStatusFilter("Finalizado")} className="cursor-pointer">Finalizado</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setStatusFilter("Sin proyectos")} className="cursor-pointer">Sin proyectos</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
+            {/* Table */}
             <Card className="rounded-3xl border-border bg-card overflow-hidden shadow-sm">
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
@@ -198,93 +253,95 @@ export function Clients() {
                                     <th className="px-6 py-4">Universidad</th>
                                     <th className="px-6 py-4">Proyectos</th>
                                     <th className="px-6 py-4">Estado</th>
-                                    <th className="px-6 py-4">Último Contacto</th>
+                                    <th className="px-6 py-4">Registro</th>
                                     <th className="px-6 py-4 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
-                                {filteredClients.length > 0 ? (
-                                    filteredClients.map((client) => (
-                                        <tr key={client.id} className="hover:bg-accent/20 transition-colors group">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shadow-sm ring-1 ring-primary/20">
-                                                        {client.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm font-bold text-foreground">{client.name}</span>
-                                                        <span className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer">{client.email}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="p-1.5 bg-accent rounded-md border border-border">
-                                                        <GraduationCap className="h-3.5 w-3.5 text-muted-foreground" />
-                                                    </div>
-                                                    <span className="text-sm font-medium">{client.university}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm font-bold">{client.projectCount}</span>
-                                                    <span className="text-xs text-muted-foreground">Investigaciones</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase ring-1 ${client.status === 'Activo' ? 'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20' :
-                                                        client.status === 'Pendiente Pago' ? 'bg-amber-500/10 text-amber-600 ring-amber-500/20' :
-                                                            'bg-slate-500/10 text-slate-600 ring-slate-500/20'
-                                                    }`}>
-                                                    <div className={`h-1.5 w-1.5 rounded-full ${client.status === 'Activo' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
-                                                            client.status === 'Pendiente Pago' ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' :
-                                                                'bg-slate-500'
-                                                        }`} />
-                                                    {client.status}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                                    <History className="h-3.5 w-3.5 opacity-70" />
-                                                    <span>{client.lastContact}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary hover:border-primary/20 border border-transparent transition-all cursor-pointer">
-                                                        <MessageSquare className="h-4 w-4" />
-                                                    </Button>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full hover:bg-accent border border-transparent transition-all cursor-pointer">
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="rounded-2xl min-w-[180px]">
-                                                            <DropdownMenuLabel>Acciones de Cliente</DropdownMenuLabel>
-                                                            <DropdownMenuSeparator />
-                                                            <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleStatusUpdate(client.id, "Activo")}>
-                                                                <CheckCircle className="h-3.5 w-3.5 text-emerald-500" /> Marcar Activo
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleStatusUpdate(client.id, "Pendiente Pago")}>
-                                                                <Clock className="h-3.5 w-3.5 text-amber-500" /> Pendiente Pago
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleStatusUpdate(client.id, "Finalizado")}>
-                                                                <XCircle className="h-3.5 w-3.5 text-slate-500" /> Finalizar
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuSeparator />
-                                                            <DropdownMenuItem className="gap-2 cursor-pointer">
-                                                                <Edit3 className="h-3.5 w-3.5" /> Editar perfil
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem className="gap-2 cursor-pointer text-destructive" onClick={() => handleDeleteClient(client.id)}>
-                                                                <Trash2 className="h-3.5 w-3.5" /> Eliminar cliente
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                            </td>
+                                {loading ? (
+                                    [...Array(4)].map((_, i) => (
+                                        <tr key={i} className="animate-pulse">
+                                            {[...Array(6)].map((_, j) => (
+                                                <td key={j} className="px-6 py-4">
+                                                    <div className="h-4 bg-accent/50 rounded-full w-3/4" />
+                                                </td>
+                                            ))}
                                         </tr>
                                     ))
+                                ) : error ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-12 text-center text-destructive">
+                                            {error}
+                                            <Button variant="link" className="ml-2" onClick={loadStudents}>Reintentar</Button>
+                                        </td>
+                                    </tr>
+                                ) : filteredStudents.length > 0 ? (
+                                    filteredStudents.map((s) => {
+                                        const status = getStudentDisplayStatus(s.projects);
+                                        const initials = `${s.name[0]}${s.lastname[0]}`.toUpperCase();
+                                        return (
+                                            <tr key={s.id} className="hover:bg-accent/20 transition-colors group">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shadow-sm ring-1 ring-primary/20">
+                                                            {initials}
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-bold text-foreground">{s.name} {s.lastname}</span>
+                                                            <span className="text-xs text-muted-foreground">{s.email}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="p-1.5 bg-accent rounded-md border border-border">
+                                                            <GraduationCap className="h-3.5 w-3.5 text-muted-foreground" />
+                                                        </div>
+                                                        <span className="text-sm font-medium">{s.university || "—"}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm font-bold">{(s.projects || []).length}</span>
+                                                        <span className="text-xs text-muted-foreground">Investigaciones</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase ring-1 ${statusBadgeClass(status)}`}>
+                                                        <div className={`h-1.5 w-1.5 rounded-full ${statusDotClass(status)}`} />
+                                                        {status}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                                        <History className="h-3.5 w-3.5 opacity-70" />
+                                                        <span>{formatRelativeTime(s.created_at)}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary border border-transparent transition-all cursor-pointer">
+                                                            <MessageSquare className="h-4 w-4" />
+                                                        </Button>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full hover:bg-accent border border-transparent transition-all cursor-pointer">
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="rounded-2xl min-w-[180px]">
+                                                                <DropdownMenuLabel>Acciones de Cliente</DropdownMenuLabel>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem className="gap-2 cursor-pointer text-destructive" onClick={() => handleDeleteClient(s.id)}>
+                                                                    <Trash2 className="h-3.5 w-3.5" /> Eliminar cliente
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 ) : (
                                     <tr>
                                         <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
@@ -304,36 +361,33 @@ export function Clients() {
                 </CardContent>
             </Card>
 
+            {/* Bottom widgets */}
             <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <Card className="rounded-3xl border-border bg-gradient-to-br from-primary/5 to-transparent border-primary/20 shadow-sm transition-all hover:shadow-md hover:border-primary/40">
+                <Card className="rounded-3xl border-border bg-gradient-to-br from-primary/5 to-transparent border-primary/20 shadow-sm">
                     <CardContent className="p-6 flex items-center gap-6">
                         <div className="h-16 w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center ring-1 ring-amber-500/20">
                             <ShieldAlert className="h-8 w-8 text-amber-500" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg text-foreground">Reporte de Auditoría</h3>
-                            <p className="text-sm text-muted-foreground mt-1">Existen 3 clientes con pagos próximos a vencer en semana actual.</p>
-                            <Button variant="link" className="p-0 h-auto text-amber-600 font-bold mt-2 hover:text-amber-700 cursor-pointer">Revisar Alertas →</Button>
+                            <h3 className="font-bold text-lg text-foreground">Resumen de Cartera</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                {students.filter(s => getStudentDisplayStatus(s.projects) === "Pendiente Pago").length} clientes con pagos pendientes.
+                            </p>
+                            <Button variant="link" className="p-0 h-auto text-amber-600 font-bold mt-2 hover:text-amber-700 cursor-pointer">
+                                Ver detalles →
+                            </Button>
                         </div>
                     </CardContent>
                 </Card>
                 <Card className="rounded-3xl border-border bg-card shadow-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-base font-bold">Crecimiento de Cartera</CardTitle>
+                        <CardTitle className="text-base font-bold">Total de Clientes</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex items-end gap-2 h-20">
-                            <div className="w-full bg-primary/10 rounded-t-lg h-[40%] transition-all hover:bg-primary/20 cursor-pointer"></div>
-                            <div className="w-full bg-primary/20 rounded-t-lg h-[60%] transition-all hover:bg-primary/30 cursor-pointer"></div>
-                            <div className="w-full bg-primary/40 rounded-t-lg h-[80%] transition-all hover:bg-primary/50 cursor-pointer"></div>
-                            <div className="w-full bg-primary/60 rounded-t-lg h-[70%] transition-all hover:bg-primary/70 cursor-pointer"></div>
-                            <div className="w-full bg-primary rounded-t-lg h-[100%] transition-all hover:bg-primary/90 cursor-pointer relative group">
-                                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                    +12
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-xs text-center mt-3 font-semibold text-muted-foreground uppercase tracking-widest">Nuevos clientes (5 meses)</p>
+                        <p className="text-4xl font-bold text-primary">{students.length}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {students.filter(s => getStudentDisplayStatus(s.projects) === "Activo").length} activos · {students.filter(s => getStudentDisplayStatus(s.projects) === "Finalizado").length} finalizados
+                        </p>
                     </CardContent>
                 </Card>
             </section>

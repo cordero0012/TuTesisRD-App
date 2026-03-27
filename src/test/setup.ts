@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
-import { axe, toHaveNoViolations } from 'jest-axe';
+import { axe as axeCore, toHaveNoViolations } from 'jest-axe';
 
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
@@ -10,8 +10,11 @@ expect.extend(matchers);
 // Extend Vitest's expect with axe matchers
 expect.extend(toHaveNoViolations);
 
-// Export axe for use in tests
-export { axe };
+// Export axe for use in tests — disable color-contrast in jsdom (no real CSS)
+export const axe = (container: Element) =>
+    axeCore(container, {
+        rules: { 'color-contrast': { enabled: false } },
+    });
 
 // Cleanup after each test
 afterEach(() => {

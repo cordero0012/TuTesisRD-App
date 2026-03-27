@@ -177,8 +177,8 @@ export type SaveAnalysisInput = z.infer<typeof SaveAnalysisSchema>;
 
 export const TrackingCodeSchema = z
     .string()
-    .regex(/^TRX-[A-Z0-9]{6}$/, 'Código de seguimiento inválido (formato: TRX-XXXXXX)')
-    .toUpperCase();
+    .toUpperCase()
+    .regex(/^TRX-[A-Z0-9]{6}$/, 'Código de seguimiento inválido (formato: TRX-XXXXXX)');
 
 export type TrackingCode = z.infer<typeof TrackingCodeSchema>;
 

@@ -200,7 +200,7 @@ const LandingPage: React.FC = () => {
 
                         <div className="w-full md:w-1/2 relative animate-fade-in group perspective-1000 order-2 md:order-2">
                             <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-xl md:shadow-2xl border border-gray-100 dark:border-slate-800 relative z-20 mx-auto w-full max-w-md md:max-w-full">
-                                <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 text-center">Diagnóstico Rápido</h3>
+                                <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 text-center">Diagnóstico Rápido</h2>
                                 <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm text-center mb-6">Completa este breve formulario y evaluaremos exactamente en qué necesitas ayuda.</p>
 
                                 <form className="space-y-4" onSubmit={(e) => {
@@ -216,8 +216,8 @@ const LandingPage: React.FC = () => {
                                     window.open('https://wa.me/message/YESJDSE3MZ3IM1', '_blank');
                                 }}>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">¿En qué etapa estás?</label>
-                                        <select className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all">
+                                        <label htmlFor="hero-etapa" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">¿En qué etapa estás?</label>
+                                        <select id="hero-etapa" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all">
                                             <option>Tengo la idea inicial / Anteproyecto</option>
                                             <option>Desarrollando Marco Teórico</option>
                                             <option>Aplicando Metodología / Instrumentos</option>
@@ -227,8 +227,8 @@ const LandingPage: React.FC = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nivel Académico</label>
-                                        <select className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all">
+                                        <label htmlFor="hero-nivel" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nivel Académico</label>
+                                        <select id="hero-nivel" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all">
                                             <option>Grado / Licenciatura</option>
                                             <option>Maestría / Posgrado</option>
                                             <option>Doctorado</option>
@@ -256,7 +256,7 @@ const LandingPage: React.FC = () => {
                                 <span className="material-icons text-2xl">location_on</span>
                             </div>
                             <div>
-                                <h4 className="font-bold text-slate-900 dark:text-white text-lg leading-tight mb-2">Online y Presencial</h4>
+                                <h2 className="font-bold text-slate-900 dark:text-white text-lg leading-tight mb-2">Online y Presencial</h2>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Atención en Higüey y todo el país.</p>
                             </div>
                         </div>
@@ -266,7 +266,7 @@ const LandingPage: React.FC = () => {
                                 <span className="material-icons text-2xl">school</span>
                             </div>
                             <div>
-                                <h4 className="font-bold text-slate-900 dark:text-white text-lg leading-tight mb-2">Todos los Niveles</h4>
+                                <h2 className="font-bold text-slate-900 dark:text-white text-lg leading-tight mb-2">Todos los Niveles</h2>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Grado, Maestría y Doctorado.</p>
                             </div>
                         </div>
@@ -276,7 +276,7 @@ const LandingPage: React.FC = () => {
                                 <span className="material-icons text-2xl">rule</span>
                             </div>
                             <div>
-                                <h4 className="font-bold text-slate-900 dark:text-white text-lg leading-tight mb-2">Revisión Guiada</h4>
+                                <h2 className="font-bold text-slate-900 dark:text-white text-lg leading-tight mb-2">Revisión Guiada</h2>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Según observaciones de tu asesor.</p>
                             </div>
                         </div>
@@ -383,7 +383,7 @@ const LandingPage: React.FC = () => {
                                 <span className={`material-icons text-4xl mb-6 bg-gradient-to-br ${stat.color} text-transparent bg-clip-text`}>{stat.icon}</span>
 
                                 <div className="flex flex-col sm:flex-row items-center sm:items-baseline gap-1 sm:gap-2 mb-2 justify-center sm:justify-start">
-                                    <h4 className="text-4xl md:text-5xl font-black tracking-tighter">{stat.title}</h4>
+                                    <h3 className="text-4xl md:text-5xl font-black tracking-tighter">{stat.title}</h3>
                                     <span className="text-base md:text-xl font-bold text-slate-400">{stat.subtitle}</span>
                                 </div>
                                 <p className="text-slate-400 font-medium text-sm md:text-base">
@@ -700,7 +700,8 @@ const LandingPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center animate-bounce-slow"
                 aria-label="Hablar por WhatsApp">
-                <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current">
+                <span className="sr-only">Hablar por WhatsApp</span>
+                <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current" aria-hidden="true">
                     <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.161.453-.834.864-1.173.968-.339.103-.943.208-2.673-.497-2.071-.845-3.418-2.957-3.52-3.093-.103-.136-.84-.114-.84-2.227 0-1.114.582-1.666.786-1.892.204-.226.444-.282.593-.282.148 0 .296.004.428.01.132.007.31-.052.485.37.175.42.596 1.45.648 1.554.052.103.087.224.013.374-.074.15-.112.243-.223.355-.112.112-.236.252-.338.347-.113.104-.236.218-.112.43.123.212.548.908 1.18 1.474.815.733 1.511.96 1.716 1.064.204.104.323.088.441-.048.118-.135.509-.596.645-.8.136-.205.27-.171.464-.098.194.074 1.226.578 1.436.683.21.104.348.156.398.244.052.088.052.511-.109.964z" />
                 </svg>
             </a>

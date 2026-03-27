@@ -207,20 +207,27 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
 
     return (
         <div className="flex h-screen w-full font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-white transition-colors duration-200">
-            {/* Custom Notification Toast */}
-            {notification && (
-                <div className="fixed top-20 right-4 z-[100] animate-fade-in-down">
-                    <div className={`px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md border ${notification.type === 'error'
-                        ? 'bg-red-500/90 text-white border-red-400'
-                        : 'bg-green-500/90 text-white border-green-400'
-                        }`}>
-                        <div className={`p-1 rounded-full ${notification.type === 'error' ? 'bg-white/20' : 'bg-white/20'}`}>
-                            <span className="material-symbols-outlined text-lg block">{notification.type === 'error' ? 'priority_high' : 'check'}</span>
+            {/* Accessible notification region - always present for screen readers */}
+            <div
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className="fixed top-20 right-4 z-[100]"
+            >
+                {notification && (
+                    <div className="animate-fade-in-down">
+                        <div className={`px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md border ${notification.type === 'error'
+                            ? 'bg-red-500/90 text-white border-red-400'
+                            : 'bg-green-500/90 text-white border-green-400'
+                            }`}>
+                            <div className={`p-1 rounded-full ${notification.type === 'error' ? 'bg-white/20' : 'bg-white/20'}`}>
+                                <span className="material-symbols-outlined text-lg block">{notification.type === 'error' ? 'priority_high' : 'check'}</span>
+                            </div>
+                            <span className="font-bold text-sm shadow-sm">{notification.message}</span>
                         </div>
-                        <span className="font-bold text-sm shadow-sm">{notification.message}</span>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
             <RegisterSidebar mode={mode} step={step} />
 

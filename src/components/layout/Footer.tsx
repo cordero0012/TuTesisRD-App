@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
                         <p className="text-sm mb-6">Tu aliado académico número uno en República Dominicana. Calidad, confianza y resultados garantizados.</p>
                     </div>
                     <div>
-                        <h4 className="text-white font-bold text-lg mb-6">Contacto</h4>
+                        <h2 className="text-white font-bold text-lg mb-6">Contacto</h2>
                         <ul className="space-y-4">
                             <li className="flex items-start">
                                 <span className="material-icons mt-1 mr-3 text-brand-orange text-sm">location_on</span>
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
                     <div>
-                        <h4 className="text-white font-bold text-lg mb-6">Recursos</h4>
+                        <h2 className="text-white font-bold text-lg mb-6">Recursos</h2>
                         <ul className="space-y-2">
                             <li><Link to="/recursos/que-es-tesis" className="hover:text-brand-orange transition">¿Qué es una Tesis?</Link></li>
                             <li><Link to="/recursos/como-hacer-tesis" className="hover:text-brand-orange transition">Guía Paso a Paso</Link></li>
@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
                     <div>
-                        <h4 className="text-white font-bold text-lg mb-6">Enlaces Rápidos</h4>
+                        <h2 className="text-white font-bold text-lg mb-6">Enlaces Rápidos</h2>
                         <ul className="space-y-2">
                             <li><Link to="/" className="hover:text-brand-orange transition">Inicio</Link></li>
                             <li><Link to="/servicios" className="hover:text-brand-orange transition">Servicios</Link></li>
@@ -56,9 +56,15 @@ const Footer: React.FC = () => {
                         © {new Date().getFullYear()} TuTesisRD. Todos los derechos reservados.
                     </div>
                     <div className="flex items-center gap-6">
-                        <a href="https://instagram.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram"><i className="fab fa-instagram text-xl"></i></a>
-                        <a href="https://facebook.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Facebook"><i className="fab fa-facebook text-xl"></i></a>
-                        <a href="javascript:void(0)" className="hover:text-white transition cursor-not-allowed opacity-50" aria-label="LinkedIn"><i className="fab fa-linkedin text-xl"></i></a>
+                        <a href="https://instagram.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram de TuTesisRD">
+                            <span className="sr-only">Instagram</span><i className="fab fa-instagram text-xl" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://facebook.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Facebook de TuTesisRD">
+                            <span className="sr-only">Facebook</span><i className="fab fa-facebook text-xl" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0)" className="hover:text-white transition cursor-not-allowed opacity-50" aria-label="LinkedIn" aria-disabled="true">
+                            <span className="sr-only">LinkedIn (próximamente)</span><i className="fab fa-linkedin text-xl" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
             </div>

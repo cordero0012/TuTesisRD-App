@@ -7,6 +7,8 @@ Allow: /
 # Block sensitive areas
 Disallow: /admin/
 Disallow: /api/
+Disallow: /portal/
+Disallow: /register/
 
 # Sitemap location
 Sitemap: https://www.tutesisrd.online/sitemap.xml

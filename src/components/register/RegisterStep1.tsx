@@ -11,7 +11,7 @@ interface RegisterStep1Props {
 export const RegisterStep1: React.FC<RegisterStep1Props> = React.memo(({ formData, handleInputChange, nextStep }) => {
     return (
         <div className="animate-fade-in-right">
-            <h2 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Empecemos con tus datos</h2>
+            <h1 className="text-2xl md:text-3xl font-black mb-2 text-slate-900 dark:text-white">Empecemos con tus datos</h1>
             <p className="text-slate-500 mb-8">Esta información nos permite contactarte directamente.</p>
 
             <div className="space-y-5">
