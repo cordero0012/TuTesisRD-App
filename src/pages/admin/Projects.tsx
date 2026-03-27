@@ -207,7 +207,6 @@ export function Projects() {
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-                </div>
             </div>
 
             {/* Filters */}
