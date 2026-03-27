@@ -152,7 +152,12 @@ function PageHeader({ path, teamMember }: { path: string; teamMember: any }) {
 }
 
 export function AdminLayout() {
-  const [theme, setTheme] = useState<"light" | "dark" | "gray">("dark");
+  const [theme, setTheme] = useState<"light" | "dark" | "gray">(() => {
+    try {
+      const stored = localStorage.getItem("admin-theme");
+      return stored ? JSON.parse(stored) : "dark";
+    } catch { return "dark"; }
+  });
   const { isCollaborator, teamMember } = useAdminAuth();
   const location = useLocation();
 
@@ -166,6 +171,18 @@ export function AdminLayout() {
     root.classList.remove("light", "dark", "gray");
     root.classList.add(theme);
   }, [theme]);
+
+  // Listen for theme changes from Settings page
+  useEffect(() => {
+    const handler = () => {
+      try {
+        const stored = localStorage.getItem("admin-theme");
+        if (stored) setTheme(JSON.parse(stored));
+      } catch {}
+    };
+    window.addEventListener("admin-theme-change", handler);
+    return () => window.removeEventListener("admin-theme-change", handler);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
