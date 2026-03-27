@@ -203,7 +203,6 @@ export function Clients() {
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-                </div>
             </div>
 
             {/* Filters */}
