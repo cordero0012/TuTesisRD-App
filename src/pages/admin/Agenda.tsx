@@ -43,12 +43,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 
-const INITIAL_EVENTS = [
-    { id: 1, title: "Reunión de Avance - Tesis UASD", time: "10:00 AM", duration: "1h", type: "Asesoría", status: "Confirmado", date: today },
-    { id: 2, title: "Entrega de Capítulo 3 - PUCMM", time: "02:30 PM", duration: "30min", type: "Entrega", status: "Pendiente", date: today },
-    { id: 3, title: "Sesión Metodológica - Grupo UNIBE", time: "09:00 AM", duration: "1.5h", type: "Taller", status: "Confirmado", date: tomorrow },
-    { id: 4, title: "Revisión Bibliográfica - Salud", time: "09:00 AM", duration: "2h", type: "Interno", status: "Completado", date: today },
-];
+const INITIAL_EVENTS: any[] = [];
 
 export function Agenda() {
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -108,8 +103,8 @@ export function Agenda() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Agenda Operativa</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h1 className="text-4xl font-extrabold tracking-tight">Agenda Operativa</h1>
+                    <p className="mt-2 text-base font-medium text-foreground/80">
                         Planificación de asesorías, entregas y hitos de investigación.
                     </p>
                 </div>
@@ -238,8 +233,8 @@ export function Agenda() {
                 <Card className="xl:col-span-8 rounded-3xl border-border bg-card shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-6 mb-4">
                         <div className="space-y-1">
-                            <CardTitle className="text-xl font-bold">Programación</CardTitle>
-                            <CardDescription className="font-medium text-primary">
+                            <CardTitle className="text-2xl font-black">Programación</CardTitle>
+                            <CardDescription className="text-sm font-black text-primary uppercase tracking-tighter">
                                 {date ? format(date, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es }) : "Selecciona una fecha"}
                             </CardDescription>
                         </div>
@@ -256,13 +251,13 @@ export function Agenda() {
                         {filteredEvents.length > 0 ? (
                             filteredEvents.map((event) => (
                                 <div key={event.id} className="group relative flex items-start gap-4 p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/40 hover:shadow-sm transition-all duration-300">
-                                    <div className="flex flex-col items-center justify-center min-w-[80px] py-1 border-r border-border/50 pr-4">
-                                        <span className="text-sm font-bold text-foreground tracking-tight">{event.time}</span>
-                                        <span className="text-[10px] text-muted-foreground uppercase font-bold mt-0.5">{event.duration}</span>
+                                    <div className="flex flex-col items-center justify-center min-w-[90px] py-1 border-r border-border/50 pr-4">
+                                        <span className="text-base font-black text-foreground tracking-tighter">{event.time}</span>
+                                        <span className="text-[11px] text-muted-foreground uppercase font-black mt-0.5">{event.duration}</span>
                                     </div>
                                     <div className="flex-1 pl-2">
                                         <div className="flex items-center justify-between">
-                                            <h4 className={`font-bold text-base transition-colors ${event.status === 'Completado' ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                                            <h4 className={`font-black text-lg transition-colors ${event.status === 'Completado' ? 'text-muted-foreground line-through opacity-60' : 'text-foreground'}`}>
                                                 {event.title}
                                             </h4>
                                             <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg ring-1 transition-all ${event.status === 'Confirmado' ? 'bg-primary/10 text-primary ring-primary/20' :
@@ -273,14 +268,14 @@ export function Agenda() {
                                                 {event.status}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-5 mt-3">
-                                            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-                                                <CalendarCheck className="h-3.5 w-3.5" />
+                                        <div className="flex items-center gap-5 mt-4">
+                                            <div className="flex items-center gap-1.5 text-xs font-black text-foreground/60 uppercase tracking-tight">
+                                                <CalendarCheck className="h-4 w-4 text-primary" />
                                                 <span>{event.type}</span>
                                             </div>
-                                            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-                                                <Clock className="h-3.5 w-3.5" />
-                                                <span>{event.type === 'Entrega' ? 'Remoto' : 'Presencial / Remoto'}</span>
+                                            <div className="flex items-center gap-1.5 text-xs font-black text-foreground/60 uppercase tracking-tight">
+                                                <Clock className="h-4 w-4 text-primary" />
+                                                <span>{event.type === 'Entrega' ? 'Remoto' : 'Híbrido'}</span>
                                             </div>
                                         </div>
                                     </div>

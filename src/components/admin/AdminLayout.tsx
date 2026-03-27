@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Search, Plus, Bell } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
 export function AdminLayout() {
     const [theme, setTheme] = useState<"light" | "dark" | "gray">("dark");
+    const { isCollaborator, teamMember } = useAdminAuth();
+    const location = useLocation();
+
+    // Evitar acceso a rutas restringidas para colaboradores
+    const restrictedPaths = ["/admin/finanzas", "/admin/equipo", "/admin/settings"];
+    if (isCollaborator && restrictedPaths.some(path => location.pathname.startsWith(path))) {
+        return <Navigate to="/admin/proyectos" replace />;
+    }
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -34,7 +43,7 @@ export function AdminLayout() {
                                 <Bell className="h-4 w-4" />
                             </Button>
                             <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                                M
+                                {teamMember?.name ? teamMember.name.charAt(0).toUpperCase() : "A"}
                             </div>
                         </div>
                     </header>

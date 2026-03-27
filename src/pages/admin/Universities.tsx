@@ -37,53 +37,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/Dialog";
 
-const INITIAL_UNIVERSITIES = [
-    {
-        id: 1,
-        name: "Universidad Autónoma de Santo Domingo",
-        acronym: "UASD",
-        templateStatus: "Actualizado",
-        lastUpdate: "Hace 2 días",
-        activeProjects: 45,
-        style: "Normas APA 7ma Ed."
-    },
-    {
-        id: 2,
-        name: "Pontificia Universidad Católica Madre y Maestra",
-        acronym: "PUCMM",
-        templateStatus: "Revisión Requerida",
-        lastUpdate: "Hace 1 semana",
-        activeProjects: 28,
-        style: "Normas Chicago / APA"
-    },
-    {
-        id: 3,
-        name: "Instituto Tecnológico de Santo Domingo",
-        acronym: "INTEC",
-        templateStatus: "Actualizado",
-        lastUpdate: "Ayer",
-        activeProjects: 15,
-        style: "Normas IEEE"
-    },
-    {
-        id: 4,
-        name: "Universidad Iberoamericana",
-        acronym: "UNIBE",
-        templateStatus: "Actualizado",
-        lastUpdate: "Hace 3 días",
-        activeProjects: 22,
-        style: "Normas Vancouver / APA"
-    },
-    {
-        id: 5,
-        name: "Universidad Abierta para Adultos",
-        acronym: "UAPA",
-        templateStatus: "Desactualizado",
-        lastUpdate: "Hace 1 mes",
-        activeProjects: 34,
-        style: "Plantilla Institucional"
-    },
-];
+const INITIAL_UNIVERSITIES: any[] = [];
 
 export function Universities() {
     const [universities, setUniversities] = useState(INITIAL_UNIVERSITIES);
@@ -129,8 +83,8 @@ export function Universities() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-wrap">Gestión Universitaria</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-wrap text-foreground">Gestión Universitaria</h1>
+                    <p className="mt-2 text-base font-medium text-foreground/80">
                         Repositorio de plantillas institucionales y normativas académicas por universidad.
                     </p>
                 </div>
@@ -244,13 +198,13 @@ export function Universities() {
                                             uni.templateStatus === 'Revisión Requerida' ? 'bg-amber-500/10 text-amber-600 ring-amber-500/20' :
                                                 'bg-rose-500/10 text-rose-600 ring-rose-500/20'
                                         }`}>
-                                        {uni.templateStatus}
+                                    {uni.templateStatus}
                                     </div>
                                 </div>
-                                <CardTitle className="text-lg font-bold mt-2 leading-tight pr-8">{uni.name}</CardTitle>
+                                <CardTitle className="text-xl font-black mt-2 leading-tight pr-8 text-foreground">{uni.name}</CardTitle>
                                 <div className="flex items-center gap-2 mt-2">
-                                    <span className="text-xs font-bold text-primary uppercase tracking-wider">{uni.style}</span>
-                                    <span className="text-muted-foreground text-[10px]">• Acrónimo: {uni.acronym}</span>
+                                    <span className="text-xs font-black text-primary uppercase tracking-widest">{uni.style}</span>
+                                    <span className="text-foreground/60 text-[11px] font-bold">• Acrónimo: {uni.acronym}</span>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4 px-6 pb-6 pt-2">

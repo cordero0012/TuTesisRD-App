@@ -146,8 +146,8 @@ export function Projects() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground text-wrap">Gestión de Proyectos</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground text-wrap">Gestión de Proyectos</h1>
+                    <p className="mt-2 text-base font-medium text-foreground/80">
                         Administra y supervisa el progreso de todas las investigaciones activas.
                     </p>
                 </div>
@@ -276,12 +276,12 @@ export function Projects() {
                                     <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0">
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
-                                                <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                                    <FileText className="h-3.5 w-3.5" />
+                                                <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                                                    <FileText className="h-4 w-4" />
                                                 </div>
-                                                <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">{project.type || "Proyecto"}</span>
+                                                <span className="text-xs font-black uppercase text-primary tracking-widest">{project.type || "Proyecto"}</span>
                                             </div>
-                                            <CardTitle className="text-lg font-bold leading-tight pt-2">
+                                            <CardTitle className="text-xl font-black leading-tight pt-2 text-foreground">
                                                 {project.title || project.tracking_code}
                                             </CardTitle>
                                         </div>
@@ -315,15 +315,15 @@ export function Projects() {
                                                         {clientName.charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs font-bold text-foreground">{clientName}</p>
-                                                        <p className="text-[10px] text-muted-foreground">Código: {project.tracking_code}</p>
+                                                        <p className="text-sm font-bold text-foreground">{clientName}</p>
+                                                        <p className="text-xs font-bold text-foreground/60 tracking-tight">Código: {project.tracking_code}</p>
                                                     </div>
                                                 </div>
                                                 <StatusBadge status={project.status} />
                                             </div>
                                             <div className="space-y-2.5">
-                                                <div className="flex justify-between text-[11px] font-bold">
-                                                    <span className="text-muted-foreground uppercase tracking-tight">Progreso del proyecto</span>
+                                                <div className="flex justify-between text-xs font-black">
+                                                    <span className="text-foreground/70 uppercase tracking-tighter">Progreso del proyecto</span>
                                                     <span className="text-primary">{project.progress_percent}%</span>
                                                 </div>
                                                 <div className="h-1.5 w-full bg-accent/50 rounded-full overflow-hidden shadow-inner">
@@ -333,10 +333,10 @@ export function Projects() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="pt-3 flex items-center justify-between border-t border-border/40">
-                                                <div className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground">
-                                                    <Clock className="h-3.5 w-3.5 text-primary opacity-70" />
-                                                    <span>Deadline: <span className="text-foreground">
+                                            <div className="pt-4 flex items-center justify-between border-t border-border/60">
+                                                <div className="flex items-center gap-2 text-xs font-bold text-foreground/80">
+                                                    <Clock className="h-4 w-4 text-primary" />
+                                                    <span>Entrega: <span className="text-foreground font-black">
                                                         {project.due_date ? new Date(project.due_date).toLocaleDateString("es-DO") : "TBD"}
                                                     </span></span>
                                                 </div>

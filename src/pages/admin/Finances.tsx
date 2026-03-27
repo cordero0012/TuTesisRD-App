@@ -56,30 +56,12 @@ import {
     DialogTrigger,
 } from "@/components/ui/Dialog";
 
-const chartData = [
-    { name: "Ene", ingresos: 45000, gastos: 15000 },
-    { name: "Feb", ingresos: 52000, gastos: 18000 },
-    { name: "Mar", ingresos: 48000, gastos: 14000 },
-    { name: "Abr", ingresos: 61000, gastos: 22000 },
-    { name: "May", ingresos: 55000, gastos: 19000 },
-    { name: "Jun", ingresos: 67000, gastos: 21000 },
-];
-
-const catData = [
-    { name: "Tesis", value: 65 },
-    { name: "TFM", value: 20 },
-    { name: "Otros", value: 15 },
-];
+const chartData: any[] = [];
+const catData: any[] = [];
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--primary) / 0.6)", "hsl(var(--primary) / 0.3)"];
 
-const INITIAL_TRANSACTIONS = [
-    { id: 1, date: "2026-03-09", concept: "Pago 1ra cuota - Tesis UASD", category: "Ingreso - Tesis", type: "Ingreso", amount: 15000, status: "Pagado" },
-    { id: 2, date: "2026-03-08", concept: "Pago asesor estadístico", category: "Honorarios", type: "Gasto", amount: 4500, status: "Pagado" },
-    { id: 3, date: "2026-03-05", concept: "Suscripción Software", category: "Suscripciones", type: "Gasto", amount: 1200, status: "Pagado" },
-    { id: 4, date: "2026-03-02", concept: "Pago 2da cuota - TFM UNIBE", category: "Ingreso - TFM", type: "Ingreso", amount: 20000, status: "Pendiente" },
-    { id: 5, date: "2026-02-28", concept: "Mantenimiento plataforma", category: "Infraestructura", type: "Gasto", amount: 3500, status: "Pagado" },
-];
+const INITIAL_TRANSACTIONS: any[] = [];
 
 export function Finances() {
     const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
@@ -146,8 +128,8 @@ export function Finances() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Centro Financiero</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h1 className="text-4xl font-extrabold tracking-tight">Centro Financiero</h1>
+                    <p className="mt-2 text-base font-medium text-foreground/80">
                         Control de ingresos, egresos y proyecciones de rentabilidad.
                     </p>
                 </div>
@@ -265,9 +247,9 @@ export function Finances() {
                                     <stat.icon className={`h-5 w-5 ${stat.color}`} />
                                 </div>
                             </div>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">{stat.title}</p>
-                            <h3 className={`text-2xl sm:text-3xl font-black mt-1 tracking-tight ${stat.title === 'Balance Neto' ? 'text-primary' : 'text-foreground'}`}>{stat.value}</h3>
-                            <div className={`flex items-center gap-1 mt-2 text-xs font-bold ${stat.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
+                            <p className="text-sm font-black text-foreground/70 uppercase tracking-widest">{stat.title}</p>
+                            <h3 className={`text-3xl sm:text-4xl font-black mt-2 tracking-tighter ${stat.title === 'Balance Neto' ? 'text-primary' : 'text-foreground'}`}>{stat.value}</h3>
+                            <div className={`flex items-center gap-1.5 mt-3 text-[11px] font-black uppercase ${stat.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
                                 {stat.trend.startsWith('+') ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
                                 {stat.trend} <span className="text-muted-foreground font-semibold ml-1">vs mes anterior</span>
                             </div>
@@ -377,7 +359,7 @@ export function Finances() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-accent/20 text-[11px] uppercase tracking-wider text-muted-foreground font-bold border-b border-border/50">
+                                <tr className="bg-accent/20 text-xs uppercase tracking-widest text-muted-foreground font-black border-b border-border/50">
                                     <th className="px-6 py-4">Fecha</th>
                                     <th className="px-6 py-4">Concepto</th>
                                     <th className="px-6 py-4">Tipo</th>
@@ -397,8 +379,8 @@ export function Finances() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 max-w-[250px]">
-                                                <p className="text-sm font-bold text-foreground truncate">{tx.concept}</p>
-                                                <p className="text-[11px] font-semibold text-muted-foreground mt-0.5">{tx.category}</p>
+                                                <p className="text-base font-black text-foreground truncate">{tx.concept}</p>
+                                                <p className="text-xs font-bold text-foreground/60 mt-1 uppercase tracking-tight">{tx.category}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase ring-1 ${tx.type === 'Ingreso' ? 'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20' : 'bg-rose-500/10 text-rose-600 ring-rose-500/20'

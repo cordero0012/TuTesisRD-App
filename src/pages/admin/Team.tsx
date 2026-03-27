@@ -40,13 +40,12 @@ import {
     DialogTrigger,
 } from "@/components/ui/Dialog";
 
-const INITIAL_TEAM = [
-    { id: 1, name: "Miguel Sánchez", role: "Director Académico", email: "miguel@tutesisrd.com", status: "Activo", avatar: "M", rating: 4.9, activeProjects: 8 },
-    { id: 2, name: "Elena Ramos", role: "Soporte Metodológico", email: "elena@tutesisrd.com", status: "En pausa", avatar: "E", rating: 4.8, activeProjects: 3 },
-    { id: 3, name: "Carlos Díaz", role: "Redactor Científico", email: "carlos@tutesisrd.com", status: "Activo", avatar: "C", rating: 4.7, activeProjects: 5 },
-    { id: 4, name: "Laura Mendez", role: "Especialista Formato", email: "laura@tutesisrd.com", status: "Activo", avatar: "L", rating: 4.9, activeProjects: 6 },
-    { id: 5, name: "Roberto Peña", role: "Asesor Estadístico", email: "roberto@tutesisrd.com", status: "Fuera de línea", avatar: "R", rating: 4.6, activeProjects: 0 },
-];
+const INITIAL_TEAM: any[] = [];
+const roleLabels: Record<string, string> = {
+    admin: "Administrador",
+    collaborator: "Colaborador",
+    reviewer: "Revisor"
+};
 
 export function Team() {
     const [team, setTeam] = useState<any[]>(INITIAL_TEAM);
@@ -54,7 +53,7 @@ export function Team() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("Todos");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [newMember, setNewMember] = useState({ name: "", email: "", role: "Redactor Científico" });
+    const [newMember, setNewMember] = useState({ name: "", email: "", role: "collaborator", isSuperAdmin: false });
 
     React.useEffect(() => {
         const fetchTeam = async () => {
@@ -88,6 +87,7 @@ export function Team() {
                 name: newMember.name,
                 email: newMember.email,
                 role: newMember.role as any,
+                is_super_admin: newMember.isSuperAdmin,
                 is_active: true
             });
 
@@ -101,7 +101,7 @@ export function Team() {
                 type: 'success'
             });
 
-            setNewMember({ name: "", email: "", role: "Redactor Científico" });
+            setNewMember({ name: "", email: "", role: "collaborator", isSuperAdmin: false });
             setIsDialogOpen(false);
         } catch (err) {
             console.error("Error inviting member:", err);
@@ -120,8 +120,8 @@ export function Team() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Equipo de Trabajo</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-wrap">Equipo de Trabajo</h1>
+                    <p className="mt-2 text-base font-medium text-foreground/80">
                         Gestión de asesores, redactores y personal administrativo.
                     </p>
                 </div>
@@ -166,14 +166,23 @@ export function Team() {
                                     value={newMember.role}
                                     onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
                                 >
-                                    <option>Director Académico</option>
-                                    <option>Soporte Metodológico</option>
-                                    <option>Redactor Científico</option>
-                                    <option>Especialista Formato</option>
-                                    <option>Asesor Estadístico</option>
-                                    <option>Administrativo</option>
+                                    <option value="admin">Administrador</option>
+                                    <option value="collaborator">Colaborador</option>
+                                    <option value="reviewer">Revisor</option>
                                 </select>
                             </div>
+                            {newMember.role === "admin" && (
+                                <div className="flex items-center gap-2 mt-2">
+                                    <input 
+                                       type="checkbox" 
+                                       id="isSuperAdmin" 
+                                       checked={newMember.isSuperAdmin}
+                                       onChange={(e) => setNewMember({...newMember, isSuperAdmin: e.target.checked})}
+                                       className="rounded border-border text-primary focus:ring-primary"
+                                    />
+                                    <label htmlFor="isSuperAdmin" className="text-sm cursor-pointer font-medium text-foreground">Es Súper Administrador</label>
+                                </div>
+                            )}
                         </div>
                         <DialogFooter>
                             <Button variant="outline" className="rounded-xl" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
@@ -256,8 +265,10 @@ export function Team() {
                                 <div className="pt-8 px-6 pb-6 space-y-5">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h3 className="font-bold text-lg text-foreground">{member.name}</h3>
-                                            <p className="text-xs font-semibold text-primary uppercase tracking-wider">{member.role}</p>
+                                            <h3 className="font-black text-xl text-foreground tracking-tight">{member.name}</h3>
+                                            <p className="text-xs font-black text-primary uppercase tracking-widest mt-0.5">
+                                                {roleLabels[member.role] || member.role} {member.is_super_admin && "(Súper)"}
+                                            </p>
                                         </div>
                                         <div className="flex items-center gap-1.5 bg-accent/50 px-2 py-1 rounded-lg border border-border">
                                             <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
@@ -266,9 +277,9 @@ export function Team() {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <div className="flex items-center gap-3 text-sm text-muted-foreground p-2 rounded-xl bg-accent/30">
+                                        <div className="flex items-center gap-3 text-sm font-bold text-foreground/80 p-2.5 rounded-xl bg-accent/40 border border-border/50">
                                             <div className="bg-card p-1.5 rounded-md shadow-sm border border-border">
-                                                <Mail className="h-3.5 w-3.5" />
+                                                <Mail className="h-4 w-4 text-primary/70" />
                                             </div>
                                             <span className="truncate">{member.email}</span>
                                         </div>

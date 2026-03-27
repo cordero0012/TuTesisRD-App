@@ -177,8 +177,8 @@ export function Dashboard() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard ejecutivo</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Dashboard ejecutivo</h1>
+                <p className="mt-2 text-base font-medium text-foreground/80">
                     Vista unificada de operaciones, productividad y flujos de TuTesisRD.
                 </p>
             </div>
@@ -198,12 +198,12 @@ export function Dashboard() {
                                 <CardContent className="p-5">
                                     <div className="mb-4 flex items-start justify-between">
                                         <div className="rounded-2xl bg-primary/10 p-3 ring-1 ring-primary/20">
-                                            <Icon className="h-5 w-5 text-primary" />
+                                            <Icon className="h-6 w-6 text-primary" />
                                         </div>
                                     </div>
-                                    <p className="text-sm font-medium text-muted-foreground">{item.title}</p>
-                                    <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">{item.value}</p>
-                                    <p className="mt-2 text-xs font-medium text-muted-foreground">{item.hint}</p>
+                                    <p className="text-sm font-bold text-foreground/80 uppercase tracking-wider">{item.title}</p>
+                                    <p className="mt-2 text-4xl font-black tracking-tight text-foreground">{item.value}</p>
+                                    <p className="mt-2 text-sm font-semibold text-muted-foreground">{item.hint}</p>
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -216,7 +216,7 @@ export function Dashboard() {
                 <Card className="rounded-3xl border-border bg-card shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <div>
-                            <CardTitle className="text-base font-semibold text-foreground">Rendimiento financiero</CardTitle>
+                            <CardTitle className="text-lg font-bold text-foreground">Rendimiento financiero</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="h-[300px]">
@@ -252,17 +252,17 @@ export function Dashboard() {
 
                 <Card className="rounded-3xl border-border bg-card shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-base font-semibold text-foreground">Actividad reciente</CardTitle>
+                        <CardTitle className="text-lg font-bold text-foreground">Actividad reciente</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {activities.length > 0 ? activities.map((item) => (
                             <div key={item.id} className="flex gap-3 rounded-2xl border border-border bg-accent/30 p-3">
                                 <ActivityDot type={item.type} />
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                                    <p className="mt-1 text-xs text-muted-foreground">{item.message}</p>
+                                    <p className="text-base font-bold text-foreground">{item.title}</p>
+                                    <p className="mt-1 text-sm font-medium text-foreground/80">{item.message}</p>
                                 </div>
-                                <div className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+                                <div className="text-sm font-bold text-muted-foreground whitespace-nowrap">
                                     {formatRelativeTime(item.created_at)}
                                 </div>
                             </div>
@@ -277,7 +277,7 @@ export function Dashboard() {
             <Card className="rounded-3xl border-border bg-card shadow-sm">
                 <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between border-b border-border/50 pb-6 mb-4">
                     <div>
-                        <CardTitle className="text-base font-semibold text-foreground">Proyectos prioritarios</CardTitle>
+                        <CardTitle className="text-xl font-bold text-foreground">Proyectos prioritarios</CardTitle>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <Input
@@ -304,12 +304,12 @@ export function Dashboard() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
-                                    <th className="pb-3 pr-4 font-semibold">Proyecto</th>
-                                    <th className="pb-3 pr-4 font-semibold">Cliente</th>
-                                    <th className="pb-3 pr-4 font-semibold">Avance</th>
-                                    <th className="pb-3 pr-4 font-semibold">Fecha límite</th>
-                                    <th className="pb-3 font-semibold">Estado</th>
+                                <tr className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground">
+                                    <th className="pb-3 pr-4 font-bold">Proyecto</th>
+                                    <th className="pb-3 pr-4 font-bold">Cliente</th>
+                                    <th className="pb-3 pr-4 font-bold">Avance</th>
+                                    <th className="pb-3 pr-4 font-bold">Fecha límite</th>
+                                    <th className="pb-3 font-bold">Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -326,21 +326,21 @@ export function Dashboard() {
                                     const overdue = isOverdue(row.due_date);
                                     return (
                                         <tr key={row.id} className="border-b border-border last:border-0 hover:bg-accent/30 transition-colors">
-                                            <td className="py-4 pr-4 text-sm font-medium text-foreground">{row.title || row.tracking_code}</td>
-                                            <td className="py-4 pr-4 text-sm text-muted-foreground">{clientName}</td>
+                                            <td className="py-4 pr-4 text-base font-bold text-foreground">{row.title || row.tracking_code}</td>
+                                            <td className="py-4 pr-4 text-sm font-semibold text-foreground/80">{clientName}</td>
                                             <td className="py-4 pr-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-20 overflow-hidden rounded-full bg-secondary">
                                                         <div className="h-full rounded-full bg-primary" style={{ width: `${row.progress_percent}%` }} />
                                                     </div>
-                                                    <span className="text-xs font-medium text-muted-foreground">{row.progress_percent}%</span>
+                                                    <span className="text-sm font-bold text-foreground/80">{row.progress_percent}%</span>
                                                 </div>
                                             </td>
-                                            <td className={`py-4 pr-4 text-sm ${overdue ? "text-rose-500 font-semibold" : "text-muted-foreground"}`}>
+                                            <td className={`py-4 pr-4 text-sm font-bold ${overdue ? "text-rose-500" : "text-foreground/80"}`}>
                                                 {row.due_date ? new Date(row.due_date).toLocaleDateString("es-DO") : "—"}
                                             </td>
                                             <td className="py-4">
-                                                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20">
+                                                <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase text-primary ring-1 ring-primary/20">
                                                     {STATUS_LABELS[row.status] || row.status}
                                                 </span>
                                             </td>

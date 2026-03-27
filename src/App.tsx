@@ -2,74 +2,17 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import AnalyticsTracker from './components/AnalyticsTracker';
-// import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import { AdminAuthProvider, useAdminAuth } from './contexts/AdminAuthContext';
 import { PersistenceProvider } from './contexts/PersistenceContext';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    const [session, setSession] = useState<any>(null);
-    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { session, hasAccess, isLoading } = useAdminAuth();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                console.log("[ProtectedRoute] Checking auth and role...");
-                const { data: { session: currentSession } } = await supabase.auth.getSession();
-                setSession(currentSession);
-
-                if (currentSession) {
-                    const rootEmails = ['admin@tutesisrd.com', 'miguelcordero0012@gmail.com'];
-                    if (currentSession.user.email && rootEmails.includes(currentSession.user.email)) {
-                        console.log("[ProtectedRoute] Granted ROOT access via email bypass");
-                        setIsAdmin(true);
-                    } else {
-                        const { data: teamMember, error } = await supabase
-                            .from('team_members')
-                            .select('id, is_active')
-                            .eq('auth_user_id', currentSession.user.id)
-                            .single();
-
-                        if (error) {
-                            console.warn("[ProtectedRoute] Role check failed or no member found:", error.message);
-                            setIsAdmin(false);
-                        } else {
-                            console.log("[ProtectedRoute] Member found:", teamMember);
-                            setIsAdmin(!!teamMember && teamMember.is_active);
-                        }
-                    }
-                } else {
-                    console.log("[ProtectedRoute] No session found");
-                    setIsAdmin(false);
-                }
-            } catch (err) {
-                console.error("[ProtectedRoute] Critical auth check error:", err);
-                setIsAdmin(false);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        checkAuth();
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log(`[ProtectedRoute] Auth event: ${_event}`);
-            if (session) {
-                checkAuth();
-            } else {
-                setSession(null);
-                setIsAdmin(false);
-                setLoading(false);
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    if (loading) {
+    if (isLoading) {
         return <LoadingSpinner />;
     }
 
-    if (!session || !isAdmin) {
+    if (!session || !hasAccess) {
         return <Navigate to="/admin/login" replace />;
     }
 
@@ -204,9 +147,11 @@ const App = () => {
                         {/* Admin Panel - 1:1 Bento Executive Audit */}
                         <Route path="/admin/login" element={<AdminLogin />} />
                         <Route path="/admin" element={
-                            <ProtectedRoute>
-                                <AdminLayout />
-                            </ProtectedRoute>
+                            <AdminAuthProvider>
+                                <ProtectedRoute>
+                                    <AdminLayout />
+                                </ProtectedRoute>
+                            </AdminAuthProvider>
                         }>
                             <Route index element={<AdminDashboard />} />
                             <Route path="proyectos" element={<AdminProjects />} />

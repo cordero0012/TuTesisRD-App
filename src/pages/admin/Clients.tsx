@@ -127,8 +127,8 @@ export function Clients() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Directorio de Clientes</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Directorio de Clientes</h1>
+                    <p className="mt-2 text-base font-medium text-foreground/80">
                         Gestión centralizada de estudiantes, investigadores y tesistas.
                     </p>
                 </div>
@@ -248,7 +248,7 @@ export function Clients() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-accent/30 text-xs uppercase tracking-wider text-muted-foreground font-semibold border-b border-border/50">
+                                <tr className="bg-accent/30 text-xs uppercase tracking-wider text-muted-foreground font-black border-b border-border/50">
                                     <th className="px-6 py-4">Cliente</th>
                                     <th className="px-6 py-4">Universidad</th>
                                     <th className="px-6 py-4">Proyectos</th>
@@ -287,17 +287,17 @@ export function Clients() {
                                                             {initials}
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-bold text-foreground">{s.name} {s.lastname}</span>
-                                                            <span className="text-xs text-muted-foreground">{s.email}</span>
+                                                            <span className="text-base font-black text-foreground">{s.name} {s.lastname}</span>
+                                                            <span className="text-xs font-bold text-foreground/60">{s.email}</span>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-2">
-                                                        <div className="p-1.5 bg-accent rounded-md border border-border">
-                                                            <GraduationCap className="h-3.5 w-3.5 text-muted-foreground" />
+                                                        <div className="p-1.5 bg-accent rounded-md border border-border/60">
+                                                            <GraduationCap className="h-4 w-4 text-primary" />
                                                         </div>
-                                                        <span className="text-sm font-medium">{s.university || "—"}</span>
+                                                        <span className="text-sm font-bold text-foreground/90">{s.university || "—"}</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -313,8 +313,8 @@ export function Clients() {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                                        <History className="h-3.5 w-3.5 opacity-70" />
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-foreground/70">
+                                                        <History className="h-4 w-4 text-primary/60" />
                                                         <span>{formatRelativeTime(s.created_at)}</span>
                                                     </div>
                                                 </td>
