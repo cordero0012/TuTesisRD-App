@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Settings as SettingsIcon,
     User,
@@ -11,18 +11,73 @@ import {
     LogOut,
     ChevronRight,
     Sparkles,
-    CreditCard,
     CheckCircle2,
-    Loader2
+    Loader2,
+    UserPlus,
+    X
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/Dialog";
+import { supabase } from "@/supabaseClient";
+import { adminService, TeamMember } from "@/services/admin/adminService";
 
 export function Settings() {
     const [activeTab, setActiveTab] = useState("General");
     const [isSaving, setIsSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+    const [isNewColabOpen, setIsNewColabOpen] = useState(false);
+    const [newColab, setNewColab] = useState({ name: "", email: "", role: "collaborator" as TeamMember["role"] });
+    const [isCreatingColab, setIsCreatingColab] = useState(false);
+    const [colabError, setColabError] = useState<string | null>(null);
+
+    useEffect(() => {
+        adminService.getTeamMembers().then(setTeamMembers).catch(console.error);
+    }, []);
+
+    const handleCreateColab = async () => {
+        if (!newColab.name || !newColab.email) return;
+        setIsCreatingColab(true);
+        setColabError(null);
+        try {
+            // 1. Invite via Supabase Auth (sends magic-link email)
+            const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(newColab.email);
+            // If inviteUserByEmail is not available client-side, we skip it and just create the record
+            // The collaborator can sign up and will be matched by auth_user_id once they log in
+
+            // 2. Create team_members record (auth_user_id will be linked later on first login)
+            const created = await adminService.createTeamMember({
+                name: newColab.name,
+                email: newColab.email,
+                role: newColab.role,
+                is_active: true,
+                is_super_admin: false,
+                notification_preferences: {
+                    new_projects: true,
+                    project_milestones: true,
+                    financial_summaries: false,
+                    system_alerts: true
+                }
+            } as any);
+            setTeamMembers(prev => [created, ...prev]);
+            setNewColab({ name: "", email: "", role: "collaborator" });
+            setIsNewColabOpen(false);
+        } catch (err: any) {
+            setColabError(err?.message || "Error al crear el colaborador.");
+        } finally {
+            setIsCreatingColab(false);
+        }
+    };
 
     // Form States
     const [profileData, setProfileData] = useState({
@@ -56,7 +111,6 @@ export function Settings() {
         { id: "Operaciones", icon: Layout, label: "Preferencias" },
         { id: "Notificaciones", icon: Bell, label: "Mis Notificaciones" },
         { id: "Seguridad", icon: Shield, label: "Seguridad y Acceso" },
-        { id: "Facturacion", icon: CreditCard, label: "Suscripción" }
     ];
 
     return (
@@ -265,32 +319,93 @@ export function Settings() {
                                             <h3 className="text-lg font-bold">Gestión de Acceso y Equipo</h3>
                                             <p className="text-sm text-muted-foreground">Administra las credenciales y roles de los colaboradores.</p>
                                         </div>
-                                        <Button className="rounded-xl font-bold flex gap-2">
-                                            <Shield className="h-4 w-4" /> Nuevo Colaborador
-                                        </Button>
+                                        <Dialog open={isNewColabOpen} onOpenChange={setIsNewColabOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button className="rounded-xl h-9 text-sm font-semibold gap-2 cursor-pointer">
+                                                    <UserPlus className="h-4 w-4" /> Nuevo Colaborador
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-[420px]">
+                                                <DialogHeader>
+                                                    <DialogTitle>Crear Colaborador</DialogTitle>
+                                                    <DialogDescription>
+                                                        El colaborador recibirá acceso a la plataforma con el rol asignado.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="grid gap-4 py-4">
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs font-bold uppercase text-muted-foreground">Nombre Completo</label>
+                                                        <Input
+                                                            placeholder="Ej: Ana Martínez"
+                                                            className="rounded-xl"
+                                                            value={newColab.name}
+                                                            onChange={(e) => setNewColab({ ...newColab, name: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs font-bold uppercase text-muted-foreground">Correo Electrónico</label>
+                                                        <Input
+                                                            placeholder="colaborador@tutesisrd.com"
+                                                            type="email"
+                                                            className="rounded-xl"
+                                                            value={newColab.email}
+                                                            onChange={(e) => setNewColab({ ...newColab, email: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs font-bold uppercase text-muted-foreground">Rol</label>
+                                                        <select
+                                                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring h-10"
+                                                            value={newColab.role}
+                                                            onChange={(e) => setNewColab({ ...newColab, role: e.target.value as TeamMember["role"] })}
+                                                        >
+                                                            <option value="collaborator">Colaborador</option>
+                                                            <option value="reviewer">Revisor</option>
+                                                            <option value="admin">Administrador</option>
+                                                        </select>
+                                                    </div>
+                                                    {colabError && (
+                                                        <p className="text-xs text-destructive font-medium">{colabError}</p>
+                                                    )}
+                                                </div>
+                                                <DialogFooter>
+                                                    <Button variant="outline" className="rounded-xl cursor-pointer" onClick={() => setIsNewColabOpen(false)}>Cancelar</Button>
+                                                    <Button className="rounded-xl cursor-pointer" onClick={handleCreateColab} disabled={isCreatingColab}>
+                                                        {isCreatingColab ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creando...</> : "Crear Acceso"}
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
 
                                     <div className="space-y-4">
-                                        {[
-                                            { name: "Miguel Sánchez", email: "miguel@tutesisrd.com", role: "Super Admin", active: true },
-                                            { name: "Equipo Soporte", email: "soporte@tutesisrd.com", role: "Admin", active: true },
-                                        ].map((member, idx) => (
-                                            <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-all group">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
-                                                        {member.name.charAt(0)}
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-bold text-sm">{member.name} {member.role === 'Super Admin' && <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">Pro</span>}</h4>
-                                                        <p className="text-xs text-muted-foreground">{member.email}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <span className={`h-2 w-2 rounded-full ${member.active ? 'bg-emerald-500' : 'bg-rose-500'} shadow-[0_0_8px_rgba(16,185,129,0.5)]`}></span>
-                                                    <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Editar</Button>
-                                                </div>
+                                        {teamMembers.length === 0 ? (
+                                            <div className="py-8 text-center border-2 border-dashed border-border rounded-2xl bg-accent/5">
+                                                <p className="text-sm text-muted-foreground">No hay colaboradores registrados aún.</p>
                                             </div>
-                                        ))}
+                                        ) : (
+                                            teamMembers.map((member) => (
+                                                <div key={member.id} className="flex items-center justify-between p-4 rounded-2xl border border-border bg-accent/10 hover:bg-accent/20 transition-all group">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
+                                                            {member.name.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="font-bold text-sm">
+                                                                {member.name}
+                                                                {member.is_super_admin && <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">Super Admin</span>}
+                                                                {!member.is_super_admin && <span className="ml-2 text-[10px] bg-accent text-muted-foreground px-2 py-0.5 rounded-full capitalize">{member.role}</span>}
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground">{member.email}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className={`h-2 w-2 rounded-full ${member.is_active ? 'bg-emerald-500' : 'bg-rose-500'} shadow-[0_0_8px_rgba(16,185,129,0.4)]`}></span>
+                                                        <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">Editar</Button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
 
                                     <div className="pt-6 border-t border-border/50">
@@ -307,16 +422,6 @@ export function Settings() {
                                 </div>
                             )}
 
-                            {activeTab === "Facturacion" && (
-                                <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-2xl bg-accent/5 max-w-2xl">
-                                    <div className="h-16 w-16 rounded-full bg-accent/50 flex items-center justify-center mb-4">
-                                        <Bell className="h-8 w-8 text-muted-foreground opacity-50" />
-                                    </div>
-                                    <h3 className="text-lg font-bold text-foreground">Planes y Facturación</h3>
-                                    <p className="text-sm text-muted-foreground mt-1 mb-4 max-w-sm">Esta sección te permite gestionar tu suscripción y ver el historial de pagos de la plataforma.</p>
-                                    <Button variant="outline" className="rounded-xl font-bold">Ver Detalles del Plan</Button>
-                                </div>
-                            )}
 
                         </CardContent>
                     </Card>

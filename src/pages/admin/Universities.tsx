@@ -81,14 +81,7 @@ export function Universities() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-wrap text-foreground">Gestión Universitaria</h1>
-                    <p className="mt-2 text-base font-medium text-foreground/80">
-                        Repositorio de plantillas institucionales y normativas académicas por universidad.
-                    </p>
-                </div>
-
+            <div className="flex items-center justify-end gap-2">
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className="rounded-2xl gap-2 font-bold shadow-lg shadow-primary/20 cursor-pointer">
@@ -159,7 +152,7 @@ export function Universities() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredUniversities.length > 0 ? (
                     filteredUniversities.map((uni) => (
-                        <Card key={uni.id} className="rounded-3xl border-border bg-card hover:bg-accent/10 hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                        <Card key={uni.id} className="rounded-2xl border-border bg-card hover:bg-accent/10 hover:shadow-xl transition-all duration-300 overflow-hidden group">
                             <CardHeader className="pb-2 relative pt-6 px-6">
                                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                     <DropdownMenu>
@@ -194,9 +187,9 @@ export function Universities() {
                                     <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl shadow-inner group-hover:bg-primary group-hover:text-white group-hover:scale-105 transition-all duration-500 ring-4 ring-background">
                                         {uni.acronym.substring(0, 2)}
                                     </div>
-                                    <div className={`mt-2 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg ring-1 transition-colors ${uni.templateStatus === 'Actualizado' ? 'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20' :
-                                            uni.templateStatus === 'Revisión Requerida' ? 'bg-amber-500/10 text-amber-600 ring-amber-500/20' :
-                                                'bg-rose-500/10 text-rose-600 ring-rose-500/20'
+                                    <div className={`mt-2 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg ring-1 transition-colors ${uni.templateStatus === 'Actualizado' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-500/20' :
+                                            uni.templateStatus === 'Revisión Requerida' ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-amber-500/20' :
+                                                'bg-rose-500/10 text-rose-700 dark:text-rose-400 ring-rose-500/20'
                                         }`}>
                                     {uni.templateStatus}
                                     </div>
@@ -231,7 +224,7 @@ export function Universities() {
                         </Card>
                     ))
                 ) : (
-                    <div className="col-span-full py-16 text-center space-y-4 border-2 border-dashed border-border rounded-3xl bg-accent/5">
+                    <div className="col-span-full py-16 text-center space-y-4 border-2 border-dashed border-border rounded-2xl bg-accent/5">
                         <div className="mx-auto h-20 w-20 rounded-full bg-accent/50 flex items-center justify-center">
                             <Search className="h-10 w-10 text-muted-foreground opacity-20" />
                         </div>
@@ -250,7 +243,7 @@ export function Universities() {
                 )}
             </div>
 
-            <Card className="rounded-3xl border-border border-dashed bg-gradient-to-br from-primary/5 to-transparent p-8 text-center transition-all hover:border-primary/30 hover:shadow-sm">
+            <Card className="rounded-2xl border-border border-dashed bg-gradient-to-br from-primary/5 to-transparent p-8 text-center transition-all hover:border-primary/30 hover:shadow-sm">
                 <div className="max-w-md mx-auto space-y-4">
                     <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto shadow-inner ring-4 ring-background">
                         <Layout className="h-8 w-8 text-primary opacity-80" />

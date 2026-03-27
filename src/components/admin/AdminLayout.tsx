@@ -1,8 +1,18 @@
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, CheckCheck } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { supabase } from "@/supabaseClient";
+
+interface NotifItem {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  created_at: string;
+  is_read?: boolean;
+}
 
 // Map routes to page titles
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
@@ -20,6 +30,47 @@ function PageHeader({ path, teamMember }: { path: string; teamMember: any }) {
   const page = PAGE_TITLES[path] ?? { title: "Portal admin", subtitle: "" };
   const userInitial = teamMember?.name ? teamMember.name.charAt(0).toUpperCase() : "A";
   const userName = teamMember?.name || "Administrador";
+
+  const [notifs, setNotifs] = useState<NotifItem[]>([]);
+  const [showNotifs, setShowNotifs] = useState(false);
+  const bellRef = useRef<HTMLDivElement>(null);
+
+  const unreadCount = notifs.filter(n => !n.is_read).length;
+
+  useEffect(() => {
+    // Fetch last 10 activity_log entries as notifications
+    supabase
+      .from("activity_log")
+      .select("id, title, message, type, created_at")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) => {
+        if (data) setNotifs(data as NotifItem[]);
+      });
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setShowNotifs(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const markAllRead = () => {
+    setNotifs(prev => prev.map(n => ({ ...n, is_read: true })));
+    setShowNotifs(false);
+  };
+
+  const TYPE_DOT: Record<string, string> = {
+    success: "bg-emerald-500",
+    warning: "bg-amber-500",
+    danger: "bg-rose-500",
+    info: "bg-blue-500",
+  };
 
   return (
     <header className="flex items-center justify-between gap-4 mb-7">
@@ -46,14 +97,47 @@ function PageHeader({ path, teamMember }: { path: string; teamMember: any }) {
         </div>
 
         {/* Notifications */}
-        <button
-          aria-label="Notificaciones"
-          className="relative h-9 w-9 flex items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
-        >
-          <Bell className="h-4 w-4" />
-          {/* Dot indicator */}
-          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-[hsl(var(--primary))]" />
-        </button>
+        <div ref={bellRef} className="relative">
+          <button
+            aria-label="Notificaciones"
+            onClick={() => setShowNotifs(v => !v)}
+            className="relative h-9 w-9 flex items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+          >
+            <Bell className="h-4 w-4" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-[hsl(var(--primary))]" />
+            )}
+          </button>
+
+          {showNotifs && (
+            <div className="absolute right-0 top-11 z-50 w-80 rounded-2xl border border-border bg-card shadow-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+                <span className="text-sm font-bold">Notificaciones</span>
+                {unreadCount > 0 && (
+                  <button onClick={markAllRead} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                    <CheckCheck className="h-3.5 w-3.5" /> Marcar leídas
+                  </button>
+                )}
+              </div>
+              <div className="max-h-72 overflow-y-auto">
+                {notifs.length === 0 ? (
+                  <div className="py-8 text-center text-sm text-muted-foreground">Sin notificaciones</div>
+                ) : (
+                  notifs.map(n => (
+                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 border-b border-border/30 hover:bg-accent/40 transition-colors ${!n.is_read ? "bg-accent/20" : ""}`}>
+                      <span className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${TYPE_DOT[n.type] ?? "bg-muted-foreground"}`} />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-foreground truncate">{n.title}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
+                        <p className="text-[10px] text-muted-foreground/60 mt-1">{new Date(n.created_at).toLocaleDateString("es-DO", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Avatar */}
         <div

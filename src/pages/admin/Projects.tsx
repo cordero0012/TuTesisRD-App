@@ -41,6 +41,7 @@ import {
     updateProjectStatus,
     AdminProject,
 } from "@/services/admin/adminDataService";
+import { supabase } from "@/supabaseClient";
 
 // ---- Status helpers ----
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
@@ -84,6 +85,17 @@ export function Projects() {
     }, []);
 
     useEffect(() => { loadProjects(); }, [loadProjects]);
+
+    // Real-time: auto-refresh when a new project is inserted from the public form
+    useEffect(() => {
+        const channel = supabase
+            .channel("admin_projects_realtime")
+            .on("postgres_changes", { event: "INSERT", schema: "public", table: "projects" }, () => {
+                loadProjects();
+            })
+            .subscribe();
+        return () => { supabase.removeChannel(channel); };
+    }, [loadProjects]);
 
     const filteredProjects = useMemo(() => {
         return projects.filter(p => {

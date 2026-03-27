@@ -192,8 +192,20 @@ export function Finances() {
                                             {newTransaction.type === 'Ingreso' ? (
                                                 <>
                                                     <option>Tesis</option>
-                                                    <option>TFM</option>
-                                                    <option>Consultoría</option>
+                                                    <option>TFM / Trabajo Final de Máster</option>
+                                                    <option>Consultoría Académica</option>
+                                                    <option>Investigación Cuantitativa</option>
+                                                    <option>Investigación Cualitativa</option>
+                                                    <option>Análisis Estadístico</option>
+                                                    <option>Revisión y Corrección</option>
+                                                    <option>Traducción</option>
+                                                    <option>Diseño de Presentación</option>
+                                                    <option>Entrega Urgente</option>
+                                                    <option>Asesoría por Horas</option>
+                                                    <option>Gasto Operacional</option>
+                                                    <option>Software / Herramientas</option>
+                                                    <option>Marketing</option>
+                                                    <option>Otros</option>
                                                     <option>Otros Ingresos</option>
                                                 </>
                                             ) : (

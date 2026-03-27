@@ -101,14 +101,7 @@ export function Agenda() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight">Agenda Operativa</h1>
-                    <p className="mt-2 text-base font-medium text-foreground/80">
-                        Planificación de asesorías, entregas y hitos de investigación.
-                    </p>
-                </div>
-
+            <div className="flex items-center justify-end gap-2">
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className="rounded-2xl gap-2 font-bold shadow-lg shadow-primary/20 cursor-pointer">
@@ -193,7 +186,7 @@ export function Agenda() {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                <Card className="xl:col-span-4 rounded-3xl border-border bg-card shadow-sm p-2">
+                <Card className="xl:col-span-4 rounded-2xl border-border bg-card shadow-sm p-2">
                     <CardContent className="p-4">
                         <CalendarComponent
                             mode="single"
@@ -230,7 +223,7 @@ export function Agenda() {
                     </CardContent>
                 </Card>
 
-                <Card className="xl:col-span-8 rounded-3xl border-border bg-card shadow-sm">
+                <Card className="xl:col-span-8 rounded-2xl border-border bg-card shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-6 mb-4">
                         <div className="space-y-1">
                             <CardTitle className="text-2xl font-black">Programación</CardTitle>
@@ -261,9 +254,9 @@ export function Agenda() {
                                                 {event.title}
                                             </h4>
                                             <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg ring-1 transition-all ${event.status === 'Confirmado' ? 'bg-primary/10 text-primary ring-primary/20' :
-                                                    event.status === 'Completado' ? 'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20' :
-                                                        event.status === 'Reprogramado' ? 'bg-slate-500/10 text-slate-600 ring-slate-500/20' :
-                                                            'bg-amber-500/10 text-amber-600 ring-amber-500/20'
+                                                    event.status === 'Completado' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-500/20' :
+                                                        event.status === 'Reprogramado' ? 'bg-slate-500/10 text-slate-600 dark:text-slate-400 ring-slate-500/20' :
+                                                            'bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-amber-500/20'
                                                 }`}>
                                                 {event.status}
                                             </span>
@@ -311,7 +304,7 @@ export function Agenda() {
                                 </div>
                             ))
                         ) : (
-                            <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl bg-accent/5">
+                            <div className="py-12 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-2xl bg-accent/5">
                                 <div className="h-16 w-16 rounded-full bg-accent/50 flex flex-col items-center justify-center mb-4 text-muted-foreground">
                                     <CalendarIcon className="h-8 w-8 stroke-1" />
                                 </div>
