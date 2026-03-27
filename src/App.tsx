@@ -18,18 +18,24 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
                 setSession(currentSession);
 
                 if (currentSession) {
-                    const { data: teamMember, error } = await supabase
-                        .from('team_members')
-                        .select('id, is_active')
-                        .eq('auth_user_id', currentSession.user.id)
-                        .single();
-
-                    if (error) {
-                        console.warn("[ProtectedRoute] Role check failed or no member found:", error.message);
-                        setIsAdmin(false);
+                    const rootEmails = ['admin@tutesisrd.com', 'miguelcordero0012@gmail.com'];
+                    if (currentSession.user.email && rootEmails.includes(currentSession.user.email)) {
+                        console.log("[ProtectedRoute] Granted ROOT access via email bypass");
+                        setIsAdmin(true);
                     } else {
-                        console.log("[ProtectedRoute] Member found:", teamMember);
-                        setIsAdmin(!!teamMember && teamMember.is_active);
+                        const { data: teamMember, error } = await supabase
+                            .from('team_members')
+                            .select('id, is_active')
+                            .eq('auth_user_id', currentSession.user.id)
+                            .single();
+
+                        if (error) {
+                            console.warn("[ProtectedRoute] Role check failed or no member found:", error.message);
+                            setIsAdmin(false);
+                        } else {
+                            console.log("[ProtectedRoute] Member found:", teamMember);
+                            setIsAdmin(!!teamMember && teamMember.is_active);
+                        }
                     }
                 } else {
                     console.log("[ProtectedRoute] No session found");
