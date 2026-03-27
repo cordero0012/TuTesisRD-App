@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Search, Plus, Bell } from "lucide-react";
@@ -49,7 +49,13 @@ export function AdminLayout() {
                     </header>
 
                     <div className="flex-1">
-                        <Outlet />
+                        <Suspense fallback={
+                            <div className="flex h-64 items-center justify-center">
+                                <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600 dark:border-slate-700 dark:border-t-blue-500" />
+                            </div>
+                        }>
+                            <Outlet />
+                        </Suspense>
                     </div>
                 </main>
             </div>

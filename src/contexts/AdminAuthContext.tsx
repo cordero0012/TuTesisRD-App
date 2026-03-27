@@ -21,15 +21,14 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const checkAuth = async () => {
+            setIsLoading(true);
             try {
-                // console.log("[AdminAuthContext] Checking auth and role...");
                 const { data: { session: currentSession } } = await supabase.auth.getSession();
                 setSession(currentSession);
 
                 if (currentSession) {
                     const rootEmails = ['admin@tutesisrd.com', 'miguelcordero0012@gmail.com'];
                     if (currentSession.user.email && rootEmails.includes(currentSession.user.email)) {
-                        // console.log("[AdminAuthContext] Granted ROOT access via email bypass");
                         setTeamMember({
                             role: 'admin',
                             is_super_admin: true,
@@ -41,12 +40,10 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
                             .select('*')
                             .eq('auth_user_id', currentSession.user.id)
                             .single();
-                        
+
                         if (!error && member && member.is_active) {
-                            // console.log("[AdminAuthContext] Member found:", member);
                             setTeamMember(member);
                         } else {
-                            // console.warn("[AdminAuthContext] Role check failed or no member found:", error?.message);
                             setTeamMember(null);
                         }
                     }
@@ -64,7 +61,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         checkAuth();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            // console.log(`[AdminAuthContext] Auth event: ${_event}`);
+            // INITIAL_SESSION is already handled by the checkAuth() call above — skip to prevent double DB query
+            if (_event === 'INITIAL_SESSION') return;
+
             if (session) {
                 checkAuth();
             } else {

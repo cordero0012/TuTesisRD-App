@@ -19,14 +19,17 @@ export function Login() {
         setError(null);
 
         try {
-            const { error: authError } = await supabase.auth.signInWithPassword({
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
             if (authError) throw authError;
 
-            navigate('/admin');
+            // Wait for session to be committed before navigating
+            if (data.session) {
+                navigate('/admin', { replace: true });
+            }
         } catch (err: any) {
             setError(err.message || 'Error al iniciar sesión');
         } finally {
