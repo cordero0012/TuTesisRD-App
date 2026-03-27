@@ -78,7 +78,6 @@ export function Settings() {
                             "Guardar Cambios"
                         )}
                     </Button>
-                </div>
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
