@@ -111,9 +111,9 @@ export function Clients() {
     };
 
     const statusBadgeClass = (status: string) => {
-        if (status === "Activo") return "badge-emerald";
-        if (status === "Pendiente Pago") return "badge-amber";
-        return "badge-slate";
+        if (status === "Activo") return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-500/20";
+        if (status === "Pendiente Pago") return "bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-amber-500/20";
+        return "bg-slate-500/10 text-slate-600 dark:text-slate-400 ring-slate-500/20";
     };
 
     const statusDotClass = (status: string) => {

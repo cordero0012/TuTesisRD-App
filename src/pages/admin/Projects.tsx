@@ -44,11 +44,11 @@ import {
 
 // ---- Status helpers ----
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
-    pending:    { label: "Pendiente", cls: "badge-slate" },
-    assigned:   { label: "Asignado",  cls: "badge-blue" },
-    in_progress:{ label: "En curso",  cls: "badge-blue" },
-    review:     { label: "Revisión",  cls: "badge-amber" },
-    completed:  { label: "Entregado", cls: "badge-emerald" },
+    pending:    { label: "Pendiente", cls: "bg-slate-500/10  text-slate-600  dark:text-slate-400  ring-1 ring-slate-500/20" },
+    assigned:   { label: "Asignado",  cls: "bg-blue-500/10   text-blue-700   dark:text-blue-400   ring-1 ring-blue-500/20" },
+    in_progress:{ label: "En curso",  cls: "bg-blue-500/10   text-blue-700   dark:text-blue-400   ring-1 ring-blue-500/20" },
+    review:     { label: "Revisión",  cls: "bg-amber-500/10  text-amber-700  dark:text-amber-400  ring-1 ring-amber-500/20" },
+    completed:  { label: "Entregado", cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-500/20" },
 };
 
 function StatusBadge({ status }: { status: string }) {

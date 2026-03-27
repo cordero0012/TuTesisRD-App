@@ -373,7 +373,7 @@ export function Finances() {
                                                 <p className="text-xs font-bold text-foreground/60 mt-1 uppercase tracking-tight">{tx.category}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase ring-1 ${tx.type === 'Ingreso' ? 'badge-emerald' : 'badge-rose'}`}>
+                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase ring-1 ${tx.type === 'Ingreso' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-500/20' : 'bg-rose-500/10 text-rose-700 dark:text-rose-400 ring-rose-500/20'}`}>
                                                     {tx.type === 'Ingreso' ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpLeft className="h-3 w-3" />}
                                                     {tx.type}
                                                 </div>

@@ -207,22 +207,3 @@ body {
   }
 }
 
-/* ─── Semantic badge utilities (light/dark aware) ───────────────────────────
-   Use these instead of hardcoding text-*-400 which fails WCAG AA in light mode.
-   Each class applies the correct text shade per theme automatically.
-   ─────────────────────────────────────────────────────────────────────────── */
-@layer utilities {
-  .badge-blue    { @apply bg-blue-500/12    text-blue-700    dark:text-blue-400    ring-1 ring-inset ring-blue-500/25; }
-  .badge-emerald { @apply bg-emerald-500/12 text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-500/25; }
-  .badge-amber   { @apply bg-amber-500/12   text-amber-700   dark:text-amber-400   ring-1 ring-inset ring-amber-500/25; }
-  .badge-rose    { @apply bg-rose-500/12    text-rose-700    dark:text-rose-400    ring-1 ring-inset ring-rose-500/25; }
-  .badge-violet  { @apply bg-violet-500/12  text-violet-700  dark:text-violet-400  ring-1 ring-inset ring-violet-500/25; }
-  .badge-slate   { @apply bg-slate-500/12   text-slate-600   dark:text-slate-400   ring-1 ring-inset ring-slate-500/25; }
-
-  /* Icon containers with semantic bg + text, WCAG AA in both modes */
-  .icon-blue    { @apply bg-blue-500/10    text-blue-700    dark:text-blue-400; }
-  .icon-emerald { @apply bg-emerald-500/10 text-emerald-700 dark:text-emerald-400; }
-  .icon-amber   { @apply bg-amber-500/10   text-amber-700   dark:text-amber-400; }
-  .icon-rose    { @apply bg-rose-500/10    text-rose-700    dark:text-rose-400; }
-  .icon-violet  { @apply bg-violet-500/10  text-violet-700  dark:text-violet-400; }
-}
