@@ -5,135 +5,195 @@ import { supabase } from "@/supabaseClient";
 import {
   LayoutDashboard,
   FolderKanban,
-  Wallet,
-  Users,
-  Calendar,
-  Sparkles,
-  Search,
-  Monitor,
+  TrendingUp,
+  Users2,
+  UserCheck,
+  CalendarDays,
+  GraduationCap,
+  SlidersHorizontal,
   Sun,
   Moon,
-  Plus,
-  Bell,
-  Settings,
-  GraduationCap
+  Monitor,
+  LogOut,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Card, CardContent } from "@/components/ui/Card";
 
-interface SidebarItemProps {
-  key?: React.Key;
-  icon: any;
+interface NavItem {
+  icon: React.ElementType;
   label: string;
   to: string;
-  active?: boolean;
+  restricted?: boolean;
 }
 
-function SidebarItem({ icon: Icon, label, to, active = false }: SidebarItemProps) {
+const NAV_MAIN: NavItem[] = [
+  { icon: LayoutDashboard, label: "Dashboard", to: "/admin" },
+  { icon: FolderKanban, label: "Proyectos", to: "/admin/proyectos" },
+  { icon: UserCheck, label: "Clientes", to: "/admin/clientes" },
+  { icon: CalendarDays, label: "Agenda", to: "/admin/agenda" },
+  { icon: GraduationCap, label: "Universidades", to: "/admin/universidades" },
+];
+
+const NAV_ADMIN: NavItem[] = [
+  { icon: TrendingUp, label: "Finanzas", to: "/admin/finanzas", restricted: true },
+  { icon: Users2, label: "Equipo", to: "/admin/equipo", restricted: true },
+  { icon: SlidersHorizontal, label: "Configuración", to: "/admin/settings", restricted: true },
+];
+
+function NavSection({
+  title,
+  items,
+  currentPath,
+}: {
+  title: string;
+  items: NavItem[];
+  currentPath: string;
+}) {
+  if (items.length === 0) return null;
   return (
-    <Link to={to} className="block w-full">
-      <button
-        className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-bold transition-all ${active
-            ? "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20"
-            : "text-muted-foreground hover:text-foreground hover:bg-accent"
-          }`}
-      >
-        <Icon className="h-5 w-5" />
-        <span>{label}</span>
-      </button>
-    </Link>
+    <div className="space-y-0.5">
+      <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none">
+        {title}
+      </p>
+      {items.map((item) => {
+        const isActive =
+          currentPath === item.to ||
+          (item.to === "/admin" && currentPath === "/admin");
+        const Icon = item.icon;
+        return (
+          <Link key={item.to} to={item.to} className="block">
+            <span
+              className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 cursor-pointer
+                ${
+                  isActive
+                    ? "bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] border-l-2 border-[hsl(var(--primary))]"
+                    : "text-muted-foreground border-l-2 border-transparent hover:text-foreground hover:bg-accent/60"
+                }`}
+            >
+              <Icon
+                className={`h-4 w-4 shrink-0 transition-colors ${
+                  isActive ? "text-[hsl(var(--primary))]" : "text-muted-foreground/70 group-hover:text-foreground"
+                }`}
+              />
+              <span className="flex-1 truncate">{item.label}</span>
+              {isActive && (
+                <ChevronRight className="h-3 w-3 opacity-60 shrink-0" />
+              )}
+            </span>
+          </Link>
+        );
+      })}
+    </div>
   );
 }
 
-export function Sidebar({ theme, setTheme }: { theme: string; setTheme: (t: "light" | "dark" | "gray") => void }) {
+export function Sidebar({
+  theme,
+  setTheme,
+}: {
+  theme: string;
+  setTheme: (t: "light" | "dark" | "gray") => void;
+}) {
   const location = useLocation();
   const navigate = useNavigate();
   const { isCollaborator, teamMember } = useAdminAuth();
 
-  const allMenuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", to: "/admin" },
-    { icon: FolderKanban, label: "Proyectos", to: "/admin/proyectos" },
-    { icon: Wallet, label: "Finanzas", to: "/admin/finanzas", restricted: true },
-    { icon: Users, label: "Equipo", to: "/admin/equipo", restricted: true },
-    { icon: Users, label: "Clientes", to: "/admin/clientes" },
-    { icon: Calendar, label: "Agenda", to: "/admin/agenda" },
-    { icon: GraduationCap, label: "Universidades", to: "/admin/universidades" },
-    { icon: Settings, label: "Configuración", to: "/admin/settings", restricted: true },
-  ];
-
-  const menuItems = allMenuItems.filter(item => !(isCollaborator && item.restricted));
+  const mainItems = NAV_MAIN;
+  const adminItems = isCollaborator
+    ? []
+    : NAV_ADMIN;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
   };
 
+  const userInitial = teamMember?.name
+    ? teamMember.name.charAt(0).toUpperCase()
+    : "A";
+  const userName = teamMember?.name || "Administrador";
+
   return (
-    <aside className="border-r border-border bg-card px-5 py-6 h-screen flex flex-col sticky top-0">
-      <div className="mb-8 px-2 flex items-center">
+    <aside className="flex h-screen flex-col sticky top-0 border-r border-border bg-[hsl(var(--sidebar,var(--card)))]">
+      {/* Logo */}
+      <div className="px-5 pt-6 pb-5 border-b border-border/60">
         <Link to="/" className="block">
-          <img src="/logos/Logo-TuTesis-Color.png" alt="TuTesisRD" className="h-12 w-auto" />
+          <img
+            src="/logos/Logo-TuTesis-Color.png"
+            alt="TuTesisRD"
+            className="h-10 w-auto"
+          />
         </Link>
       </div>
 
-      <nav className="space-y-2 flex-1">
-        {menuItems.map((item) => (
-          <SidebarItem
-            key={item.to}
-            icon={item.icon}
-            label={item.label}
-            to={item.to}
-            active={location.pathname === item.to || (item.to === "/admin" && location.pathname === "/")}
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-none">
+        <NavSection
+          title="Menú principal"
+          items={mainItems}
+          currentPath={location.pathname}
+        />
+        {!isCollaborator && (
+          <NavSection
+            title="Administración"
+            items={adminItems}
+            currentPath={location.pathname}
           />
-        ))}
+        )}
       </nav>
 
-      <div className="mt-auto space-y-4">
-        <Card className="rounded-3xl border-border bg-accent/50 shadow-none">
-          <CardContent className="p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-base font-bold text-foreground">Sistema</p>
-              <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Activo
-              </div>
-            </div>
-            <p className="text-sm font-medium leading-5 text-foreground/80">
-              Estado operativo estable.
-            </p>
-          </CardContent>
-        </Card>
-
-        <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-1">
-          <Button
-            size="icon"
-            variant={theme === "light" ? "secondary" : "ghost"}
-            className="h-8 w-8 rounded-xl flex-1"
-            onClick={() => setTheme("light")}
-          >
-            <Sun className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant={theme === "gray" ? "secondary" : "ghost"}
-            className="h-8 w-8 rounded-xl flex-1"
-            onClick={() => setTheme("gray")}
-          >
-            <Monitor className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant={theme === "dark" ? "secondary" : "ghost"}
-            className="h-8 w-8 rounded-xl flex-1"
-            onClick={() => setTheme("dark")}
-          >
-            <Moon className="h-4 w-4" />
-          </Button>
+      {/* Bottom controls */}
+      <div className="px-3 pb-5 pt-3 border-t border-border/60 space-y-3">
+        {/* System status */}
+        <div className="flex items-center gap-2 rounded-xl bg-emerald-500/8 border border-emerald-500/15 px-3 py-2">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+          <span className="text-xs font-medium text-emerald-400/90">Sistema operativo</span>
         </div>
 
-        <Button onClick={handleLogout} variant="ghost" className="w-full justify-start rounded-2xl text-muted-foreground hover:text-foreground">
-          Cerrar sesión
-        </Button>
+        {/* Theme toggle */}
+        <div className="flex items-center gap-1 rounded-xl border border-border bg-background/60 p-1">
+          {(
+            [
+              { value: "light", Icon: Sun, label: "Claro" },
+              { value: "gray", Icon: Monitor, label: "Gris" },
+              { value: "dark", Icon: Moon, label: "Oscuro" },
+            ] as const
+          ).map(({ value, Icon, label }) => (
+            <button
+              key={value}
+              aria-label={label}
+              onClick={() => setTheme(value)}
+              className={`flex flex-1 items-center justify-center rounded-lg p-1.5 transition-all duration-150 cursor-pointer
+                ${
+                  theme === value
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+            </button>
+          ))}
+        </div>
+
+        {/* User + logout */}
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 shrink-0 rounded-full bg-[hsl(var(--primary)/0.18)] flex items-center justify-center text-sm font-bold text-[hsl(var(--primary))]">
+            {userInitial}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-foreground truncate">{userName}</p>
+            <p className="text-[10px] text-muted-foreground truncate">
+              {isCollaborator ? "Colaborador" : "Administrador"}
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            aria-label="Cerrar sesión"
+            className="h-7 w-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
     </aside>
   );

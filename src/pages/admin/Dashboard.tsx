@@ -2,9 +2,11 @@ import React, { useMemo, useState, useEffect } from "react";
 import { motion } from "motion/react";
 import {
     FolderKanban,
-    Wallet,
+    TrendingUp,
     CheckCircle2,
     AlertTriangle,
+    ArrowUpRight,
+    Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -16,11 +18,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/Select";
-import { Calendar as CalendarComponent } from "@/components/ui/Calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { DateRange } from "react-day-picker";
 import {
     AreaChart,
     Area,
@@ -43,45 +40,110 @@ import {
     formatRelativeTime,
 } from "@/services/admin/adminDataService";
 
-// ---- Status label mapping (DB values → Spanish display) ----
-const STATUS_LABELS: Record<string, string> = {
-    pending: "Pendiente",
-    assigned: "Asignado",
-    in_progress: "En curso",
-    review: "En revisión",
-    completed: "Listo",
+// ─── Status config with semantic colors ────────────────────────────────────────
+const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
+    pending:    { label: "Pendiente",    cls: "bg-slate-500/15 text-slate-400 ring-1 ring-inset ring-slate-500/25" },
+    assigned:   { label: "Asignado",    cls: "bg-violet-500/15 text-violet-400 ring-1 ring-inset ring-violet-500/25" },
+    in_progress:{ label: "En curso",    cls: "bg-blue-500/15  text-blue-400  ring-1 ring-inset ring-blue-500/25" },
+    review:     { label: "En revisión", cls: "bg-amber-500/15 text-amber-400 ring-1 ring-inset ring-amber-500/25" },
+    completed:  { label: "Listo",       cls: "bg-emerald-500/15 text-emerald-400 ring-1 ring-inset ring-emerald-500/25" },
 };
 
-const ACTIVITY_TYPE_MAP: Record<string, string> = {
+// ─── KPI card config with semantic colors ──────────────────────────────────────
+const KPI_CONFIG = [
+    {
+        key: "activeProjects",
+        title: "Proyectos activos",
+        hint: "en curso actualmente",
+        icon: FolderKanban,
+        color: "blue",
+        iconCls: "bg-blue-500/12 text-blue-400",
+        valueCls: "text-foreground",
+    },
+    {
+        key: "monthlyRevenue",
+        title: "Ingresos del mes",
+        hint: "pagos recibidos",
+        icon: TrendingUp,
+        color: "emerald",
+        iconCls: "bg-emerald-500/12 text-emerald-400",
+        valueCls: "text-foreground",
+    },
+    {
+        key: "completionRate",
+        title: "Tasa de finalización",
+        hint: "rendimiento operativo",
+        icon: CheckCircle2,
+        color: "violet",
+        iconCls: "bg-violet-500/12 text-violet-400",
+        valueCls: "text-foreground",
+    },
+    {
+        key: "overdueProjects",
+        title: "Alertas críticas",
+        hint: "proyectos vencidos",
+        icon: AlertTriangle,
+        color: "rose",
+        iconCls: "bg-rose-500/12 text-rose-400",
+        valueCls: "text-foreground",
+    },
+] as const;
+
+const ACTIVITY_DOT: Record<string, string> = {
     success: "bg-emerald-500",
     warning: "bg-amber-500",
-    info: "bg-blue-500",
-    danger: "bg-rose-500",
+    info:    "bg-blue-500",
+    danger:  "bg-rose-500",
 };
 
-function ActivityDot({ type }: { type: string }) {
-    return <span className={`mt-1.5 h-2.5 w-2.5 rounded-full ${ACTIVITY_TYPE_MAP[type] || "bg-gray-400"}`} />;
+function StatusBadge({ status }: { status: string }) {
+    const cfg = STATUS_CONFIG[status] ?? {
+        label: status,
+        cls: "bg-slate-500/15 text-slate-400 ring-1 ring-inset ring-slate-500/20",
+    };
+    return (
+        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${cfg.cls}`}>
+            {cfg.label}
+        </span>
+    );
 }
 
 function formatCurrency(amount: number): string {
     return `RD$${amount.toLocaleString("es-DO")}`;
 }
 
+function formatKpiValue(key: string, kpis: DashboardKPIs): string {
+    if (key === "activeProjects") return kpis.activeProjects.toString();
+    if (key === "monthlyRevenue") return formatCurrency(kpis.monthlyRevenue);
+    if (key === "completionRate") return `${kpis.completionRate}%`;
+    if (key === "overdueProjects") return kpis.overdueProjects.toString();
+    return "—";
+}
+
+// ─── Custom tooltip for chart ──────────────────────────────────────────────────
+function ChartTooltip({ active, payload, label }: any) {
+    if (!active || !payload?.length) return null;
+    return (
+        <div className="rounded-xl border border-border bg-card px-3 py-2.5 shadow-lg text-sm">
+            <p className="font-semibold text-foreground/70 mb-1">{label}</p>
+            <p className="font-bold text-[hsl(var(--primary))]">
+                {formatCurrency(payload[0].value)}
+            </p>
+        </div>
+    );
+}
+
 export function Dashboard() {
-    // ---- State ----
-    const [projects, setProjects] = useState<AdminProject[]>([]);
-    const [kpis, setKpis] = useState<DashboardKPIs | null>(null);
+    const [projects, setProjects]     = useState<AdminProject[]>([]);
+    const [kpis, setKpis]             = useState<DashboardKPIs | null>(null);
     const [financeData, setFinanceData] = useState<FinanceMonthData[]>([]);
     const [activities, setActivities] = useState<ActivityItem[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading]       = useState(true);
+    const [error, setError]           = useState<string | null>(null);
 
     const [statusFilter, setStatusFilter] = useState("Todos");
-    const [ownerFilter, setOwnerFilter] = useState("Todos");
-    const [dateRange, setDateRange] = useState<DateRange | undefined>();
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm]     = useState("");
 
-    // ---- Fetch all data ----
     const loadData = async () => {
         try {
             setLoading(true);
@@ -105,34 +167,21 @@ export function Dashboard() {
 
     useEffect(() => { loadData(); }, []);
 
-    // ---- Unique owners for filter ----
-    const uniqueOwners = useMemo(() => {
-        const owners = new Set(projects.map(p => p.students?.name || "Admin"));
-        return ["Todos", ...Array.from(owners)];
-    }, [projects]);
-
-    // ---- Filtered projects ----
     const filteredProjects = useMemo(() => {
-        return projects.filter(p => {
-            const label = STATUS_LABELS[p.status] || p.status;
+        return projects.filter((p) => {
+            const cfg = STATUS_CONFIG[p.status];
+            const label = cfg?.label ?? p.status;
             const matchesStatus = statusFilter === "Todos" || label === statusFilter;
-            const clientName = p.students ? `${p.students.name} ${p.students.lastname}` : "Admin";
-            const matchesOwner = ownerFilter === "Todos" || clientName === ownerFilter;
-            const matchesSearch = searchTerm === "" ||
+            const clientName = p.students
+                ? `${p.students.name} ${p.students.lastname}`
+                : "Admin";
+            const matchesSearch =
+                searchTerm === "" ||
                 (p.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
                 clientName.toLowerCase().includes(searchTerm.toLowerCase());
-            let matchesDate = true;
-            if (dateRange?.from && p.due_date) {
-                const d = new Date(p.due_date);
-                if (dateRange.to) {
-                    matchesDate = d >= dateRange.from && d <= dateRange.to;
-                } else {
-                    matchesDate = d >= dateRange.from;
-                }
-            }
-            return matchesStatus && matchesOwner && matchesSearch && matchesDate;
+            return matchesStatus && matchesSearch;
         });
-    }, [projects, statusFilter, ownerFilter, searchTerm, dateRange]);
+    }, [projects, statusFilter, searchTerm]);
 
     const isOverdue = (due?: string) => {
         if (!due) return false;
@@ -141,26 +190,20 @@ export function Dashboard() {
         return new Date(due) < today;
     };
 
-    // ---- Handle progress update ----
     const handleProgressChange = async (projectId: string, newStatus: string) => {
         await updateProjectStatus(projectId, newStatus);
-        setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: newStatus } : p));
+        setProjects((prev) => prev.map((p) => p.id === projectId ? { ...p, status: newStatus } : p));
     };
-
-    // ---- KPI Cards ----
-    const kpiCards = kpis ? [
-        { title: "Proyectos activos", value: kpis.activeProjects.toString(), hint: "proyectos en curso", icon: FolderKanban },
-        { title: "Ingresos del mes", value: formatCurrency(kpis.monthlyRevenue), hint: "pagos recibidos", icon: Wallet },
-        { title: "Tasa de finalización", value: `${kpis.completionRate}%`, hint: "rendimiento operativo", icon: CheckCircle2 },
-        { title: "Alertas críticas", value: kpis.overdueProjects.toString(), hint: "proyectos vencidos", icon: AlertTriangle },
-    ] : [];
 
     if (loading) {
         return (
-            <div className="space-y-6 animate-pulse">
-                {[1, 2, 3].map(i => (
-                    <div key={i} className="h-32 rounded-3xl bg-accent/30" />
-                ))}
+            <div className="space-y-5 animate-pulse">
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="h-28 rounded-2xl bg-card/60" />
+                    ))}
+                </div>
+                <div className="h-64 rounded-2xl bg-card/60" />
             </div>
         );
     }
@@ -168,42 +211,48 @@ export function Dashboard() {
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                <p className="text-destructive font-semibold">{error}</p>
-                <Button onClick={loadData} variant="outline" className="rounded-2xl">Reintentar</Button>
+                <p className="text-destructive font-semibold text-sm">{error}</p>
+                <Button onClick={loadData} variant="outline" size="sm" className="rounded-xl">
+                    Reintentar
+                </Button>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Dashboard ejecutivo</h1>
-                <p className="mt-2 text-base font-medium text-foreground/80">
-                    Vista unificada de operaciones, productividad y flujos de TuTesisRD.
-                </p>
-            </div>
-
-            {/* KPI Cards */}
-            <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {kpiCards.map((item, index) => {
-                    const Icon = item.icon;
+            {/* ── KPI Cards ─────────────────────────────────────────────── */}
+            <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+                {KPI_CONFIG.map((cfg, index) => {
+                    const Icon = cfg.icon;
+                    const value = kpis ? formatKpiValue(cfg.key, kpis) : "—";
+                    const isAlert = cfg.key === "overdueProjects" && kpis && kpis.overdueProjects > 0;
                     return (
                         <motion.div
-                            key={item.title}
-                            initial={{ opacity: 0, y: 12 }}
+                            key={cfg.key}
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
+                            transition={{ delay: index * 0.05, duration: 0.25 }}
                         >
-                            <Card className="rounded-3xl border-border bg-card/50 backdrop-blur-xl shadow-sm">
-                                <CardContent className="p-5">
-                                    <div className="mb-4 flex items-start justify-between">
-                                        <div className="rounded-2xl bg-primary/10 p-3 ring-1 ring-primary/20">
-                                            <Icon className="h-6 w-6 text-primary" />
+                            <Card className={`rounded-2xl border-border bg-card shadow-none transition-colors ${isAlert ? "border-rose-500/25" : ""}`}>
+                                <CardContent className="p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className={`inline-flex h-8 w-8 items-center justify-center rounded-xl ${cfg.iconCls}`}>
+                                            <Icon className="h-4 w-4" />
                                         </div>
+                                        {isAlert && (
+                                            <span className="text-[10px] font-semibold uppercase tracking-wide text-rose-400 bg-rose-500/10 rounded-full px-2 py-0.5">
+                                                Urgente
+                                            </span>
+                                        )}
                                     </div>
-                                    <p className="text-sm font-bold text-foreground/80 uppercase tracking-wider">{item.title}</p>
-                                    <p className="mt-2 text-4xl font-black tracking-tight text-foreground">{item.value}</p>
-                                    <p className="mt-2 text-sm font-semibold text-muted-foreground">{item.hint}</p>
+                                    <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                        {cfg.title}
+                                    </p>
+                                    <p className={`mt-1 text-2xl font-black tracking-tight ${cfg.valueCls}`}>
+                                        {value}
+                                    </p>
+                                    <p className="mt-1 text-[11px] text-muted-foreground/70">{cfg.hint}</p>
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -211,142 +260,226 @@ export function Dashboard() {
                 })}
             </section>
 
-            {/* Finance Chart + Activity Feed */}
-            <div className="grid grid-cols-1 gap-6 2xl:grid-cols-[1.5fr_1fr]">
-                <Card className="rounded-3xl border-border bg-card shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+            {/* ── Finance Chart + Activity ───────────────────────────────── */}
+            <div className="grid grid-cols-1 gap-4 2xl:grid-cols-[1.6fr_1fr]">
+                {/* Finance chart */}
+                <Card className="rounded-2xl border-border bg-card shadow-none">
+                    <CardHeader className="pb-2 flex flex-row items-center justify-between">
                         <div>
-                            <CardTitle className="text-lg font-bold text-foreground">Rendimiento financiero</CardTitle>
+                            <CardTitle className="text-sm font-semibold text-foreground">
+                                Rendimiento financiero
+                            </CardTitle>
+                            <p className="text-xs text-muted-foreground mt-0.5">Ingresos por mes</p>
                         </div>
+                        <ArrowUpRight className="h-4 w-4 text-muted-foreground/50" />
                     </CardHeader>
-                    <CardContent className="h-[300px]">
+                    <CardContent className="h-[260px]">
                         {financeData.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={financeData}>
+                                <AreaChart data={financeData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
                                     <defs>
-                                        <linearGradient id="ingresos" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                                        <linearGradient id="grad-ingresos" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#F29727" stopOpacity={0.25} />
+                                            <stop offset="95%" stopColor="#F29727" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                                    <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
-                                    <Tooltip
-                                        contentStyle={{
-                                            background: "hsl(var(--card))",
-                                            border: "1px solid hsl(var(--border))",
-                                            borderRadius: 12,
-                                        }}
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        stroke="hsl(var(--border))"
+                                        vertical={false}
                                     />
-                                    <Area type="monotone" dataKey="ingresos" stroke="hsl(var(--primary))" fill="url(#ingresos)" strokeWidth={2.5} />
+                                    <XAxis
+                                        dataKey="month"
+                                        stroke="hsl(var(--muted-foreground))"
+                                        fontSize={11}
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <YAxis
+                                        stroke="hsl(var(--muted-foreground))"
+                                        fontSize={11}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                                    />
+                                    <Tooltip content={<ChartTooltip />} />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="ingresos"
+                                        stroke="#F29727"
+                                        fill="url(#grad-ingresos)"
+                                        strokeWidth={2}
+                                    />
                                 </AreaChart>
                             </ResponsiveContainer>
                         ) : (
                             <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
-                                No hay datos financieros aún.
+                                Sin datos financieros aún.
                             </div>
                         )}
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-3xl border-border bg-card shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-bold text-foreground">Actividad reciente</CardTitle>
+                {/* Activity feed */}
+                <Card className="rounded-2xl border-border bg-card shadow-none">
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="text-sm font-semibold text-foreground">
+                                Actividad reciente
+                            </CardTitle>
+                            <Clock className="h-4 w-4 text-muted-foreground/50" />
+                        </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        {activities.length > 0 ? activities.map((item) => (
-                            <div key={item.id} className="flex gap-3 rounded-2xl border border-border bg-accent/30 p-3">
-                                <ActivityDot type={item.type} />
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-base font-bold text-foreground">{item.title}</p>
-                                    <p className="mt-1 text-sm font-medium text-foreground/80">{item.message}</p>
+                    <CardContent className="space-y-2">
+                        {activities.length > 0 ? (
+                            activities.slice(0, 6).map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex gap-3 rounded-xl bg-accent/30 border border-border/50 px-3 py-2.5"
+                                >
+                                    <span
+                                        className={`mt-1 h-2 w-2 shrink-0 rounded-full ${ACTIVITY_DOT[item.type] ?? "bg-slate-400"}`}
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm font-semibold text-foreground leading-tight truncate">
+                                            {item.title}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                                            {item.message}
+                                        </p>
+                                    </div>
+                                    <span className="text-[11px] font-medium text-muted-foreground/60 whitespace-nowrap self-start mt-0.5">
+                                        {formatRelativeTime(item.created_at)}
+                                    </span>
                                 </div>
-                                <div className="text-sm font-bold text-muted-foreground whitespace-nowrap">
-                                    {formatRelativeTime(item.created_at)}
-                                </div>
-                            </div>
-                        )) : (
-                            <p className="text-sm text-muted-foreground text-center py-8">Sin actividad reciente.</p>
+                            ))
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center py-10">
+                                Sin actividad reciente.
+                            </p>
                         )}
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Projects Table */}
-            <Card className="rounded-3xl border-border bg-card shadow-sm">
-                <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between border-b border-border/50 pb-6 mb-4">
-                    <div>
-                        <CardTitle className="text-xl font-bold text-foreground">Proyectos prioritarios</CardTitle>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Input
-                            placeholder="Buscar..."
-                            className="w-[160px] rounded-2xl h-9"
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                        />
-                        <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger className="w-[140px] rounded-2xl">
-                                <SelectValue placeholder="Estado" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Todos">Todos</SelectItem>
-                                <SelectItem value="En revisión">En revisión</SelectItem>
-                                <SelectItem value="En curso">En curso</SelectItem>
-                                <SelectItem value="Listo">Listo</SelectItem>
-                                <SelectItem value="Pendiente">Pendiente</SelectItem>
-                            </SelectContent>
-                        </Select>
+            {/* ── Projects Table ─────────────────────────────────────────── */}
+            <Card className="rounded-2xl border-border bg-card shadow-none">
+                <CardHeader className="border-b border-border/50 pb-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <CardTitle className="text-sm font-semibold text-foreground">
+                                Proyectos prioritarios
+                            </CardTitle>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                                {filteredProjects.length} resultado{filteredProjects.length !== 1 ? "s" : ""}
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Input
+                                placeholder="Buscar proyecto..."
+                                className="w-44 rounded-xl h-8 text-xs"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <SelectTrigger className="w-36 rounded-xl h-8 text-xs">
+                                    <SelectValue placeholder="Estado" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Todos">Todos</SelectItem>
+                                    {Object.values(STATUS_CONFIG).map((s) => (
+                                        <SelectItem key={s.label} value={s.label}>
+                                            {s.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground">
-                                    <th className="pb-3 pr-4 font-bold">Proyecto</th>
-                                    <th className="pb-3 pr-4 font-bold">Cliente</th>
-                                    <th className="pb-3 pr-4 font-bold">Avance</th>
-                                    <th className="pb-3 pr-4 font-bold">Fecha límite</th>
-                                    <th className="pb-3 font-bold">Estado</th>
+                                <tr className="border-b border-border/50">
+                                    <th className="px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Proyecto</th>
+                                    <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Cliente</th>
+                                    <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Avance</th>
+                                    <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Fecha límite</th>
+                                    <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredProjects.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="py-10 text-center text-sm text-muted-foreground">
+                                        <td colSpan={5} className="py-12 text-center text-sm text-muted-foreground">
                                             No se encontraron proyectos.
                                         </td>
                                     </tr>
-                                ) : filteredProjects.map((row) => {
-                                    const clientName = row.students
-                                        ? `${row.students.name} ${row.students.lastname}`
-                                        : "Sin cliente";
-                                    const overdue = isOverdue(row.due_date);
-                                    return (
-                                        <tr key={row.id} className="border-b border-border last:border-0 hover:bg-accent/30 transition-colors">
-                                            <td className="py-4 pr-4 text-base font-bold text-foreground">{row.title || row.tracking_code}</td>
-                                            <td className="py-4 pr-4 text-sm font-semibold text-foreground/80">{clientName}</td>
-                                            <td className="py-4 pr-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-2 w-20 overflow-hidden rounded-full bg-secondary">
-                                                        <div className="h-full rounded-full bg-primary" style={{ width: `${row.progress_percent}%` }} />
+                                ) : (
+                                    filteredProjects.map((row) => {
+                                        const clientName = row.students
+                                            ? `${row.students.name} ${row.students.lastname}`
+                                            : "Sin cliente";
+                                        const overdue = isOverdue(row.due_date);
+                                        const progress = row.progress_percent ?? 0;
+                                        // Progress bar color by value
+                                        const barColor =
+                                            progress >= 80
+                                                ? "bg-emerald-500"
+                                                : progress >= 40
+                                                ? "bg-blue-500"
+                                                : "bg-amber-500";
+                                        return (
+                                            <tr
+                                                key={row.id}
+                                                className="border-b border-border/40 last:border-0 hover:bg-accent/25 transition-colors"
+                                            >
+                                                <td className="px-5 py-3.5">
+                                                    <p className="text-sm font-semibold text-foreground leading-tight">
+                                                        {row.title || row.tracking_code}
+                                                    </p>
+                                                    <p className="text-[11px] text-muted-foreground/60 font-mono mt-0.5">
+                                                        {row.tracking_code}
+                                                    </p>
+                                                </td>
+                                                <td className="px-4 py-3.5 text-sm text-foreground/80 font-medium">
+                                                    {clientName}
+                                                </td>
+                                                <td className="px-4 py-3.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
+                                                            <div
+                                                                className={`h-full rounded-full transition-all ${barColor}`}
+                                                                style={{ width: `${progress}%` }}
+                                                            />
+                                                        </div>
+                                                        <span className="text-xs font-semibold text-muted-foreground tabular-nums">
+                                                            {progress}%
+                                                        </span>
                                                     </div>
-                                                    <span className="text-sm font-bold text-foreground/80">{row.progress_percent}%</span>
-                                                </div>
-                                            </td>
-                                            <td className={`py-4 pr-4 text-sm font-bold ${overdue ? "text-rose-500" : "text-foreground/80"}`}>
-                                                {row.due_date ? new Date(row.due_date).toLocaleDateString("es-DO") : "—"}
-                                            </td>
-                                            <td className="py-4">
-                                                <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase text-primary ring-1 ring-primary/20">
-                                                    {STATUS_LABELS[row.status] || row.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                                                </td>
+                                                <td className={`px-4 py-3.5 text-sm font-medium ${overdue ? "text-rose-400" : "text-muted-foreground"}`}>
+                                                    {row.due_date
+                                                        ? new Date(row.due_date).toLocaleDateString("es-DO", {
+                                                              day: "2-digit",
+                                                              month: "short",
+                                                              year: "numeric",
+                                                          })
+                                                        : "—"}
+                                                    {overdue && (
+                                                        <span className="ml-1 text-[10px] font-semibold text-rose-400/70">
+                                                            vencido
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3.5">
+                                                    <StatusBadge status={row.status} />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
                             </tbody>
                         </table>
                     </div>
