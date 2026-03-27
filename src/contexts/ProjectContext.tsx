@@ -179,29 +179,47 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     React.useEffect(() => {
         let isMounted = true;
+        let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        // Get current session immediately — avoids relying on INITIAL_SESSION event
+        supabase.auth.getSession().then(({ data: { session } }) => {
             if (!isMounted) return;
+            setSession(session);
+            initProject(session); // errors handled internally via try/catch
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (!isMounted) return;
+            // INITIAL_SESSION is handled above via getSession() — skip to avoid double-init
+            if (_event === 'INITIAL_SESSION') return;
 
             console.log(`[ProjectContext] Auth state change [${_event}]:`, session?.user?.email || 'none');
             setSession(session);
 
-            // Wait for project to initialize (might create new one or load existing)
-            await initProject(session);
-
-            // If we have a session AND a real project ID, sync the queue
-            const pId = projectIdRef.current;
-            if (session && pId && pId !== 'offline-demo') {
-                persistenceService.updateQueueProjectId(pId);
-                persistenceService.flushQueue();
-            }
+            // Debounce rapid consecutive events (Supabase can fire SIGNED_IN twice in quick succession)
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                if (!isMounted) return;
+                try {
+                    await initProject(session);
+                    const pId = projectIdRef.current;
+                    if (session && pId && pId !== 'offline-demo') {
+                        persistenceService.updateQueueProjectId(pId);
+                        persistenceService.flushQueue();
+                    }
+                } catch (err) {
+                    // Absorb any residual errors (e.g. AbortError from cancelled fetches)
+                    console.warn('[ProjectContext] Auth handler error (non-critical):', err);
+                }
+            }, 100);
         });
 
         return () => {
             isMounted = false;
+            if (debounceTimer) clearTimeout(debounceTimer);
             subscription.unsubscribe();
         };
-    }, []); // Empty dependency! Stop rapid re-subscribing
+    }, []);
 
 
     React.useEffect(() => {
