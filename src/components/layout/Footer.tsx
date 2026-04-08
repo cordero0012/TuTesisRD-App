@@ -52,8 +52,15 @@ const Footer: React.FC = () => {
                 </div>
 
                 <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="text-sm">
-                        © {new Date().getFullYear()} TuTesisRD. Todos los derechos reservados.
+                    <div className="flex flex-col md:flex-row items-center gap-2 text-sm">
+                        <span className="text-gray-400">© {new Date().getFullYear()} TuTesisRD. Todos los derechos reservados.</span>
+                        <div className="flex items-center gap-4 mt-2 md:mt-0 md:ml-4 text-xs text-gray-500">
+                            <Link to="/politica-de-privacidad" className="hover:text-brand-orange transition">Política de Privacidad</Link>
+                            <span className="hidden md:inline">|</span>
+                            <Link to="/terminos-y-condiciones" className="hover:text-brand-orange transition">Términos y Condiciones</Link>
+                            <span className="hidden md:inline">|</span>
+                            <Link to="/eliminacion-de-datos" className="hover:text-brand-orange transition">Eliminación de Datos</Link>
+                        </div>
                     </div>
                     <div className="flex items-center gap-6">
                         <a href="https://instagram.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram de TuTesisRD">

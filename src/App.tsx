@@ -44,6 +44,11 @@ const QueEsTesis = lazy(() => import('./pages/Recursos/QueEsTesis'));
 const ComoHacerTesis = lazy(() => import('./pages/Recursos/ComoHacerTesis'));
 const EjemplosTesis = lazy(() => import('./pages/Recursos/EjemplosTesis'));
 
+// Legal Pages
+const PrivacyPolicy = lazy(() => import('./pages/Legal/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('./pages/Legal/TermsAndConditions'));
+const DataDeletion = lazy(() => import('./pages/Legal/DataDeletion'));
+
 // Admin Panel Pages
 import { AdminLayout } from './components/admin/AdminLayout';
 import { Login as AdminLogin } from './pages/admin/Login';
@@ -143,6 +148,11 @@ const App = () => {
                         <Route path="/herramientas" element={<AuditPage />} />
                         <Route path="/herramientas/auditor" element={<DocumentAudit />} />
                         <Route path="/herramientas/matriz" element={<ConsistencyMatrix />} />
+
+                        {/* Legal */}
+                        <Route path="/politica-de-privacidad" element={<PrivacyPolicy />} />
+                        <Route path="/terminos-y-condiciones" element={<TermsAndConditions />} />
+                        <Route path="/eliminacion-de-datos" element={<DataDeletion />} />
 
                         {/* Admin Panel - 1:1 Bento Executive Audit */}
                         <Route path="/admin/login" element={<AdminLogin />} />
