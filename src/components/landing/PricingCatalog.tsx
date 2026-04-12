@@ -210,7 +210,7 @@ const PricingCatalog: React.FC = () => {
     const activeData = pricingCategories.find(c => c.id === activeCategory);
 
     const generateWhatsAppLink = (planTitle: string, categoryName: string) => {
-        const phone = "18294435985";
+        const phone = "18297513267";
         const message = `Hola TuTesisRD, me interesa consultar y obtener una cotización formal para el "${planTitle}" en la categoría de "${categoryName}". ¿Podemos hablar al respecto?`;
         return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     };

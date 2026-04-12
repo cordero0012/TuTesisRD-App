@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "google-analytics": {
+      "command": "C:\\Users\\miang\\AppData\\Local\\Python\\pythoncore-3.11-64\\python.exe",
+      "args": ["-m", "analytics_mcp.server"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:\\Users\\miang\\AppData\\Roaming\\gcloud\\application_default_credentials.json",
+        "GOOGLE_PROJECT_ID": "fit-crow-492714-h5"
+      }
+    },
+    "google-ads": {
+      "command": "C:\\Users\\miang\\AppData\\Local\\Python\\pythoncore-3.11-64\\python.exe",
+      "args": ["-m", "ads_mcp.server"],
+      "env": {
+        "GOOGLE_ADS_DEVELOPER_TOKEN": "gRhJQ_QTNJWbdPyE0Ip2Ng",
+        "GOOGLE_ADS_LOGIN_CUSTOMER_ID": "6869393137"
+      }
+    }
+  }
+}

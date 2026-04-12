@@ -25,7 +25,7 @@ const LandingPage: React.FC = () => {
             "height": "60"
         },
         "description": "Asesoría experta en tesis de grado, tesis doctoral y anteproyectos en República Dominicana. Más de 7 años ayudando a estudiantes universitarios a graduarse con éxito.",
-        "telephone": "+18294435985",
+        "telephone": "+18297513267",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "Higüey, La Altagracia",
@@ -48,7 +48,7 @@ const LandingPage: React.FC = () => {
         ],
         "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "+18294435985",
+            "telephone": "+18297513267",
             "contactType": "Customer Service",
             "areaServed": "DO",
             "availableLanguage": "Spanish"

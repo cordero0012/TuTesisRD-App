@@ -48,6 +48,9 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
     const submitRegistration = useCallback(async () => {
         setIsSubmitting(true);
         try {
+            let userId = null;
+            let studentRecordId = null;
+
             // 1. Sign up user in Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: formData.email,
@@ -60,35 +63,75 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                 }
             });
 
-            if (authError) throw authError;
+            if (authError) {
+                if (authError.message.toLowerCase().includes('already registered')) {
+                     // Try to sign in instead
+                     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                         email: formData.email,
+                         password: formData.password || ''
+                     });
+                     if (signInError) {
+                         throw new Error("El correo ya está en uso con otra contraseña. Inicia sesión primero o corrige tu contraseña.");
+                     }
+                     userId = signInData.user?.id;
+                } else {
+                    throw authError; // unknown error
+                }
+            } else {
+                userId = authData.user?.id;
+            }
 
-            // 2. Insert Student linked to Auth User
-            const { data: studentData, error: studentError } = await supabase
-                .from('students')
-                .insert([{
-                    name: formData.name,
-                    lastname: formData.lastname,
-                    email: formData.email,
-                    phone: formData.phone,
-                    university: formData.university,
-                    career: formData.career,
-                    auth_user_id: authData.user?.id
-                }])
-                .select()
-                .single();
+            if (!userId) {
+                throw new Error("No se pudo obtener el identificador de usuario.");
+            }
 
-            if (studentError) throw studentError;
+            // 2. Insert Student or Link Existing
+            const { data: existingStudent, error: fetchErr } = await supabase
+               .from('students')
+               .select('id')
+               .eq('auth_user_id', userId)
+               .maybeSingle();
+
+            if (existingStudent) {
+                 studentRecordId = existingStudent.id;
+            } else {
+                 if (fetchErr) {
+                     console.error("Error fetching existing student:", fetchErr);
+                 }
+                 const { data: studentData, error: studentError } = await supabase
+                    .from('students')
+                    .insert([{
+                        name: formData.name,
+                        lastname: formData.lastname,
+                        email: formData.email,
+                        phone: formData.phone,
+                        university: formData.university,
+                        career: formData.career,
+                        auth_user_id: userId
+                    }])
+                    .select()
+                    .single();
+
+                 if (studentError) throw studentError;
+                 studentRecordId = studentData.id;
+            }
+
+            if (!studentRecordId) throw new Error("Error interno vinculando perfil de estudiante.");
 
             // 3. Insert Project
+            const amountTotal = Math.abs(parseFloat(formData.totalAmount) || 0);
+            const amountPaid = Math.abs(parseFloat(formData.paidAmount) || 0);
+            const dueDateValue = formData.dueDate && formData.dueDate.trim() !== '' ? formData.dueDate : null;
+
             const { data: projectData, error: projectError } = await supabase
                 .from('projects')
                 .insert([{
-                    student_id: studentData.id,
+                    student_id: studentRecordId,
                     type: formData.type,
                     description: `Plan: ${formData.plan}, Normative: ${formData.normative}`,
-                    total_amount: parseFloat(formData.totalAmount) || 0,
-                    paid_amount: parseFloat(formData.paidAmount) || 0,
-                    due_date: formData.dueDate || null,
+                    total_amount: amountTotal,
+                    paid_amount: amountPaid,
+                    due_date: dueDateValue,
                     status: 'pending' // Default
                 }])
                 .select('tracking_code')

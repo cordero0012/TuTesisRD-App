@@ -59,19 +59,17 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = React.memo(({ formDat
                             { label: 'Artículo Científico', icon: 'science' },
                             { label: 'Presentación', icon: 'co_present' }
                         ].map((item) => (
-                            <div
+                            <button
                                 key={item.label}
-                                role="button"
-                                tabIndex={0}
+                                type="button"
                                 aria-pressed={formData.type === item.label}
                                 onClick={() => setFormData(prev => ({ ...prev, type: item.label }))}
-                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFormData(prev => ({ ...prev, type: item.label })); } }}
-                                className={`p-3 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 ${formData.type === item.label ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
+                                className={`p-3 border-2 rounded-xl cursor-pointer relative shadow-sm transition-all text-center flex flex-col items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary ${formData.type === item.label ? 'border-primary bg-blue-50 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-700 hover:border-primary'}`}
                             >
                                 {formData.type === item.label && <div className="absolute top-2 right-2 text-primary"><span className="material-symbols-outlined text-base">check_circle</span></div>}
                                 <span className="material-icons text-2xl text-slate-400">{item.icon}</span>
                                 <span className={`font-bold text-xs sm:text-sm leading-tight ${formData.type === item.label ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>{item.label}</span>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -85,10 +83,12 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = React.memo(({ formDat
                             { id: 'parcial', title: 'Desarrollo Colaborativo', desc: 'Usted investiga, nosotros redactamos (50/50).' },
                             { id: 'completo', title: 'Desarrollo Integral', desc: 'Elaboración completa desde cero.' }
                         ].map((mod) => (
-                            <div
+                            <button
                                 key={mod.id}
+                                type="button"
+                                aria-pressed={formData.plan === mod.id}
                                 onClick={() => setFormData(prev => ({ ...prev, plan: mod.id }))}
-                                className={`p-4 border-2 rounded-xl cursor-pointer flex items-center gap-4 transition-all ${formData.plan === mod.id ? 'border-brand-orange bg-orange-50 dark:bg-orange-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'}`}
+                                className={`w-full text-left p-4 border-2 rounded-xl cursor-pointer flex items-center gap-4 transition-all focus:outline-none focus:ring-2 focus:ring-brand-orange ${formData.plan === mod.id ? 'border-brand-orange bg-orange-50 dark:bg-orange-900/10' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'}`}
                             >
                                 <div className={`size-6 rounded-full border-2 flex items-center justify-center shrink-0 ${formData.plan === mod.id ? 'border-brand-orange' : 'border-slate-300'}`}>
                                     {formData.plan === mod.id && <div className="size-3 rounded-full bg-brand-orange" />}
@@ -97,7 +97,7 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = React.memo(({ formDat
                                     <div className={`font-bold ${formData.plan === mod.id ? 'text-brand-orange' : 'text-slate-800 dark:text-white'}`}>{mod.title}</div>
                                     <div className="text-xs text-slate-500 dark:text-slate-400">{mod.desc}</div>
                                 </div>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -140,6 +140,7 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = React.memo(({ formDat
                             <input
                                 type="number"
                                 name="totalAmount"
+                                min="0"
                                 value={formData.totalAmount}
                                 onChange={handleInputChange}
                                 className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
@@ -151,6 +152,7 @@ export const RegisterStep2: React.FC<RegisterStep2Props> = React.memo(({ formDat
                             <input
                                 type="number"
                                 name="paidAmount"
+                                min="0"
                                 value={formData.paidAmount}
                                 onChange={handleInputChange}
                                 className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"

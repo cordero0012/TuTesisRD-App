@@ -75,7 +75,7 @@ const UniversityTemplate: React.FC = () => {
                     </p>
 
                     <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                        <a href="https://wa.me/18296392033" target="_blank" rel="noopener noreferrer">
+                        <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer">
                             <Button variant="default" size="lg" className="w-full md:w-auto">
                                 Escuchar un audio de Asesoría <span className="material-icons ml-2">whatsapp</span>
                                 Cotizar mi Tesis {university.shortName}
