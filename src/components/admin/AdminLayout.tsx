@@ -77,11 +77,11 @@ function PageHeader({ path, teamMember }: { path: string; teamMember: any }) {
     <header className="flex items-center justify-between gap-4 mb-7">
       {/* Page title */}
       <div className="min-w-0">
-        <h1 className="text-xl font-bold text-foreground tracking-tight truncate">
+        <h1 className="text-3xl font-black text-foreground tracking-tight truncate">
           {page.title}
         </h1>
         {page.subtitle && (
-          <p className="text-xs text-muted-foreground mt-0.5">{page.subtitle}</p>
+          <p className="text-sm font-semibold text-muted-foreground mt-1">{page.subtitle}</p>
         )}
       </div>
 
