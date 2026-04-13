@@ -121,8 +121,8 @@ export function Team() {
             <div className="flex items-center justify-end gap-2">
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="rounded-xl h-9 text-sm font-semibold gap-2">
-                            <UserPlus className="h-3.5 w-3.5" /> Invitar Miembro
+                        <Button className="rounded-xl h-11 px-6 text-sm font-black uppercase tracking-wider gap-2 shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
+                            <UserPlus className="h-4 w-4" /> Invitar Miembro
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
@@ -216,18 +216,19 @@ export function Team() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredTeam.length > 0 ? (
                     filteredTeam.map((member) => (
-                        <Card key={member.id} className="rounded-2xl border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 group">
+                        <Card key={member.id} className="rounded-3xl border-border/50 bg-card overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.05)] transition-all duration-500 group">
                             <CardContent className="p-0">
-                                <div className="h-16 bg-[hsl(var(--primary)/0.08)] w-full relative border-b border-border/40">
-                                    <div className="absolute -bottom-6 left-6">
-                                        <div className="h-16 w-16 rounded-xl bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] flex items-center justify-center text-2xl font-bold border-4 border-card shadow-sm">
+                                <div className="h-24 bg-foreground w-full relative overflow-hidden">
+                                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[hsl(var(--primary))] to-transparent"></div>
+                                    <div className="absolute -bottom-8 left-6">
+                                        <div className="h-20 w-20 rounded-2xl bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center text-3xl font-black border-4 border-card shadow-xl group-hover:scale-105 transition-transform duration-300">
                                             {member.avatar}
                                         </div>
                                     </div>
                                     <div className="absolute top-4 right-4 flex gap-1">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full bg-card/50 backdrop-blur-md hover:bg-card">
+                                                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 hover:text-white backdrop-blur-md transition-all">
                                                     <MoreVertical className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
@@ -255,17 +256,17 @@ export function Team() {
                                     </div>
                                 </div>
 
-                                <div className="pt-8 px-6 pb-6 space-y-5">
-                                    <div className="flex justify-between items-start">
+                                <div className="pt-12 px-6 pb-6 space-y-6">
+                                    <div className="flex justify-between items-start mt-2">
                                         <div>
-                                            <h3 className="font-black text-xl text-foreground tracking-tight">{member.name}</h3>
-                                            <p className="text-xs font-black text-primary uppercase tracking-widest mt-0.5">
-                                                {roleLabels[member.role] || member.role} {member.is_super_admin && "(Súper)"}
+                                            <h3 className="font-black text-2xl text-foreground tracking-tight group-hover:text-primary transition-colors">{member.name}</h3>
+                                            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mt-1">
+                                                {roleLabels[member.role] || member.role} <span className="text-primary">{member.is_super_admin && "★"}</span>
                                             </p>
                                         </div>
-                                        <div className="flex items-center gap-1.5 bg-accent/50 px-2 py-1 rounded-lg border border-border">
-                                            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                                            <span className="text-sm font-bold text-foreground">{member.rating}</span>
+                                        <div className="flex items-center gap-1.5 bg-[hsl(var(--primary)/0.1)] px-2.5 py-1 rounded-xl border border-[hsl(var(--primary)/0.2)]">
+                                            <Star className="h-4 w-4 text-[hsl(var(--primary))] fill-[hsl(var(--primary))]" />
+                                            <span className="text-sm font-black text-foreground">{member.rating}</span>
                                         </div>
                                     </div>
 
@@ -290,12 +291,12 @@ export function Team() {
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-2 pt-3 border-t border-border/50">
-                                        <Button variant="outline" size="sm" className="flex-1 rounded-xl h-9 text-xs font-bold border-border hover:bg-accent transition-all">
+                                    <div className="flex gap-3 pt-4 border-t border-border/50">
+                                        <Button variant="outline" size="sm" className="flex-1 rounded-xl h-10 text-xs font-black uppercase tracking-wider border-border hover:bg-accent hover:text-foreground transition-all">
                                             Ver Perfil
                                         </Button>
-                                        <Button variant="secondary" size="sm" className="flex-1 rounded-xl h-9 text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-all">
-                                            Asignar Proyecto
+                                        <Button size="sm" className="flex-1 rounded-xl h-10 text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:scale-[1.02]">
+                                            Asignar Proy.
                                         </Button>
                                     </div>
                                 </div>
