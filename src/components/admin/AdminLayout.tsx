@@ -158,8 +158,8 @@ export function AdminLayout() {
   const [theme, setTheme] = useState<"light" | "dark" | "gray">(() => {
     try {
       const stored = localStorage.getItem("admin-theme");
-      return stored ? JSON.parse(stored) : "dark";
-    } catch { return "dark"; }
+      return stored ? JSON.parse(stored) : "light";
+    } catch { return "light"; }
   });
   const { isCollaborator, teamMember } = useAdminAuth();
   const location = useLocation();

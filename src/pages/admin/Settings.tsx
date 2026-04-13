@@ -113,7 +113,7 @@ export function Settings() {
     };
 
     // ── theme (persisted to localStorage + event) ─────────────────────────────
-    const [theme, setThemeState] = useState<string>(() => readLS(LS_THEME, "dark"));
+    const [theme, setThemeState] = useState<string>(() => readLS(LS_THEME, "light"));
 
     const applyTheme = (val: string) => {
         setThemeState(val);
