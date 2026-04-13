@@ -4,6 +4,7 @@ import { Sidebar } from "./Sidebar";
 import { Search, Bell, CheckCheck } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { supabase } from "@/supabaseClient";
+import { CommandPalette } from "./CommandPalette";
 
 interface NotifItem {
   id: string;
@@ -91,8 +92,10 @@ function PageHeader({ path, teamMember }: { path: string; teamMember: any }) {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="search"
-            placeholder="Buscar..."
-            className="h-9 w-52 rounded-full border border-border bg-card pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary)/0.4)] focus:border-[hsl(var(--primary)/0.5)] transition-all"
+            placeholder="Buscar... (Cmd+K)"
+            readOnly
+            onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}))}
+            className="h-9 w-52 rounded-full border border-border/50 bg-card/40 backdrop-blur-md pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 shadow-inner cursor-pointer hover:bg-accent/40 transition-all focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary)/0.4)]"
           />
         </div>
 
@@ -185,11 +188,18 @@ export function AdminLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[256px_1fr]">
+    <div className="min-h-screen bg-background text-foreground font-sans relative overflow-hidden">
+      {/* Dynamic Background */}
+      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[hsl(var(--primary)/0.03)] to-transparent pointer-events-none -z-10" />
+      <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] rounded-full bg-[hsl(var(--primary)/0.08)] blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-[20%] right-[-5%] w-[35%] h-[35%] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none -z-10" />
+
+      <CommandPalette />
+
+      <div className="flex min-h-screen">
         <Sidebar theme={theme} setTheme={setTheme} />
 
-        <main className="bg-background px-5 py-6 md:px-8 lg:px-10 transition-colors duration-200 flex flex-col min-w-0">
+        <main className="flex-1 bg-transparent px-5 py-6 md:px-8 lg:px-10 transition-colors duration-200 flex flex-col min-w-0 z-10">
           <PageHeader path={location.pathname} teamMember={teamMember} />
 
           <div className="flex-1 min-w-0">

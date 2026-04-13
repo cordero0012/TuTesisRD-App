@@ -12,7 +12,10 @@ import {
     ExternalLink,
     RefreshCw,
     Loader,
+    Columns,
+    LayoutGrid,
 } from "lucide-react";
+import { KanbanBoard } from "@/components/admin/KanbanBoard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -69,6 +72,7 @@ export function Projects() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("Todos");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [viewMode, setViewMode] = useState<"kanban" | "grid">("kanban");
     const [newProject, setNewProject] = useState({ title: "", client: "", type: "Tesis", due_date: "" });
 
     const loadProjects = useCallback(async () => {
@@ -153,6 +157,40 @@ export function Projects() {
         }
     };
 
+    const handleDragEnd = async (result: any) => {
+        if (!result.destination) return;
+        
+        const sourceStatus = result.source.droppableId;
+        const destStatus = result.destination.droppableId;
+        const projectId = result.draggableId;
+        
+        if (sourceStatus === destStatus) return;
+        
+        // Optimistic update
+        setProjects(prev => prev.map(p => p.id === projectId ? {
+            ...p,
+            status: destStatus,
+            progress_percent: destStatus === "completed" ? 100 : p.progress_percent
+        } : p));
+        
+        // Server update
+        try {
+            await updateProjectStatus(projectId, destStatus);
+        } catch (err: any) {
+            // Revert on error
+            loadProjects();
+            alert(`Error al mover proyecto: ${err.message}`);
+        }
+    };
+
+    const kanbanColumns = useMemo(() => [
+        { id: 'pending', title: 'Pendientes', projects: filteredProjects.filter(p => p.status === 'pending') },
+        { id: 'assigned', title: 'Asignados', projects: filteredProjects.filter(p => p.status === 'assigned') },
+        { id: 'in_progress', title: 'En Curso', projects: filteredProjects.filter(p => p.status === 'in_progress') },
+        { id: 'review', title: 'Revisión', projects: filteredProjects.filter(p => p.status === 'review') },
+        { id: 'completed', title: 'Completados', projects: filteredProjects.filter(p => p.status === 'completed') }
+    ], [filteredProjects]);
+
     return (
         <div className="space-y-6">
             {/* Header actions */}
@@ -222,32 +260,53 @@ export function Projects() {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-                <div className="relative flex-1">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card/30 p-2 rounded-2xl backdrop-blur-sm border border-border/40">
+                <div className="relative w-full md:w-96">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         placeholder="Buscar por nombre, cliente o código..."
-                        className="pl-10 rounded-2xl h-11 bg-card shadow-sm border-border"
+                        className="pl-10 rounded-xl h-10 w-full bg-background/50 border-border/50 focus:border-primary/50 transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="rounded-2xl h-11 px-6 border-border hover:bg-accent hover:text-accent-foreground font-semibold gap-2 transition-all">
-                            <Filter className="h-4 w-4" /> {statusFilter === "Todos" ? "Filtros" : statusFilter}
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-background/50 rounded-xl border border-border/50 p-1">
+                        <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className={`h-8 w-8 rounded-lg ${viewMode === 'kanban' ? 'bg-primary/20 text-primary shadow-sm' : 'text-muted-foreground'}`}
+                            onClick={() => setViewMode("kanban")}
+                        >
+                            <Columns className="h-4 w-4" />
                         </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 rounded-2xl shadow-xl">
-                        <DropdownMenuLabel>Estado del Proyecto</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => setStatusFilter("Todos")} className="cursor-pointer">Todos los estados</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatusFilter("En curso")} className="cursor-pointer">En curso</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatusFilter("Revisión")} className="cursor-pointer">En revisión</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatusFilter("Pendiente")} className="cursor-pointer">Pendientes</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatusFilter("Entregado")} className="cursor-pointer">Entregados</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                        <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className={`h-8 w-8 rounded-lg ${viewMode === 'grid' ? 'bg-primary/20 text-primary shadow-sm' : 'text-muted-foreground'}`}
+                            onClick={() => setViewMode("grid")}
+                        >
+                            <LayoutGrid className="h-4 w-4" />
+                        </Button>
+                    </div>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="rounded-xl h-10 px-4 border-border/50 bg-background/60 hover:bg-accent font-semibold gap-2 transition-all">
+                                <Filter className="h-4 w-4" /> {statusFilter === "Todos" ? "Filtros" : statusFilter}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 rounded-2xl shadow-xl">
+                            <DropdownMenuLabel>Estado del Proyecto</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => setStatusFilter("Todos")} className="cursor-pointer">Todos los estados</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setStatusFilter("En curso")} className="cursor-pointer">En curso</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setStatusFilter("Revisión")} className="cursor-pointer">En revisión</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setStatusFilter("Pendiente")} className="cursor-pointer">Pendientes</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setStatusFilter("Entregado")} className="cursor-pointer">Entregados</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
 
             {/* Project Grid */}
@@ -262,6 +321,12 @@ export function Projects() {
                     <p className="text-destructive font-semibold">{error}</p>
                     <Button onClick={loadProjects} variant="outline" className="rounded-2xl">Reintentar</Button>
                 </div>
+            ) : viewMode === "kanban" ? (
+                <KanbanBoard 
+                    columns={kanbanColumns} 
+                    onDragEnd={handleDragEnd} 
+                    onProjectClick={(id) => console.log('Abrir detalle proyecto', id)} 
+                />
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredProjects.length > 0 ? (
@@ -275,9 +340,9 @@ export function Projects() {
                                 : project.status === "pending" ? "bg-slate-500"
                                 : "bg-primary";
                             return (
-                                <Card key={project.id} className="rounded-2xl border-border bg-card hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden">
+                                <Card key={project.id} className="rounded-2xl border-border/50 bg-card/60 backdrop-blur-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden">
                                     <div className={`h-1.5 w-full ${barColor}`} />
-                                    <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0">
+                                    <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0 relative z-10">
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
@@ -291,7 +356,7 @@ export function Projects() {
                                         </div>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost" className="rounded-full h-8 w-8 hover:bg-accent">
+                                                <Button size="icon" variant="ghost" className="rounded-full h-8 w-8 hover:bg-accent ring-1 ring-border/20 shadow-sm bg-card/80 backdrop-blur-md">
                                                     <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
@@ -311,11 +376,11 @@ export function Projects() {
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </CardHeader>
-                                    <CardContent className="pt-4">
+                                    <CardContent className="pt-4 relative z-10">
                                         <div className="space-y-5">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold border border-border">
+                                                    <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold border border-border/50">
                                                         {clientName.charAt(0)}
                                                     </div>
                                                     <div>
@@ -337,7 +402,7 @@ export function Projects() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="pt-4 flex items-center justify-between border-t border-border/60">
+                                            <div className="pt-4 flex items-center justify-between border-t border-border/40">
                                                 <div className="flex items-center gap-2 text-xs font-bold text-foreground/80">
                                                     <Clock className="h-4 w-4 text-primary" />
                                                     <span>Entrega: <span className="text-foreground font-black">
@@ -347,28 +412,31 @@ export function Projects() {
                                                 <Button
                                                     variant="secondary"
                                                     size="sm"
-                                                    className="h-8 rounded-xl text-xs font-bold bg-accent/50 hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-all gap-1.5"
+                                                    className="h-8 rounded-xl text-xs font-bold bg-accent/30 hover:bg-primary/20 hover:text-primary transition-all gap-1.5"
                                                 >
                                                     Ver detalles <ExternalLink className="h-3 w-3" />
                                                 </Button>
                                             </div>
                                         </div>
                                     </CardContent>
+                                    
+                                    {/* Subdued ambient glow for card (Glassmorphism highlight) */}
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
                                 </Card>
                             );
                         })
                     ) : (
-                        <div className="col-span-full py-20 text-center space-y-4">
-                            <div className="mx-auto h-20 w-20 rounded-full bg-accent/50 flex items-center justify-center">
-                                <Search className="h-10 w-10 text-muted-foreground opacity-20" />
+                        <div className="col-span-full py-20 text-center space-y-4 bg-card/30 backdrop-blur-sm rounded-3xl border border-border/40">
+                            <div className="mx-auto h-20 w-20 rounded-full bg-background flex items-center justify-center shadow-inner border border-border/50">
+                                <Search className="h-10 w-10 text-muted-foreground opacity-40" />
                             </div>
                             <h3 className="text-xl font-bold">No se encontraron proyectos</h3>
                             <p className="text-muted-foreground text-sm max-w-md mx-auto">
                                 Intenta ajustar los términos de búsqueda o los filtros para encontrar lo que buscas.
                             </p>
                             <Button
-                                variant="link"
-                                className="text-primary font-bold"
+                                variant="outline"
+                                className="font-bold rounded-xl border-border/50 bg-background/50 hover:bg-accent"
                                 onClick={() => { setSearchTerm(""); setStatusFilter("Todos"); }}
                             >
                                 Limpiar todos los filtros

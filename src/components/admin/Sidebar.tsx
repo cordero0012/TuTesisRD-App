@@ -114,7 +114,7 @@ export function Sidebar({
   const userName = teamMember?.name || "Administrador";
 
   return (
-    <aside className="flex h-screen flex-col sticky top-0 border-r border-border bg-[hsl(var(--sidebar,var(--card)))]">
+    <aside className="w-[256px] shrink-0 h-[100dvh] sticky top-0 border-r border-border/40 bg-card/60 backdrop-blur-2xl transition-all duration-300 z-20 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)] dark:shadow-[4px_0_24px_-12px_rgba(0,0,0,0.5)] flex flex-col hidden lg:flex">
       {/* Logo */}
       <div className="px-5 pt-6 pb-5 border-b border-border/60">
         <Link to="/" className="block">
