@@ -40,10 +40,10 @@ export function KanbanBoard({ columns, onDragEnd, onProjectClick }: KanbanBoardP
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex gap-4 h-[calc(100vh-220px)] w-full overflow-x-auto pb-4 scrollbar-thin">
         {columns.map((col) => (
-          <div key={col.id} className="flex-shrink-0 w-[320px] flex flex-col bg-card/40 backdrop-blur-md rounded-2xl border border-border/50">
-            <div className="p-4 flex items-center justify-between border-b border-border/50">
-              <h3 className="font-bold text-sm tracking-tight">{col.title}</h3>
-              <span className="text-xs font-semibold bg-accent/60 px-2 py-0.5 rounded-full text-muted-foreground">
+          <div key={col.id} className="flex-shrink-0 w-[320px] flex flex-col bg-muted/40 backdrop-blur-xl rounded-2xl border border-border/80">
+            <div className="p-4 flex items-center justify-between border-b border-border/80">
+              <h3 className="font-extrabold text-sm tracking-tight text-foreground">{col.title}</h3>
+              <span className="text-xs font-bold bg-background shadow-sm px-2.5 py-0.5 rounded-full text-foreground/80 border border-border/50">
                 {col.projects.length}
               </span>
             </div>
@@ -70,7 +70,7 @@ export function KanbanBoard({ columns, onDragEnd, onProjectClick }: KanbanBoardP
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               style={{ ...provided.draggableProps.style }}
-                              className={`group relative bg-card rounded-xl border border-border/50 p-4 transition-all hover:shadow-lg hover:border-primary/30 cursor-grab active:cursor-grabbing ${
+                              className={`group relative bg-card rounded-xl border border-border/80 p-4 transition-all hover:shadow-lg hover:border-primary/50 cursor-grab active:cursor-grabbing ${
                                 snapshot.isDragging ? 'shadow-2xl rotate-2 ring-2 ring-primary scale-105 z-50' : 'shadow-sm'
                               }`}
                               onClick={() => onProjectClick(project.id)}
@@ -79,10 +79,10 @@ export function KanbanBoard({ columns, onDragEnd, onProjectClick }: KanbanBoardP
                               
                               <div className="flex justify-between items-start mb-3">
                                 <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground block mb-1">
                                         {project.tracking_code}
                                     </span>
-                                    <h4 className="font-bold text-sm leading-snug line-clamp-2">
+                                    <h4 className="font-extrabold text-sm leading-snug line-clamp-2 text-foreground">
                                         {project.title || 'Proyecto sin título'}
                                     </h4>
                                 </div>
@@ -92,10 +92,10 @@ export function KanbanBoard({ columns, onDragEnd, onProjectClick }: KanbanBoardP
                               </div>
 
                               <div className="flex items-center gap-2 mb-4">
-                                <div className="h-6 w-6 rounded-full bg-accent flex items-center justify-center text-[10px] font-bold">
+                                <div className="h-6 w-6 rounded-full bg-accent flex items-center justify-center text-[10px] font-extrabold text-foreground border border-border/60">
                                     {clientName.charAt(0)}
                                 </div>
-                                <span className="text-xs font-semibold text-muted-foreground truncate">
+                                <span className="text-xs font-bold text-foreground/80 truncate">
                                     {clientName}
                                 </span>
                               </div>

@@ -95,7 +95,7 @@ function PageHeader({ path, teamMember }: { path: string; teamMember: any }) {
             placeholder="Buscar... (Cmd+K)"
             readOnly
             onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}))}
-            className="h-9 w-52 rounded-full border border-border/50 bg-card/40 backdrop-blur-md pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 shadow-inner cursor-pointer hover:bg-accent/40 transition-all focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary)/0.4)]"
+            className="h-9 w-52 rounded-full border border-border bg-background pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-sm cursor-pointer hover:bg-accent/50 transition-all focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary)/0.5)]"
           />
         </div>
 
@@ -189,10 +189,10 @@ export function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans relative overflow-hidden">
-      {/* Dynamic Background */}
-      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[hsl(var(--primary)/0.03)] to-transparent pointer-events-none -z-10" />
-      <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] rounded-full bg-[hsl(var(--primary)/0.08)] blur-[120px] pointer-events-none -z-10" />
-      <div className="absolute top-[20%] right-[-5%] w-[35%] h-[35%] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none -z-10" />
+      {/* Dynamic Background - Opacity reduced for better accessibility and text contrast */}
+      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[hsl(var(--primary)/0.02)] to-transparent pointer-events-none -z-10" />
+      <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] rounded-full bg-[hsl(var(--primary)/0.04)] blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-[20%] right-[-5%] w-[35%] h-[35%] rounded-full bg-blue-500/3 blur-[120px] pointer-events-none -z-10" />
 
       <CommandPalette />
 

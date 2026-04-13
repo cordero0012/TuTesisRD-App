@@ -260,18 +260,18 @@ export function Projects() {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card/30 p-2 rounded-2xl backdrop-blur-sm border border-border/40">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card p-3 rounded-2xl shadow-sm border border-border/80">
                 <div className="relative w-full md:w-96">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/80" />
                     <Input
                         placeholder="Buscar por nombre, cliente o código..."
-                        className="pl-10 rounded-xl h-10 w-full bg-background/50 border-border/50 focus:border-primary/50 transition-all"
+                        className="pl-10 rounded-xl h-10 w-full bg-background border-border/80 focus:border-primary/80 transition-all font-semibold text-foreground placeholder:font-normal"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center bg-background/50 rounded-xl border border-border/50 p-1">
+                    <div className="flex items-center bg-background rounded-xl border border-border/80 p-1">
                         <Button 
                             variant="ghost" 
                             size="icon"
@@ -292,7 +292,7 @@ export function Projects() {
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="rounded-xl h-10 px-4 border-border/50 bg-background/60 hover:bg-accent font-semibold gap-2 transition-all">
+                            <Button variant="outline" className="rounded-xl h-10 px-4 border-border/80 bg-background hover:bg-accent font-bold gap-2 transition-all">
                                 <Filter className="h-4 w-4" /> {statusFilter === "Todos" ? "Filtros" : statusFilter}
                             </Button>
                         </DropdownMenuTrigger>
@@ -340,7 +340,7 @@ export function Projects() {
                                 : project.status === "pending" ? "bg-slate-500"
                                 : "bg-primary";
                             return (
-                                <Card key={project.id} className="rounded-2xl border-border/50 bg-card/60 backdrop-blur-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden">
+                                <Card key={project.id} className="rounded-2xl border-border/80 bg-card hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden shadow-sm">
                                     <div className={`h-1.5 w-full ${barColor}`} />
                                     <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0 relative z-10">
                                         <div className="space-y-1">
@@ -426,9 +426,9 @@ export function Projects() {
                             );
                         })
                     ) : (
-                        <div className="col-span-full py-20 text-center space-y-4 bg-card/30 backdrop-blur-sm rounded-3xl border border-border/40">
-                            <div className="mx-auto h-20 w-20 rounded-full bg-background flex items-center justify-center shadow-inner border border-border/50">
-                                <Search className="h-10 w-10 text-muted-foreground opacity-40" />
+                        <div className="col-span-full py-20 text-center space-y-4 bg-card rounded-3xl border border-border/80 shadow-sm">
+                            <div className="mx-auto h-20 w-20 rounded-full bg-background flex items-center justify-center shadow-inner border border-border/80">
+                                <Search className="h-10 w-10 text-muted-foreground opacity-60" />
                             </div>
                             <h3 className="text-xl font-bold">No se encontraron proyectos</h3>
                             <p className="text-muted-foreground text-sm max-w-md mx-auto">
