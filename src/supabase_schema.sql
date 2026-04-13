@@ -43,5 +43,8 @@ create policy "Enable insert for all users" on public.projects
   for insert with check (true);
 
 -- Allow public read access (for monitoring by code)
+create policy "Enable read access for all users" on public.students
+  for select using (true);
+
 create policy "Enable read access for all users" on public.projects
   for select using (true);
