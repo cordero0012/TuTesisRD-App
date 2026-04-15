@@ -2,6 +2,24 @@
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
 
+// Fuentes que se consideran tráfico interno/testing.
+// El tráfico marcado con traffic_type='internal' es excluido por el
+// Data Filter de Internal Traffic en GA4 Admin (debe estar ACTIVE).
+const INTERNAL_REFERRERS = [
+    'tagassistant.google.com', // sesiones de debug con GTM/GA Tag Assistant
+    'vercel.com',              // accesos desde el dashboard de Vercel a producción
+];
+
+/**
+ * Detecta si la sesión viene de una fuente de testing interna.
+ * Se evalúa en tiempo de ejecución en el navegador, no en build.
+ */
+const isInternalTraffic = (): boolean => {
+    if (typeof document === 'undefined') return false;
+    const ref = document.referrer || '';
+    return INTERNAL_REFERRERS.some(r => ref.includes(r));
+};
+
 declare global {
     interface Window {
         gtag: (...args: any[]) => void;
@@ -22,11 +40,17 @@ export const initGA = () => {
 
         const inlineScript = document.createElement('script');
         inlineScript.innerHTML = `
-       window.dataLayer = window.dataLayer || [];
-       function gtag(){dataLayer.push(arguments);}
-       gtag('js', new Date());
-       gtag('config', '${GA_MEASUREMENT_ID}');
-     `;
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            (function() {
+                var ref = document.referrer || '';
+                var internalSources = ['tagassistant.google.com', 'vercel.com'];
+                var isInternal = internalSources.some(function(r) { return ref.indexOf(r) > -1; });
+                var config = isInternal ? { traffic_type: 'internal' } : {};
+                gtag('config', '${GA_MEASUREMENT_ID}', config);
+            })();
+        `;
         document.head.appendChild(inlineScript);
     }
 
@@ -52,21 +76,27 @@ export const initGA = () => {
 
 // Log Page View
 export const logPageView = (url: string) => {
+    const internal = isInternalTraffic();
+
     if (typeof window.gtag !== 'undefined' && GA_MEASUREMENT_ID) {
-        window.gtag('config', GA_MEASUREMENT_ID, {
-            page_path: url,
-        });
+        // Mantener traffic_type='internal' en cada navegación SPA para que
+        // el Data Filter de GA4 siga excluyendo la sesión correctamente.
+        const config: Record<string, unknown> = { page_path: url };
+        if (internal) config.traffic_type = 'internal';
+        window.gtag('config', GA_MEASUREMENT_ID, config);
     }
 
-    // Meta Pixel PageView is handled by react-router usually, but we can force track if needed
-    // However, the base code tracks the initial load. For SPA, we might need to track again.
-    if (typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
+    if (!internal && typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
         window.fbq('track', 'PageView');
     }
 };
 
 // Log Event
 export const logEvent = (action: string, category: string, label: string, value?: number) => {
+    // No disparar eventos de conversión desde sesiones de testing interno.
+    // Segunda línea de defensa además del traffic_type en el config.
+    if (isInternalTraffic()) return;
+
     // GA4 Tracking
     if (typeof window.gtag !== 'undefined' && GA_MEASUREMENT_ID) {
         window.gtag('event', action, {
