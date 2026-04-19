@@ -61,17 +61,36 @@ export async function analyzeConsistencyStrict(
     const { SemanticChunker } = await import('../ai/chunkingService');
     const chunks = SemanticChunker.chunkBySections(cleanText);
 
-    // Prioritize sections for Forensic Analysis
-    const prioritySections = ['INTRODUCCI', 'PROBLEMA', 'METODOLOG', 'RESULTADOS', 'CONCLUSIONES', 'DISCUSI', 'OBJETIVO'];
+    // Prioritize sections for Forensic Analysis (including References for Citations Validation)
+    const prioritySections = [
+        'INTRODUCCI', 
+        'PROBLEMA', 
+        'METODOLOG', 
+        'RESULTADOS', 
+        'CONCLUSIONES', 
+        'DISCUSI', 
+        'OBJETIVO',
+        'REFERENCIA',
+        'BIBLIOGRAF'
+    ];
     const relevantChunks = chunks.filter(c => prioritySections.some(p => c.sectionType.toUpperCase().includes(p)));
 
-    // Ensure we don't send too much
-    const textToProcess = relevantChunks.length > 0
-        ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, 20000)}`).join('\n\n')
-        : cleanText.substring(0, 60000);
+    // Deep Analysis Context Constants
+    const MAX_SECTION_CHARS = 50000; // Increased from 20k to capture full bibliography and context
+    const MAX_TOTAL_CHARS = 300000;   // Massive expansion from 60k to ~50-80 pages of text
+
+    // Ensure we capture as much relevant content as possible
+    let textToProcess = relevantChunks.length > 0
+        ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, MAX_SECTION_CHARS)}`).join('\n\n')
+        : cleanText;
+
+    if (textToProcess.length > MAX_TOTAL_CHARS) {
+        console.log(`[StrictAnalyzer] Truncating text to ${MAX_TOTAL_CHARS} characters.`);
+        textToProcess = textToProcess.substring(0, MAX_TOTAL_CHARS);
+    }
 
     // TELEMETRY: Chunk Verification
-    console.log(`[StrictAnalyzer] Processing text. Total Length: ${textToProcess.length}, Chunks Used: ${relevantChunks.length > 0 ? relevantChunks.length : 'Full Text'}`);
+    console.log(`[StrictAnalyzer] Deep Analysis Mode. Total Length: ${textToProcess.length}, Chunks Priority: ${relevantChunks.length > 0 ? 'Enabled' : 'Full Text fallback'}`);
     if (textToProcess.length < 500) {
         console.warn("[StrictAnalyzer] WARNING: Input text is dangerously short (<500 chars). Analysis may fail.");
     }
