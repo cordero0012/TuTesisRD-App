@@ -90,6 +90,7 @@ FORMATO DE SALIDA (JSON ESTRICTO):
   "methodologicalAnalysis": {
     "approachCoherent": boolean,
     "designAdequate": boolean,
+    "techniquesAppropriate": boolean,
     "resultsDeriveFromMethod": boolean,
     "conclusionsSupportedByResults": boolean,
     "criticalAlerts": string[],
@@ -104,14 +105,18 @@ FORMATO DE SALIDA (JSON ESTRICTO):
 
   "normativeCompliance": { 
      "apa7Score": 0-100, 
-     "academicWritingScore": 0-100,
-     "terminologyConsistencyScore": 0-100
+     "academicWritingScore": 0-100, 
+     "terminologyConsistencyScore": 0-100,
+     "orthographicErrors": string[],
+     "grammaticalErrors": string[],
+     "styleIssues": string[]
   },
 
   "globalDiagnosis": { 
     "level": "Excelente/Aceptable/Débil/Crítico", 
     "mainRisks": string[], 
     "internalConsistencyDegree": number, 
+    "publishabilityLevel": number (0-100),
     "auditSummary": string
   },
 

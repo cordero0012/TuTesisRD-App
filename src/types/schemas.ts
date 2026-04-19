@@ -74,7 +74,7 @@ export const SectionEvaluationSchema = z.object({
 export const MethodologicalAnalysisSchema = z.object({
     approachCoherent: z.boolean(),
     designAdequate: z.boolean(),
-    techniquesAppropriate: z.boolean(),
+    techniquesAppropriate: z.boolean().optional().default(true),
     resultsDeriveFromMethod: z.boolean(),
     conclusionsSupportedByResults: z.boolean(),
     criticalAlerts: z.array(z.string()),
@@ -85,16 +85,16 @@ export const NormativeComplianceSchema = z.object({
     apa7Score: z.number(),
     academicWritingScore: z.number(),
     terminologyConsistencyScore: z.number(),
-    orthographicErrors: z.array(z.string()),
-    grammaticalErrors: z.array(z.string()),
-    styleIssues: z.array(z.string()),
+    orthographicErrors: z.array(z.string()).optional().default([]),
+    grammaticalErrors: z.array(z.string()).optional().default([]),
+    styleIssues: z.array(z.string()).optional().default([]),
 });
 
 export const GlobalDiagnosisSchema = z.object({
     level: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']).or(z.string()),
     mainRisks: z.array(z.string()),
     internalConsistencyDegree: z.number(),
-    publishabilityLevel: z.number(),
+    publishabilityLevel: z.number().optional().default(0),
     auditSummary: z.string().optional(), // Added to fix UI error
     summary: z.string().optional(), // Backward compatibility
     score: z.number().optional()    // Backward compatibility
