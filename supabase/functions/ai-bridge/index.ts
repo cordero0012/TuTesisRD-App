@@ -59,6 +59,8 @@ Deno.serve(async (req: Request) => {
         const systemText = body.systemInstruction || body.system || "";
         const temperature = body.temperature ?? 0.1;
         const requestedModel = body.model;
+        const maxOutputTokens = Number(body.maxOutputTokens) > 0 ? Number(body.maxOutputTokens) : 16384;
+        const jsonMode = body.jsonMode === true;
 
         if (!userText || (typeof userText !== 'string' && !Array.isArray(userText))) {
             return new Response(JSON.stringify({ error: 'Missing or invalid prompt text' }), {
@@ -93,14 +95,20 @@ Deno.serve(async (req: Request) => {
                     ? `[SYSTEM_INSTRUCTION]\n${systemText}\n[END_SYSTEM_INSTRUCTION]\n\n${finalPrompt}`
                     : finalPrompt;
 
+                const generationConfig: Record<string, unknown> = {
+                    temperature: temperature,
+                    maxOutputTokens: maxOutputTokens,
+                };
+                if (jsonMode) {
+                    generationConfig.responseMimeType = "application/json";
+                }
+
                 const payload = {
                     contents: [{
                         role: "user",
                         parts: [{ text: combinedPrompt }]
                     }],
-                    generationConfig: {
-                        temperature: temperature,
-                    }
+                    generationConfig
                 };
 
                 const response = await fetch(url, {

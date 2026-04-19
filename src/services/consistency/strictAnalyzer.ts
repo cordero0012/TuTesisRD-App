@@ -57,40 +57,35 @@ export async function analyzeConsistencyStrict(
         .replace(/\s+/g, ' ') // Normalize whitespace
         .trim();
 
-    // Import Chunker dynamically to avoid circular dependencies if any
-    const { SemanticChunker } = await import('../ai/chunkingService');
-    const chunks = SemanticChunker.chunkBySections(cleanText);
+    // Deep Analysis Context: Gemini 3 Flash handles ~1M tokens (~3.5M chars).
+    // Configurable vía VITE_CONSISTENCY_MAX_CHARS. Default 500k = ~120 páginas.
+    const MAX_TOTAL_CHARS = CONFIG.CONSISTENCY_MAX_CHARS;
+    const REFERENCES_TAIL_CHARS = Math.min(80000, Math.floor(MAX_TOTAL_CHARS * 0.16)); // ~16% presupuesto a referencias
 
-    // Prioritize sections for Forensic Analysis (including References for Citations Validation)
-    const prioritySections = [
-        'INTRODUCCI', 
-        'PROBLEMA', 
-        'METODOLOG', 
-        'RESULTADOS', 
-        'CONCLUSIONES', 
-        'DISCUSI', 
-        'OBJETIVO',
-        'REFERENCIA',
-        'BIBLIOGRAF'
-    ];
-    const relevantChunks = chunks.filter(c => prioritySections.some(p => c.sectionType.toUpperCase().includes(p)));
+    // Detect references block explicitly (regex over clean text, case-insensitive).
+    // Si el documento tiene "Referencias", "Bibliografía" o "References", capturamos desde ese punto.
+    const refsRegex = /\n\s*(referencias?\s*(bibliogr[áa]ficas?)?|bibliograf[íi]a|references)\s*\n/i;
+    const refsMatch = cleanText.match(refsRegex);
+    const refsIndex = refsMatch ? cleanText.indexOf(refsMatch[0]) : -1;
 
-    // Deep Analysis Context Constants
-    const MAX_SECTION_CHARS = 50000; // Increased from 20k to capture full bibliography and context
-    const MAX_TOTAL_CHARS = 300000;   // Massive expansion from 60k to ~50-80 pages of text
+    const bodyText = refsIndex > 0 ? cleanText.substring(0, refsIndex) : cleanText;
+    const referencesText = refsIndex > 0
+        ? cleanText.substring(refsIndex)
+        : cleanText.substring(Math.max(0, cleanText.length - REFERENCES_TAIL_CHARS)); // fallback: últimas 80k
 
-    // Ensure we capture as much relevant content as possible
-    let textToProcess = relevantChunks.length > 0
-        ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, MAX_SECTION_CHARS)}`).join('\n\n')
-        : cleanText;
+    // Build final text: reservar presupuesto para referencias, resto al cuerpo.
+    const refsBudget = Math.min(referencesText.length, REFERENCES_TAIL_CHARS);
+    const bodyBudget = Math.max(0, MAX_TOTAL_CHARS - refsBudget - 200); // 200 chars para separadores
 
-    if (textToProcess.length > MAX_TOTAL_CHARS) {
-        console.log(`[StrictAnalyzer] Truncating text to ${MAX_TOTAL_CHARS} characters.`);
-        textToProcess = textToProcess.substring(0, MAX_TOTAL_CHARS);
-    }
+    const bodyTruncated = bodyText.length > bodyBudget
+        ? bodyText.substring(0, bodyBudget) + '\n\n[... cuerpo truncado ...]\n\n'
+        : bodyText;
+    const refsTruncated = referencesText.substring(0, refsBudget);
 
-    // TELEMETRY: Chunk Verification
-    console.log(`[StrictAnalyzer] Deep Analysis Mode. Total Length: ${textToProcess.length}, Chunks Priority: ${relevantChunks.length > 0 ? 'Enabled' : 'Full Text fallback'}`);
+    const textToProcess = `${bodyTruncated}\n\n[SECCIÓN: REFERENCIAS / BIBLIOGRAFÍA]\n${refsTruncated}`;
+
+    // TELEMETRY
+    console.log(`[StrictAnalyzer] Input chars: ${cleanText.length} | Body sent: ${bodyTruncated.length} | Refs sent: ${refsTruncated.length} | Refs detected: ${refsIndex > 0 ? 'YES' : 'NO (tail fallback)'}`);
     if (textToProcess.length < 500) {
         console.warn("[StrictAnalyzer] WARNING: Input text is dangerously short (<500 chars). Analysis may fail.");
     }
@@ -106,9 +101,11 @@ export async function analyzeConsistencyStrict(
     try {
         const result = await generateJSON<StrictAnalysisResult>({
             prompt: finalPrompt,
-            systemInstruction: "Eres un auditor académico estricto. Analiza el documento buscando inconsistencias fatales y fallos normativos.",
-            temperature: 0.1, // Very low temperature for strictness
-            model: CONFIG.CONSISTENCY_AI_MODEL // Use configured model
+            systemInstruction: "Eres un auditor académico estricto. Analiza el documento buscando inconsistencias fatales y fallos normativos. OUTPUT: JSON válido únicamente, sin prosa.",
+            temperature: CONFIG.CONSISTENCY_AI_TEMPERATURE,
+            model: CONFIG.CONSISTENCY_AI_MODEL,
+            jsonMode: true,
+            maxOutputTokens: CONFIG.CONSISTENCY_MAX_OUTPUT_TOKENS
         });
 
         // 4. Validate and Return

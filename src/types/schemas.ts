@@ -137,6 +137,36 @@ export const ActionableFeedbackSchema = z.object({
     example: z.string()
 });
 
+// APA 7 forensic extraction — inventarios y validación regla-por-regla
+export const CitationInventoryEntrySchema = z.object({
+    author: z.string(),
+    year: z.string(),
+    page: z.string().optional().default(''),
+    quoteType: z.string().optional().default('parenthetical'),
+    textExcerpt: z.string().optional().default('')
+});
+
+export const RuleValidationResultSchema = z.object({
+    ruleId: z.string(),
+    description: z.string().optional().default(''),
+    status: z.enum(['pass', 'fail', 'na']).or(z.string()).optional().default('na'),
+    failCount: z.number().optional().default(0),
+    examples: z.array(z.object({
+        page: z.string().optional().default(''),
+        excerpt: z.string().optional().default('')
+    })).optional().default([])
+});
+
+export const ApaComplianceScoreSchema = z.object({
+    citationsScore: z.number().optional().default(0),
+    referencesScore: z.number().optional().default(0),
+    formatScore: z.number().optional().default(0),
+    plagiarismScore: z.number().optional().default(0),
+    weightedFinalScore: z.number().optional().default(0),
+    classification: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']).or(z.string()).optional().default('Crítico'),
+    thresholdMet: z.boolean().optional().default(false)
+});
+
 export const MatrixAnalysisSchema = z.object({
     documentType: z.string().optional(),
     methodologicalApproach: z.string().optional(),
@@ -156,6 +186,12 @@ export const MatrixAnalysisSchema = z.object({
     sourceConsistencySubMatrix: SourceConsistencySubMatrixSchema.optional(),
     actionableFeedback: z.array(ActionableFeedbackSchema).optional(),
     normativeComplianceDetailed: z.any().optional(), // Simplify for now
+
+    // APA 7 Forensic Extensions (inventarios + checklist computable + scoring ponderado)
+    citationInventory: z.array(CitationInventoryEntrySchema).optional(),
+    referenceInventory: z.array(z.string()).optional(),
+    ruleValidationResults: z.array(RuleValidationResultSchema).optional(),
+    apaComplianceScore: ApaComplianceScoreSchema.optional(),
 
     rawAnalysis: z.string().optional(),
     analysisStatus: z.enum(['ok', 'partial', 'insufficient_input', 'model_noncompliant', 'error']).optional(),
