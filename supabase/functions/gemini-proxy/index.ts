@@ -5,8 +5,8 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// DEFINITIVE GEMINI 2.x MODELS - REMOVED 1.5 AT PROXY LEVEL
-const MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.0-pro'];
+// STABLE MODELS LIST
+const FALLBACK_MODELS = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
 
 serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -23,10 +23,10 @@ serve(async (req) => {
         }
 
         const body = await req.json();
-        // Fallback for prompt/user/contents
         const userText = body.prompt || body.user || body.contents;
         const systemText = body.systemInstruction || body.system || "";
         const temperature = body.temperature ?? 0.7;
+        const requestedModel = body.model;
 
         if (!userText || typeof userText !== 'string') {
             return new Response(JSON.stringify({ error: 'Missing or invalid prompt text' }), {
@@ -35,34 +35,30 @@ serve(async (req) => {
             })
         }
 
+        // Build priority list: Requested model first, then fallbacks
+        const modelsToTry = requestedModel 
+            ? [requestedModel, ...FALLBACK_MODELS.filter(m => m !== requestedModel)]
+            : FALLBACK_MODELS;
+
         let lastError = null;
         let lastStatus = 500;
 
-        // Always favor 2.0+ models now
-        const tryModels = MODELS;
-
-        for (const mName of tryModels) {
+        for (const mName of modelsToTry) {
             try {
+                console.log(`[Proxy] Attempting model: ${mName}`);
                 const url = `https://generativelanguage.googleapis.com/v1/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
 
-                // --- DEFINITIVE REST V1 PAYLOAD ---
-                // We inject system instruction as the first user turn to ensure 100% compatibility
-                // with endpoints that don't support the top-level systemInstruction field.
                 const combinedPrompt = systemText
-                    ? `[INSTRUCCIONES DE SISTEMA]\n${systemText}\n[FIN INSTRUCCIONES]\n\n${userText}`
+                    ? `[SYSTEM_INSTRUCTION]\n${systemText}\n[END_SYSTEM_INSTRUCTION]\n\n${userText}`
                     : userText;
 
                 const payload = {
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [{ text: combinedPrompt }]
-                        }
-                    ],
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: combinedPrompt }]
+                    }],
                     generationConfig: {
                         temperature: temperature,
-                        // Not sending responseMimeType if it's causing 400s; 
-                        // prompting for JSON is more reliable across unstable API versions.
                     }
                 };
 
@@ -72,25 +68,31 @@ serve(async (req) => {
                     body: JSON.stringify(payload)
                 });
 
+                const data = await response.json().catch(() => ({}));
+
                 if (response.ok) {
-                    const data = await response.json();
                     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    if (!text) {
+                        console.warn(`[Proxy] Empty response from ${mName}`);
+                        lastError = "Respuesta vacía de la IA";
+                        continue;
+                    }
                     return new Response(JSON.stringify({ text }), {
                         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                         status: 200,
                     });
                 }
 
-                const errBody = await response.json().catch(() => ({}));
-                console.error(`[Proxy] Upstream Error for ${mName}:`, JSON.stringify(errBody));
-
-                lastError = errBody.error?.message || response.statusText;
+                console.error(`[Proxy] Upstream Error for ${mName}:`, JSON.stringify(data));
+                lastError = data.error?.message || response.statusText;
                 lastStatus = response.status;
 
-                if (response.status === 404) continue;
-                break; // Stop on 400 or other fatal errors
+                // If quota or fatal error on a specific model, try next one
+                if ([404, 400, 429].includes(response.status)) continue;
+                break; 
 
             } catch (err: any) {
+                console.error(`[Proxy] Fetch error for ${mName}:`, err.message);
                 lastError = err.message;
             }
         }
@@ -99,7 +101,8 @@ serve(async (req) => {
             JSON.stringify({
                 error: lastError || 'No available Gemini model found.',
                 type: 'UPSTREAM_ERROR',
-                status: lastStatus
+                status: lastStatus,
+                details: "Consulte los logs de la función para más detalles."
             }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },

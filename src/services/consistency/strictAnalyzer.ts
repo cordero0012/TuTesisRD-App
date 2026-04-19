@@ -68,7 +68,7 @@ export async function analyzeConsistencyStrict(
     // Ensure we don't send too much
     const textToProcess = relevantChunks.length > 0
         ? relevantChunks.map(c => `[SECCIÓN: ${c.sectionType}]\n${c.content.substring(0, 20000)}`).join('\n\n')
-        : cleanText.substring(0, 100000);
+        : cleanText.substring(0, 60000);
 
     // TELEMETRY: Chunk Verification
     console.log(`[StrictAnalyzer] Processing text. Total Length: ${textToProcess.length}, Chunks Used: ${relevantChunks.length > 0 ? relevantChunks.length : 'Full Text'}`);

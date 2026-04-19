@@ -101,8 +101,19 @@ export const ConsistencyMatrix = () => {
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
-                    const pageText = textContent.items.map((item: any) => (item as any).str).join(' ');
-                    pages.push({ page: i, text: pageText });
+                    let lastY = -1;
+                    let pageText = "";
+
+                    // Improved text extraction with line break detection
+                    for (const item of (textContent.items as any[])) {
+                        if (lastY !== -1 && Math.abs(item.transform[5] - lastY) > 5) {
+                            pageText += "\n";
+                        }
+                        pageText += item.str;
+                        lastY = item.transform[5];
+                    }
+
+                    pages.push({ page: i, text: pageText.trim() });
                 }
 
                 content = pages;
