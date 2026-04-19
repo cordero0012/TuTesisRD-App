@@ -5,8 +5,14 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// STABLE MODELS LIST
-const FALLBACK_MODELS = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+// 2026 STABLE MODELS LIST (Including Gemini 3)
+const FALLBACK_MODELS = [
+    'gemini-3-flash-preview', 
+    'gemini-3-pro-preview',
+    'gemini-2.0-flash-exp',
+    'gemini-1.5-flash', 
+    'gemini-1.5-pro'
+];
 
 serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -87,7 +93,7 @@ serve(async (req) => {
                 lastError = data.error?.message || response.statusText;
                 lastStatus = response.status;
 
-                // If quota or fatal error on a specific model, try next one
+                // Handle specific model not found or quota issues
                 if ([404, 400, 429].includes(response.status)) continue;
                 break; 
 

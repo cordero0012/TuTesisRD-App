@@ -2,8 +2,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // GLOBAL MODEL CONSTANTS
-export const GEMINI_MODEL = "gemini-1.5-flash"; // Stable 1.5 (Better JSON handling)
-export const GEMINI_MODEL_PRO = "gemini-1.5-pro"; // High Performance 1.5
+export const GEMINI_MODEL = "gemini-3-flash-preview"; // Fast 3.0
+export const GEMINI_MODEL_PRO = "gemini-3-pro-preview"; // High Performance 3.0
 export const GROQ_MODEL = "llama-3.3-70b-versatile"; // 128k context
 export const GROQ_MODEL_FAST = "llama-3.1-8b-instant"; // Fast 128k context model for quick audits
 const GROQ_FALLBACK_LIMIT = 45000; // Optimized for 350k thesis fallback without 413 errors
