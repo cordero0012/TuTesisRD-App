@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -13,7 +15,7 @@ const FALLBACK_MODELS = [
     'gemini-1.5-pro'
 ];
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
     console.log("-> GEMINI_PROXY_ENTRY");
     
     // 1. Handle CORS Preflight
