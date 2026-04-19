@@ -1,8 +1,7 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 // 2026 STABLE MODELS LIST (Including Gemini 3)
@@ -14,34 +13,40 @@ const FALLBACK_MODELS = [
     'gemini-1.5-pro'
 ];
 
-serve(async (req) => {
+Deno.serve(async (req) => {
+    // 1. Handle CORS Preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
 
     try {
+        console.log(`[Proxy] New Request: ${req.method} ${req.url}`);
+
+        // 2. Auth Check (Secret)
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
         if (!GEMINI_API_KEY) {
+            console.error("[Proxy] CRITICAL: GEMINI_API_KEY missing in environment.");
             return new Response(JSON.stringify({ error: 'Falta GEMINI_API_KEY en Supabase.' }), {
                 status: 500,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             })
         }
 
-        const body = await req.json();
+        // 3. Parse Body
+        const body = await req.json().catch(() => ({}));
         const userText = body.prompt || body.user || body.contents;
         const systemText = body.systemInstruction || body.system || "";
-        const temperature = body.temperature ?? 0.7;
+        const temperature = body.temperature ?? 0.1;
         const requestedModel = body.model;
 
-        if (!userText || typeof userText !== 'string') {
+        if (!userText || (typeof userText !== 'string' && !Array.isArray(userText))) {
             return new Response(JSON.stringify({ error: 'Missing or invalid prompt text' }), {
                 status: 400,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             })
         }
 
-        // Build priority list: Requested model first, then fallbacks
+        // 4. Build Priority List
         const modelsToTry = requestedModel 
             ? [requestedModel, ...FALLBACK_MODELS.filter(m => m !== requestedModel)]
             : FALLBACK_MODELS;
@@ -51,12 +56,20 @@ serve(async (req) => {
 
         for (const mName of modelsToTry) {
             try {
-                console.log(`[Proxy] Attempting model: ${mName}`);
+                console.log(`[Proxy] Attempting AI Call: ${mName}`);
                 const url = `https://generativelanguage.googleapis.com/v1/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
 
+                // Extract text from contents if it's an array (standard Gemini format)
+                let finalPrompt = "";
+                if (Array.isArray(userText)) {
+                    finalPrompt = userText[0]?.parts?.[0]?.text || "";
+                } else {
+                    finalPrompt = userText;
+                }
+
                 const combinedPrompt = systemText
-                    ? `[SYSTEM_INSTRUCTION]\n${systemText}\n[END_SYSTEM_INSTRUCTION]\n\n${userText}`
-                    : userText;
+                    ? `[SYSTEM_INSTRUCTION]\n${systemText}\n[END_SYSTEM_INSTRUCTION]\n\n${finalPrompt}`
+                    : finalPrompt;
 
                 const payload = {
                     contents: [{
@@ -80,25 +93,24 @@ serve(async (req) => {
                     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
                     if (!text) {
                         console.warn(`[Proxy] Empty response from ${mName}`);
-                        lastError = "Respuesta vacía de la IA";
                         continue;
                     }
+                    console.log(`[Proxy] Success with ${mName}`);
                     return new Response(JSON.stringify({ text }), {
                         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                         status: 200,
                     });
                 }
 
-                console.error(`[Proxy] Upstream Error for ${mName}:`, JSON.stringify(data));
+                console.error(`[Proxy] Upstream Error [${mName}]:`, JSON.stringify(data.error || data));
                 lastError = data.error?.message || response.statusText;
                 lastStatus = response.status;
 
-                // Handle specific model not found or quota issues
                 if ([404, 400, 429].includes(response.status)) continue;
                 break; 
 
             } catch (err: any) {
-                console.error(`[Proxy] Fetch error for ${mName}:`, err.message);
+                console.error(`[Proxy] Connection failed to ${mName}:`, err.message);
                 lastError = err.message;
             }
         }
@@ -107,8 +119,7 @@ serve(async (req) => {
             JSON.stringify({
                 error: lastError || 'No available Gemini model found.',
                 type: 'UPSTREAM_ERROR',
-                status: lastStatus,
-                details: "Consulte los logs de la función para más detalles."
+                status: lastStatus
             }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -116,6 +127,7 @@ serve(async (req) => {
             },
         )
     } catch (error: any) {
+        console.error("[Proxy] Global Handler Crash:", error.message);
         return new Response(
             JSON.stringify({ error: error.message }),
             {
