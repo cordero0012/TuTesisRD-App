@@ -14,6 +14,8 @@ const FALLBACK_MODELS = [
 ];
 
 Deno.serve(async (req) => {
+    console.log("-> GEMINI_PROXY_ENTRY");
+    
     // 1. Handle CORS Preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })

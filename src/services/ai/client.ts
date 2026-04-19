@@ -175,24 +175,41 @@ export const getClient = (): GoogleGenerativeAI => {
 import { supabase } from '../../supabaseClient';
 
 async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
-    const { data, error } = await supabase.functions.invoke('gemini-proxy', {
-        body: {
-            prompt: options.prompt,
-            model: options.model || GEMINI_MODEL,
-            systemInstruction: options.systemInstruction,
-            temperature: options.temperature,
-            jsonMode: options.jsonMode,
-            provider: options.provider
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const functionUrl = `${supabaseUrl}/functions/v1/gemini-proxy`;
+
+    try {
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Explicitly empty headers that might be added by interceptors
+            },
+            body: JSON.stringify({
+                prompt: options.prompt,
+                model: options.model || GEMINI_MODEL,
+                systemInstruction: options.systemInstruction,
+                temperature: options.temperature,
+                jsonMode: options.jsonMode,
+                provider: options.provider
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const msg = errorData.error || errorData.message || response.statusText;
+            throw new Error(`Proxy Fetch Error (${response.status}): ${msg}`);
         }
-    });
 
-    if (error) {
-        throw new Error(`Proxy Error: ${error.message || 'Unknown error'}`);
+        const data = await response.json();
+        
+        if (!data || !data.text) {
+            throw new Error("Proxy Error: Invalid response format from edge function");
+        }
+
+        return data.text;
+    } catch (err: any) {
+        console.error("[AI Proxy Fetch] Fatal Error:", err);
+        throw err;
     }
-
-    if (!data || !data.text) {
-        throw new Error("Proxy Error: Invalid response format from edge function");
-    }
-
-    return data.text;
 }
