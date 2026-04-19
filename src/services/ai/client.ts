@@ -176,7 +176,7 @@ import { supabase } from '../../supabaseClient';
 
 async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const functionUrl = `${supabaseUrl}/functions/v1/gemini-proxy`;
+    const functionUrl = `${supabaseUrl}/functions/v1/ai-bridge`;
 
     try {
         const response = await fetch(functionUrl, {
