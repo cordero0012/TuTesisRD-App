@@ -157,6 +157,19 @@ export const RuleValidationResultSchema = z.object({
     })).optional().default([])
 });
 
+// Evaluación por elemento estructural de la tesis (problema, objetivos, metodología, etc.)
+export const ThesisElementEvaluationSchema = z.object({
+    element: z.string(),
+    present: z.boolean().optional().default(false),
+    page: z.string().optional().default(''),
+    quality: z.enum(['Excelente', 'Aceptable', 'Débil', 'Ausente']).or(z.string()).optional().default('Ausente'),
+    score: z.number().optional().default(0),
+    strengths: z.array(z.string()).optional().default([]),
+    weaknesses: z.array(z.string()).optional().default([]),
+    alignmentWithOthers: z.string().optional().default(''),
+    recommendation: z.string().optional().default('')
+});
+
 export const ApaComplianceScoreSchema = z.object({
     citationsScore: z.number().optional().default(0),
     referencesScore: z.number().optional().default(0),
@@ -192,6 +205,9 @@ export const MatrixAnalysisSchema = z.object({
     referenceInventory: z.array(z.string()).optional(),
     ruleValidationResults: z.array(RuleValidationResultSchema).optional(),
     apaComplianceScore: ApaComplianceScoreSchema.optional(),
+
+    // Evaluación exhaustiva por elemento de la tesis (problema, objetivos, metodología, etc.)
+    thesisElementsEvaluation: z.array(ThesisElementEvaluationSchema).optional(),
 
     rawAnalysis: z.string().optional(),
     analysisStatus: z.enum(['ok', 'partial', 'insufficient_input', 'model_noncompliant', 'error']).optional(),

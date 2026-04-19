@@ -89,12 +89,57 @@ Clasificación:
 - 50-${p.threshold - 1} → "Débil"
 - <50 → "Crítico"
 
-── FASE 4: FEEDBACK ACCIONABLE ──
-Genera actionableFeedback con MÍNIMO 5 hallazgos concretos (si hay evidencia). Cada entrada:
+── FASE 4: EVALUACIÓN POR ELEMENTO DE TESIS ──
+Evalúa CADA uno de los siguientes elementos de la tesis (thesisElementsEvaluation).
+NO te limites a objetivos. Cubre TODOS los componentes estructurales y metodológicos presentes:
+
+Elementos obligatorios a evaluar si aparecen en el documento:
+1. Problema de Investigación (planteamiento, pertinencia, delimitación)
+2. Preguntas de Investigación (general + específicas, claridad, respondibilidad)
+3. Objetivo General (alineación con problema, verbo adecuado, alcanzable)
+4. Objetivos Específicos (coherencia con general, operacionalización, verificabilidad)
+5. Justificación (teórica, práctica, social, relevancia)
+6. Antecedentes (vigencia, pertinencia, cobertura nacional/internacional)
+7. Marco Teórico / Bases Teóricas (profundidad, autores clave, estructura lógica)
+8. Hipótesis (si aplica: formulación, variables, contrastabilidad)
+9. Variables / Categorías (definición conceptual y operacional)
+10. Enfoque Metodológico (cuantitativo/cualitativo/mixto — justificado)
+11. Diseño de Investigación (experimental/no experimental, transversal/longitudinal)
+12. Tipo / Nivel de Investigación (exploratorio/descriptivo/correlacional/explicativo)
+13. Población y Muestra (definición, criterios de inclusión/exclusión, representatividad)
+14. Técnicas e Instrumentos (validez, confiabilidad, pertinencia)
+15. Procedimientos de Análisis (estadístico, temático, hermenéutico)
+16. Resultados (presentación, tablas/figuras, vinculación con objetivos)
+17. Discusión (contraste con antecedentes, interpretación, triangulación)
+18. Conclusiones (alineadas a objetivos, derivadas de resultados, sin extrapolar)
+19. Recomendaciones (accionables, dirigidas, fundamentadas)
+20. Aspectos Éticos (consentimiento, confidencialidad, aprobación de comité)
+
+Cada entrada en thesisElementsEvaluation:
+{
+  "element": "Nombre del elemento",
+  "present": true|false,
+  "page": "Pág. X o rango (si se detecta)",
+  "quality": "Excelente"|"Aceptable"|"Débil"|"Ausente",
+  "score": 0-100,
+  "strengths": ["punto fuerte 1 con evidencia literal"],
+  "weaknesses": ["punto débil 1 con evidencia literal"],
+  "alignmentWithOthers": "Descripción de cómo se alinea (o no) con otros elementos (ej: objetivo específico 2 no produce ningún resultado en la sección de hallazgos)",
+  "recommendation": "Qué hacer concretamente para mejorar este elemento"
+}
+
+── FASE 5: FEEDBACK ACCIONABLE ──
+Genera actionableFeedback con MÍNIMO 8 hallazgos concretos distribuidos entre:
+- Errores de citación APA 7
+- Problemas de coherencia entre elementos de la tesis
+- Debilidades metodológicas específicas
+- Fallos de redacción académica
+
+Cada entrada:
 {
   "finding": "Descripción clara del error detectado",
   "evidence": "Pág. X — \\"fragmento literal entre comillas\\"",
-  "whyItMatters": "Justificación normativa citando APA 7",
+  "whyItMatters": "Justificación normativa o metodológica",
   "howToFix": "Instrucción paso a paso",
   "example": "Demostración visual de la corrección"
 }
@@ -140,6 +185,20 @@ FORMATO DE SALIDA (JSON ESTRICTO, SIN PROSA):
 
   "consistencyMatrix": [
     { "element": string, "description": string, "coherenceLevel": "Alta"|"Media"|"Baja"|"Inexistente", "technicalObservation": string, "recommendation": string }
+  ],
+
+  "thesisElementsEvaluation": [
+    {
+      "element": string,
+      "present": boolean,
+      "page": string,
+      "quality": "Excelente"|"Aceptable"|"Débil"|"Ausente",
+      "score": number,
+      "strengths": [ string ],
+      "weaknesses": [ string ],
+      "alignmentWithOthers": string,
+      "recommendation": string
+    }
   ],
 
   "methodologicalAnalysis": {
