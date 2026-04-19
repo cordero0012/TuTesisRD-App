@@ -172,27 +172,29 @@ export const getClient = (): GoogleGenerativeAI => {
 
 // --- Implementation Details ---
 
-// Proxy logic remains as the primary secure channel
-import { supabase } from '../../supabaseClient';
-
+// Vercel API Route proxy — same origin, no CORS issues
 async function generateGeminiProxy(options: GenerateOptions): Promise<string> {
-    const { data, error } = await supabase.functions.invoke('gemini-proxy', {
-        body: {
+    const response = await fetch('/api/gemini-proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
             prompt: options.prompt,
             model: options.model || GEMINI_MODEL,
             systemInstruction: options.systemInstruction,
             temperature: options.temperature,
             jsonMode: options.jsonMode,
-            provider: options.provider // Ensure proxy handles both providers
-        }
+        })
     });
 
-    if (error) {
-        throw new Error(`Proxy Error: ${error.message || 'Unknown error'}`);
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(`Proxy Error: ${(err as any).error || response.statusText}`);
     }
 
-    if (!data || !data.text) {
-        throw new Error("Proxy Error: Invalid response format from edge function");
+    const data = await response.json();
+
+    if (!data?.text) {
+        throw new Error("Proxy Error: Invalid response format from proxy");
     }
 
     return data.text;
