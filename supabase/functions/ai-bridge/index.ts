@@ -15,12 +15,29 @@ const FALLBACK_MODELS = [
     'gemini-1.5-pro'
 ];
 
+function resolveGeminiApiVersion(modelName: string): 'v1' | 'v1beta' {
+    // Preview and experimental Gemini aliases are published under v1beta.
+    if (modelName.includes('preview') || modelName.includes('exp')) {
+        return 'v1beta';
+    }
+
+    return 'v1';
+}
+
 Deno.serve(async (req: Request) => {
     console.log("-> GEMINI_PROXY_ENTRY");
     
     // 1. Handle CORS Preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
+    }
+
+    // 2. Health Check for Browser
+    if (req.method === 'GET') {
+        return new Response('AI Bridge is Active and Reachable', { 
+            status: 200, 
+            headers: { ...corsHeaders, 'Content-Type': 'text/plain' } 
+        })
     }
 
     try {
@@ -61,7 +78,8 @@ Deno.serve(async (req: Request) => {
         for (const mName of modelsToTry) {
             try {
                 console.log(`[Proxy] Attempting AI Call: ${mName}`);
-                const url = `https://generativelanguage.googleapis.com/v1/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
+                const apiVersion = resolveGeminiApiVersion(mName);
+                const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${mName}:generateContent?key=${GEMINI_API_KEY}`;
 
                 // Extract text from contents if it's an array (standard Gemini format)
                 let finalPrompt = "";

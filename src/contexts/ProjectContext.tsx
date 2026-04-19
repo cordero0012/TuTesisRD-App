@@ -48,6 +48,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     const [session, setSession] = useState<Session | null>(null);
     const currentCallId = React.useRef(0);
+    const lastInitSessionRef = React.useRef<string | null>(null);
 
     // Core Initialization Logic
     const initProject = async (currentSession: Session | null) => {
@@ -185,6 +186,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         supabase.auth.getSession().then(({ data: { session } }) => {
             if (!isMounted) return;
             setSession(session);
+            lastInitSessionRef.current = session?.user?.id ?? null;
             initProject(session); // errors handled internally via try/catch
         });
 
@@ -196,12 +198,24 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
             console.log(`[ProjectContext] Auth state change [${_event}]:`, session?.user?.email || 'none');
             setSession(session);
 
+            const incomingSessionId = session?.user?.id ?? null;
+            const alreadyInitializedForSession =
+                (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED') &&
+                incomingSessionId !== null &&
+                incomingSessionId === lastInitSessionRef.current;
+
+            if (alreadyInitializedForSession) {
+                console.log(`[ProjectContext] Skipping duplicate init for session:`, session?.user?.email || 'none');
+                return;
+            }
+
             // Debounce rapid consecutive events (Supabase can fire SIGNED_IN twice in quick succession)
             if (debounceTimer) clearTimeout(debounceTimer);
             debounceTimer = setTimeout(async () => {
                 if (!isMounted) return;
                 try {
                     await initProject(session);
+                    lastInitSessionRef.current = incomingSessionId;
                     const pId = projectIdRef.current;
                     if (session && pId && pId !== 'offline-demo') {
                         persistenceService.updateQueueProjectId(pId);
