@@ -109,30 +109,57 @@ export const mapMatrixToWordExport = (matrix: MatrixAnalysisDTO): WordExportDTO 
 export const mapAuditToWordExport = (audit: AuditResultDTO): WordExportDTO => {
     const sections: WordExportSection[] = [];
 
-    // Summary
-    sections.push({ type: 'heading1', content: 'Resultado de Auditoría' });
+    // 1. Score headline
+    sections.push({ type: 'heading1', content: 'Resultado de Auditoría Forense IA' });
     sections.push({
         type: 'text',
-        content: `Probabilidad de IA: ${(audit.score * 100).toFixed(1)}%`,
+        content: `Probabilidad de origen IA: ${(audit.score * 100).toFixed(1)}%`,
         styling: {
             bold: true,
             align: 'center',
-            size: 24, // custom handling in service? mapped to styling
+            size: 24,
             color: audit.score > 0.6 ? '#dc2626' : audit.score > 0.3 ? '#f59e0b' : '#16a34a',
             isCritical: audit.score > 0.6
         }
     });
 
-    // Metrics
+    // 2. Forensic metrics table
     sections.push({ type: 'heading2', content: 'Métricas Forenses' });
-    sections.push({ type: 'list', content: `Burstiness: ${audit.metrics?.burstiness?.toFixed(2) || 'N/A'}` });
-    sections.push({ type: 'list', content: `Perplejidad: ${audit.metrics?.perplexityProxy?.toFixed(2) || 'N/A'}` });
+    sections.push({
+        type: 'table',
+        tableData: {
+            headers: ['Métrica', 'Valor', 'Interpretación'],
+            rows: [
+                ['Burstiness', audit.metrics?.burstiness?.toFixed(2) ?? 'N/A', audit.metrics?.burstiness != null ? (audit.metrics.burstiness < 4 ? 'Alta sospecha de IA' : 'Normal') : 'N/A'],
+                ['Perplejidad', audit.metrics?.perplexityProxy?.toFixed(2) ?? 'N/A', 'Diversidad léxica del texto'],
+                ['Diversidad Léxica', audit.metrics?.lexicalDiversity?.toFixed(2) ?? 'N/A', audit.metrics?.lexicalDiversity != null ? (audit.metrics.lexicalDiversity < 0.4 ? 'Vocabulario repetitivo' : 'Variedad adecuada') : 'N/A'],
+            ]
+        }
+    });
+
+    // 3. Source probabilities
+    if (audit.sourceProbabilities) {
+        sections.push({ type: 'heading2', content: 'Probabilidad por Modelo IA' });
+        sections.push({ type: 'list', content: `ChatGPT: ${audit.sourceProbabilities.chatgpt ?? 0}%` });
+        sections.push({ type: 'list', content: `Gemini: ${audit.sourceProbabilities.gemini ?? 0}%` });
+        sections.push({ type: 'list', content: `Claude: ${audit.sourceProbabilities.claude ?? 0}%` });
+    }
+
+    // 4. Detected signals
+    if (audit.signals && audit.signals.length > 0) {
+        sections.push({ type: 'heading2', content: 'Señales Detectadas' });
+        audit.signals.forEach(signal => {
+            sections.push({ type: 'list', content: sanitizeText(signal) });
+        });
+    }
 
     return {
         metadata: {
             title: 'Informe de Auditoría Forense',
-            date: new Date().toLocaleDateString(),
-            brandingColor: '#64748b'
+            subtitle: 'Análisis de Autenticidad con IA',
+            date: new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }),
+            creator: 'TuTesis RD',
+            brandingColor: '64748b'
         },
         sections
     };

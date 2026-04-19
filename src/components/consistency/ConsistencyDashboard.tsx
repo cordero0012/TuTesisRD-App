@@ -116,8 +116,8 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
                     </div>
 
                     <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                        {result.methodologicalAnalysis.criticalAlerts.length > 0 ? (
-                            result.methodologicalAnalysis.criticalAlerts.map((alert, i) => (
+                        {(result.methodologicalAnalysis?.criticalAlerts?.length ?? 0) > 0 ? (
+                            result.methodologicalAnalysis!.criticalAlerts.map((alert, i) => (
                                 <div key={i} className="flex gap-3 text-sm p-3 bg-white dark:bg-surface-dark rounded-xl border border-red-100 dark:border-red-900/30">
                                     <span className="material-symbols-outlined text-red-500 text-xs mt-1 shrink-0">error</span>
                                     <span className="text-slate-700 dark:text-slate-300">{alert}</span>
@@ -134,7 +134,7 @@ export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ resu
             </div>
 
             {/* 3. Forensic Reasoning Box */}
-            {result.methodologicalAnalysis.forensicReasoning && (
+            {result.methodologicalAnalysis?.forensicReasoning && (
                 <div className="bg-slate-900 border-2 border-brand-orange/30 text-slate-300 p-8 rounded-[2rem] relative overflow-hidden shadow-2xl shadow-brand-orange/5">
                     <div className="absolute top-0 right-0 p-32 bg-brand-orange/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
                     <div className="flex items-center gap-3 mb-4 relative z-10">

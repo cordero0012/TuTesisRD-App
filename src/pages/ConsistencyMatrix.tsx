@@ -34,6 +34,14 @@ export const ConsistencyMatrix = () => {
     const [analysisProgress, setAnalysisProgress] = useState(0);
     const [result, setResult] = useState<ConsistencyAnalysisResult | null>(null);
 
+    // Reset on every fresh page entry — clear previous file and analysis
+    useEffect(() => {
+        if (!location.state?.loadedAnalysis) {
+            setUploadedFile(null);
+            setResult(null);
+        }
+    }, []);
+
     // Load analysis from history if passed via state
     useEffect(() => {
         if (location.state?.loadedAnalysis) {
@@ -49,7 +57,6 @@ export const ConsistencyMatrix = () => {
 
     // Document upload state handled by Context
     const [isUploading, setIsUploading] = useState(false);
-    const [useDeepScan, setUseDeepScan] = useState(false);
 
     // Regulations from universities.json
     const availableRegulations = useMemo(() => {
@@ -86,10 +93,6 @@ export const ConsistencyMatrix = () => {
 
             // For PDF files
             if (file.type === 'application/pdf') {
-                if (useDeepScan && (window as any).scholar?.ocr) {
-                    showNotification("Deep Scan activado: Procesando con OCR avanzado...", "info");
-                }
-
                 const arrayBuffer = await file.arrayBuffer();
                 const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
                 const pdf = await loadingTask.promise;
@@ -114,6 +117,7 @@ export const ConsistencyMatrix = () => {
                 showNotification(`DOCX cargado: ${file.name} (${result.value.length} caracteres)`, "success");
             }
 
+            setResult(null); // clear previous analysis when new file is loaded
             setUploadedFile({
                 name: file.name,
                 type: file.type,
@@ -354,36 +358,48 @@ export const ConsistencyMatrix = () => {
                         <section className="flex flex-col gap-4 w-full xl:w-80 shrink-0">
 
                             {/* Upload Button */}
-                            <button
-                                onClick={() => document.getElementById('hidden-file-upload')?.click()}
-                                className={`w-full py-6 px-6 rounded-[2rem] font-bold transition-all hover:shadow-xl border-2 border-dashed group text-left relative overflow-hidden
-                                    ${uploadedFile
-                                        ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-500 hover:border-emerald-600'
-                                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:border-brand-orange dark:hover:border-brand-orange'
-                                    }
-                                `}
-                            >
-                                <div className="relative z-10 flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors
+                            <div className="relative w-full">
+                                <button
+                                    onClick={() => document.getElementById('hidden-file-upload')?.click()}
+                                    disabled={isUploading}
+                                    className={`w-full py-5 px-5 rounded-[2rem] font-bold transition-all hover:shadow-xl border-2 border-dashed group text-left
                                         ${uploadedFile
-                                            ? 'bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300'
-                                            : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 group-hover:bg-brand-orange/10 group-hover:text-brand-orange'
+                                            ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-500 hover:border-emerald-600'
+                                            : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:border-brand-orange dark:hover:border-brand-orange'
                                         }
-                                    `}>
-                                        <span className="material-symbols-outlined">
-                                            {uploadedFile ? 'check_circle' : 'upload_file'}
-                                        </span>
+                                    `}
+                                >
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors
+                                            ${uploadedFile
+                                                ? 'bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300'
+                                                : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 group-hover:bg-brand-orange/10 group-hover:text-brand-orange'
+                                            }
+                                        `}>
+                                            <span className="material-symbols-outlined text-xl">
+                                                {isUploading ? 'hourglass_top' : uploadedFile ? 'check_circle' : 'upload_file'}
+                                            </span>
+                                        </div>
+                                        <div className="min-w-0 flex-1 pr-6">
+                                            <span className={`block text-sm font-bold truncate ${uploadedFile ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-800 dark:text-white'}`}>
+                                                {isUploading ? 'Procesando...' : uploadedFile ? uploadedFile.name : 'Cargar Documento'}
+                                            </span>
+                                            <span className={`block text-xs font-normal ${uploadedFile ? 'text-emerald-600/70 dark:text-emerald-400/70' : 'text-slate-400'}`}>
+                                                {uploadedFile ? 'Clic para cambiar archivo' : 'PDF o DOCX'}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <span className={`block text-sm font-bold truncate ${uploadedFile ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-800 dark:text-white'}`}>
-                                            {uploadedFile ? uploadedFile.name : 'Cargar Documento'}
-                                        </span>
-                                        <span className={`block text-xs font-normal truncate ${uploadedFile ? 'text-emerald-600/70 dark:text-emerald-400/70' : 'text-slate-400'}`}>
-                                            {uploadedFile ? 'Clic para cambiar archivo' : 'PDF o DOCX'}
-                                        </span>
-                                    </div>
-                                </div>
-                            </button>
+                                </button>
+                                {uploadedFile && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setUploadedFile(null); setResult(null); }}
+                                        title="Quitar archivo"
+                                        className="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                )}
+                            </div>
 
                             {/* Academic Level Selector */}
                             <div className="p-6 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700">
@@ -417,34 +433,38 @@ export const ConsistencyMatrix = () => {
                                 onClick={handleAnalyze}
                                 disabled={isAnalyzing || (!uploadedFile && !project.content)}
                                 className={`
-                                    w-full py-6 px-6 rounded-[2rem] font-bold text-left transition-all relative overflow-hidden shadow-xl
+                                    w-full py-5 px-5 rounded-[2rem] font-bold text-left transition-all relative overflow-hidden shadow-xl
                                     ${isAnalyzing || (!uploadedFile && !project.content)
                                         ? 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600'
-                                        : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:translate-y-[-2px] hover:shadow-2xl hover:shadow-brand-orange/20'
+                                        : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-brand-orange/20'
                                     }
                                 `}
                             >
-                                <div className="relative z-10 flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-full bg-white/20 dark:bg-slate-200/20 flex items-center justify-center backdrop-blur-sm">
+                                {/* Progress bar behind content */}
+                                {isAnalyzing && (
+                                    <div
+                                        className="absolute inset-y-0 left-0 bg-brand-orange/20 transition-all duration-500"
+                                        style={{ width: `${analysisProgress}%` }}
+                                    />
+                                )}
+                                <div className="relative z-10 flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className="w-10 h-10 shrink-0 rounded-full bg-white/20 dark:bg-slate-200/20 flex items-center justify-center">
                                             {isAnalyzing ? (
-                                                <span className="material-symbols-outlined animate-spin">sync</span>
+                                                <span className="material-symbols-outlined animate-spin text-xl">sync</span>
                                             ) : (
-                                                <span className="material-symbols-outlined">neurology</span>
+                                                <span className="material-symbols-outlined text-xl">neurology</span>
                                             )}
                                         </div>
-                                        <div>
-                                            <span className="block text-lg">Ejecutar Análisis</span>
-                                            <span className="block text-white/60 dark:text-slate-500 text-xs font-normal">
-                                                {isAnalyzing ? 'Procesando...' : 'Modo Forense Activo'}
+                                        <div className="min-w-0">
+                                            <span className="block text-base font-bold">Ejecutar Análisis</span>
+                                            <span className="block text-xs font-normal opacity-60">
+                                                {isAnalyzing ? `Procesando... ${analysisProgress}%` : 'Modo Forense Activo'}
                                             </span>
                                         </div>
                                     </div>
-                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                    <span className="material-symbols-outlined shrink-0">arrow_forward</span>
                                 </div>
-                                {isAnalyzing && (
-                                    <div className="absolute inset-0 bg-brand-orange/20" style={{ width: `${analysisProgress}%`, transition: 'width 0.5s ease' }}></div>
-                                )}
                             </button>
 
                             {/* Info Card / Extra Actions */}
@@ -470,6 +490,15 @@ export const ConsistencyMatrix = () => {
                     </div>
                 </main>
             </div>
+
+            {/* Hidden file input — triggered by the upload button */}
+            <input
+                id="hidden-file-upload"
+                type="file"
+                accept=".pdf,.docx,.doc"
+                className="hidden"
+                onChange={handleFileUpload}
+            />
         </div>
     );
 };

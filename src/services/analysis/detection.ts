@@ -164,21 +164,20 @@ async function analyzeWithGemini(text: string, metrics: TextMetrics): Promise<Om
 
             === SALIDA JSON REQUERIDA ===
             {
-                "score": number, 
-                "category": "A"|"B"|"C"|"D", 
+                "score": number (0.0-1.0, donde 0=humano, 1=IA),
+                "category": "A"|"B"|"C"|"D",
                 "confidence": "Low"|"Medium"|"High",
                 "signals": ["señal detectada..."],
-                "heatmap": [{ "text": "...", "probability": 0.0-1.0 }],
-                "sourceProbabilities": { "chatgpt": 0-100, "gemini": 0-100, "claude": 0-100 },
-                "turnitinIndicators": { "aiw2_score": 0-100, "air1_paraphrase_detected": boolean, "bypasser_detected": boolean },
-                "compilatioIndicators": { "deep_reformulation": boolean, "semantic_plagiarism_score": 0-100, "translation_artifacts": boolean }
+                "heatmap": [{ "text": "fragmento exacto del texto", "probability": 0.0-1.0 }],
+                "sourceProbabilities": { "chatgpt": 0-100, "gemini": 0-100, "claude": 0-100 }
             }
-            
+
             === INSTRUCCIONES CRÍTICAS ===
-            - El "heatmap" debe dividir el texto en oraciones/frases resaltando las más sospechosas
-            - Correlaciona tu análisis con las métricas locales
-            - Sé estricto pero justo
-            - IMPORTANTE: Incluye turnitinIndicators y compilatioIndicators en tu respuesta
+            - El "heatmap" debe dividir el texto en oraciones/frases (máximo 30 segmentos)
+            - Cada segmento de heatmap debe ser texto literal del documento, no paráfrasis
+            - Correlaciona tu análisis con las métricas locales provistas
+            - Sé estricto pero justo: texto técnico especializado puede parecer uniforme sin ser IA
+            - category: A=≤30% (humano), B=31-60% (mixto), C=61-80% (probable IA), D=≥81% (casi certeza IA)
             `,
             systemInstruction: "Actúa como un experto forense en lingüística computacional.",
             temperature: 0.1,

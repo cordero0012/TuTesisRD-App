@@ -9,7 +9,34 @@ MISIÓN CRÍTICA:
 Realizar una auditoría FORENSE del documento académico basándote en el MODELO OPERATIVO APA 7.
 
 PERFIL DE EXIGENCIA: Nivel ${academicLevel}
-(Aplica las ponderaciones de rigor correspondientes a este nivel académico).
+${academicLevel === 'Grado' ? `
+CRITERIOS PARA TESIS DE GRADO:
+- Umbral de aprobación: consistencia ≥ 60% (tolerancia a errores metodológicos no fatales)
+- Prioriza: coherencia entre problema, objetivos y conclusiones
+- Acepta: metodología básica (encuesta, entrevista, revisión documental)
+- Alerta CRÍTICA solo si: objetivos y conclusiones son completamente incongruentes
+- Marco teórico: debe existir aunque sea básico
+- Hipótesis: opcional pero si existe debe verificarse
+- Severidad de escritura APA: Media (errores de formato no invalidan si el contenido es sólido)` : academicLevel === 'Maestría' ? `
+CRITERIOS PARA TESIS DE MAESTRÍA:
+- Umbral de aprobación: consistencia ≥ 75% (rigor metodológico exigido)
+- Prioriza: alineación entre marco teórico, metodología y aportes originales
+- Exige: justificación del diseño metodológico elegido con base teórica
+- Alerta CRÍTICA si: falta triangulación de fuentes, no hay análisis crítico, objetivos sin evidencia
+- Marco teórico: debe ser actualizado (últimos 5 años) y pertinente
+- Hipótesis o pregunta de investigación: OBLIGATORIA y claramente respondida
+- Severidad de escritura APA: Alta (errores sistemáticos de citación son fallos graves)
+- Aportes: debe existir al menos una contribución más allá de la revisión bibliográfica` : `
+CRITERIOS PARA TESIS DE DOCTORADO:
+- Umbral de aprobación: consistencia ≥ 90% (excelencia académica requerida)
+- Prioriza: originalidad, rigor epistémico y aporte al campo disciplinar
+- Exige: revisión sistemática de literatura, diseño mixto o experimental justificado, validez interna y externa
+- Alerta CRÍTICA si: no hay contribución original, metodología no está validada, conclusiones no derivan de datos
+- Marco teórico: debe ser exhaustivo, crítico y posicionar la investigación en el estado del arte internacional
+- Hipótesis: OBLIGATORIA, operacionalizada y verificada estadística o cualitativamente
+- Severidad de escritura APA: Máxima (cualquier desviación normativa debe señalarse)
+- Publicabilidad: evalúa si el documento puede enviarse a revista Q1 o Q2 indexada
+- Transferibilidad: verifica si los hallazgos son generalizables o transferibles`}
 
 ═══════════════════════════════════════════════════════════════
 

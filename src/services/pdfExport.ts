@@ -78,7 +78,7 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         addMeta("DOCUMENTO:", result.documentType || "Tesis de Grado");
         addMeta("ENFOQUE:", result.methodologicalApproach || "No identificado");
         addMeta("ÁREA:", result.disciplinaryArea || "Multidisciplinar");
-        addMeta("NORMATIVA:", result.applicableStandards.join(', ') || "Estándar General");
+        addMeta("NORMATIVA:", (result.applicableStandards?.join(', ')) || "Estándar General");
 
         // Page 2: Content
         doc.addPage();
@@ -103,26 +103,45 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
             doc.text(String(value), x + 25, yPos + 18, { align: 'center' });
         };
 
-        drawScore("Nivel General", result.globalDiagnosis.level, margin);
-        drawScore("Consistencia", `${result.globalDiagnosis.internalConsistencyDegree}%`, margin + 40);
-        drawScore("APA 7", `${result.normativeCompliance?.apa7Score || 0}%`, margin + 80);
-        drawScore("Publicabilidad", `${result.globalDiagnosis.publishabilityLevel}%`, margin + 120);
+        const diag = result.globalDiagnosis;
+        drawScore("Nivel General", diag?.level ?? "N/D", margin);
+        drawScore("Consistencia", `${diag?.internalConsistencyDegree ?? 0}%`, margin + 40);
+        drawScore("APA 7", `${result.normativeCompliance?.apa7Score ?? 0}%`, margin + 80);
+        drawScore("Publicabilidad", `${diag?.publishabilityLevel ?? 0}%`, margin + 120);
         yPos += 40;
+
+        // Diagnosis summary (prose)
+        const summaryText = diag?.summary || diag?.auditSummary;
+        if (summaryText) {
+            doc.setFontSize(10);
+            doc.setFont(FONTS.primary, FONTS.style.italic);
+            doc.setTextColor(COLORS.text.secondary[0], COLORS.text.secondary[1], COLORS.text.secondary[2]);
+            const lines = doc.splitTextToSize(summaryText, pageWidth - margin * 2);
+            doc.text(lines, margin, yPos);
+            yPos += lines.length * 5 + 6;
+            doc.setFont(FONTS.primary, FONTS.style.regular);
+        }
 
         // 2. Matrix Table
         doc.setFontSize(16); doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
         doc.text("2. MATRIZ DE ALINEACIÓN", margin, yPos);
         yPos += 5;
 
+        const matrixRows = (result.consistencyMatrix ?? []).map(row => [
+            row.element ?? '-',
+            row.description || 'No detectado',
+            (row.coherenceLevel ?? '').toString().toUpperCase(),
+            row.technicalObservation || 'Sin observaciones'
+        ]);
+
+        if (matrixRows.length === 0) {
+            matrixRows.push(['-', 'Matriz no generada por el modelo', '-', 'Reejecutar análisis']);
+        }
+
         autoTable(doc, {
             startY: yPos,
             head: [['Componente', 'Contenido Detectado', 'Estado', 'Observación']],
-            body: result.consistencyMatrix.map(row => [
-                row.element,
-                row.description || 'No detectado',
-                row.coherenceLevel.toUpperCase(),
-                row.technicalObservation || 'Sin observaciones'
-            ]),
+            body: matrixRows,
             theme: 'plain',
             headStyles: { fillColor: [240, 240, 240], textColor: [40, 44, 52], fontStyle: 'bold' },
             styles: { fontSize: 9, cellPadding: 4, textColor: [40, 44, 52] },
@@ -139,7 +158,8 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         yPos = (doc as any).lastAutoTable.finalY + 15;
 
         // 2.5 Source Consistency Sub-matrix
-        if (result.sourceConsistencySubMatrix) {
+        const citations = result.sourceConsistencySubMatrix?.citationsFound;
+        if (citations && citations.length > 0) {
             if (yPos > pageHeight - 60) { doc.addPage(); yPos = 30; }
             doc.setFontSize(16); doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
             doc.text("2.5 SUB-MATRIZ DE FUENTES (APA 7)", margin, yPos);
@@ -148,10 +168,10 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
             autoTable(doc, {
                 startY: yPos,
                 head: [['Cita en Texto', 'En Bibliografía', 'Página']],
-                body: result.sourceConsistencySubMatrix.citationsFound.map(item => [
-                    item.citation,
+                body: citations.map(item => [
+                    item.citation ?? '-',
                     item.inBibliography ? 'SÍ' : 'NO',
-                    item.page
+                    item.page ?? '-'
                 ]),
                 theme: 'striped',
                 headStyles: { fillColor: [70, 70, 70], textColor: [255, 255, 255] },
@@ -175,7 +195,7 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         doc.text("3. PLAN DE ACCIÓN", margin, yPos);
         yPos += 15;
 
-        result.prioritizedRecommendations.forEach((rec, idx) => {
+        (result.prioritizedRecommendations ?? []).forEach((rec, idx) => {
             if (yPos > pageHeight - 40) { doc.addPage(); yPos = 30; }
             const title = `${idx + 1}. ${rec.what} (${rec.priority})`;
             doc.setFontSize(11); doc.setFont(FONTS.primary, FONTS.style.bold);
@@ -265,7 +285,7 @@ class ReferenceReportStrategy implements PDFReportStrategy {
             yPos = addWrappedText(doc, citation, PAGE_MARGIN.left + 10, yPos, maxWidth - 10);
             yPos += 2;
             doc.setFontSize(FONT_SIZES.small);
-            const status = ref.status === 'verified' ? "✓ VERIFICADO" : "⚠ SIN VERIFICAR";
+            const status = ref.status === 'verified' ? "[OK] VERIFICADO" : "[!] SIN VERIFICAR";
             const statusColor = ref.status === 'verified' ? COLORS.status.success : COLORS.status.error;
             doc.setTextColor(statusColor[0], statusColor[1], statusColor[2]);
             doc.text(status, PAGE_MARGIN.left + 10, yPos);
