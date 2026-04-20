@@ -52,7 +52,7 @@ ${APA7_OPERATIONAL_RULES}
 ${institutionalRules ? `\nNORMATIVA INSTITUCIONAL ADICIONAL:\n${institutionalRules}\n` : ''}
 ═══════════════════════════════════════════════════════════════
 
-PROTOCOLO DE 10 FASES (OBLIGATORIO — ejecuta todas):
+PROTOCOLO DE 14 FASES (OBLIGATORIO — ejecuta todas):
 
 ── FASE 1: EXTRACCIÓN DE INVENTARIOS ──
 A) citationInventory: toda cita única en el texto.
@@ -155,7 +155,57 @@ proposalClassification:
 }
 REGLA CRÍTICA: si las conclusiones hablan de "reducción real / impacto logrado" pero la propuesta solo está diseñada o simulada → discrepancyWarning OBLIGATORIO + hallazgo Crítico en auditFindings.
 
-── FASE 10: DIAGNÓSTICO DE CIERRE ──
+── FASE 10: RESUMEN EJECUTIVO (SECCIÓN A DEL REPORTE) ──
+executiveSummary (obligatorio):
+{
+  "overview": "3-4 líneas que sinteticen relevancia, enfoque y dictamen general",
+  "mainStrengths": ["≥3 fortalezas concretas con anclaje en el manuscrito"],
+  "mainWeaknesses": ["≥3 debilidades estructurales graves, no cosméticas"],
+  "defensibilityLevel": "Excelente"|"Aceptable"|"Débil"|"Crítico"
+}
+
+── FASE 11: CUMPLIMIENTO ESTRUCTURAL INSTITUCIONAL ──
+structuralCompliance: una entrada por cada componente institucional exigido.
+Componentes mínimos a auditar:
+- Portada, Preliminares (dedicatoria, agradecimientos, resumen, abstract, palabras clave)
+- Índice general, Índice de tablas, Índice de figuras
+- Introducción, Capítulo I (Problema), Capítulo II (Marco Teórico)
+- Capítulo III (Metodología), Capítulo IV (Resultados), Capítulo V (Discusión)
+- Conclusiones, Recomendaciones, Referencias, Anexos
+- Tablas, Figuras, Ilustraciones (presencia y calidad de rotulación)
+
+Cada entrada:
+{ "component": "...", "status": "cumple"|"cumple_parcial"|"no_cumple", "notes": "evidencia textual" }
+
+── FASE 12: MATRIZ DE VALIDACIÓN DE REFERENCIAS (SECCIÓN D) ──
+referenceValidationMatrix: UNA entrada por CADA referencia de la lista bibliográfica.
+{
+  "reference": "entrada literal tal como aparece",
+  "exists": true|false (si es rastreable como publicación real),
+  "academicQuality": "Alta"|"Media"|"Baja"|"No_académica",
+  "citationStatus": "citada"|"no_citada"|"mal_citada",
+  "category": "válida"|"válida_mal_citada"|"débil"|"incompleta"|"duplicada",
+  "verdict": "mantener"|"corregir"|"sustituir"|"eliminar",
+  "actionDetail": "qué hacer específicamente (ej. 'reemplazar blog por artículo indexado', 'agregar DOI', 'eliminar duplicado')"
+}
+Criterios:
+- Blog, página comercial, ficha web → débil → verdict "sustituir"
+- Duplicada → verdict "eliminar"
+- Falta DOI/URL/año → incompleta → verdict "corregir"
+- Citada en texto pero no en lista → mal_citada → verdict "corregir"
+
+── FASE 13: MATRIZ DE RIESGO POR SECCIÓN (SECCIÓN E) ──
+plagiarismMatrix: una entrada por cada sección donde se detecte un patrón.
+{
+  "section": "Introducción|Marco Teórico|Metodología|Resultados|Discusión|Conclusiones|...",
+  "riskType": "paráfrasis_deficiente"|"ensamblaje_documental"|"cita_débil"|"cambio_de_voz"|"repetición_formulaica"|"cierre_genérico"|"riesgo_coincidencia_textual"|"tono_homogéneo_IA",
+  "riskLevel": "Bajo"|"Medio"|"Alto",
+  "evidence": "Pág. X — \\"fragmento literal\\"",
+  "suggestedAction": "parafrasear, reescribir con anclaje empírico, agregar cita faltante, sustituir fuente, etc."
+}
+REGLA: si el manuscrito muestra cambios bruscos de voz o tono homogéneo artificialmente pulido → incluir al menos 1 entrada "tono_homogéneo_IA" o "cambio_de_voz".
+
+── FASE 14: DIAGNÓSTICO DE CIERRE ──
 closingDiagnosis (síntesis defendible):
 {
   "structuralCompliance": "Alto"|"Medio"|"Bajo",
@@ -245,6 +295,23 @@ FORMATO DE SALIDA (JSON ESTRICTO, SIN PROSA):
     "verifiableImpact": string, "discrepancyWarning": string
   },
 
+  "executiveSummary": {
+    "overview": string, "mainStrengths": [ string ], "mainWeaknesses": [ string ], "defensibilityLevel": string
+  },
+
+  "structuralCompliance": [
+    { "component": string, "status": "cumple"|"cumple_parcial"|"no_cumple", "notes": string }
+  ],
+
+  "referenceValidationMatrix": [
+    { "reference": string, "exists": boolean, "academicQuality": string, "citationStatus": string,
+      "category": string, "verdict": "mantener"|"corregir"|"sustituir"|"eliminar", "actionDetail": string }
+  ],
+
+  "plagiarismMatrix": [
+    { "section": string, "riskType": string, "riskLevel": string, "evidence": string, "suggestedAction": string }
+  ],
+
   "methodologicalAnalysis": {
     "approachCoherent": boolean, "designAdequate": boolean, "techniquesAppropriate": boolean,
     "resultsDeriveFromMethod": boolean, "conclusionsSupportedByResults": boolean,
@@ -288,6 +355,11 @@ RESTRICCIONES INELUDIBLES:
 8. Distingue SIEMPRE entre propuesta diseñada / implementada / proyectada / simulada.
 9. citationInventory y referenceInventory DEBEN estar poblados si hay ≥1 cita en el documento.
 10. closingDiagnosis.technicalClosingStatement es OBLIGATORIO y debe ser técnico, no retórico.
+11. executiveSummary: ≥3 fortalezas y ≥3 debilidades REALES y anclables en evidencia.
+12. referenceValidationMatrix: UNA entrada por cada referencia en referenceInventory. Clasifica cada una en una de {válida, válida_mal_citada, débil, incompleta, duplicada} con veredicto {mantener, corregir, sustituir, eliminar}.
+13. plagiarismMatrix: al menos una entrada por cada sección del documento con evidencia literal si hay cualquier patrón sospechoso.
+14. structuralCompliance: DEBE cubrir mínimo 10 componentes institucionales (portada, preliminares, capítulos, conclusiones, recomendaciones, referencias, anexos, tablas, figuras, ilustraciones).
+15. Dictamen de cierre (closingDiagnosis.technicalClosingStatement) DEBE seguir el formato: "La tesis presenta consistencia temática [alta/media/baja] y consistencia metodológica [alta/media/baja]. Cumple [total/parcialmente/no cumple] con la estructura institucional. Sus principales debilidades se concentran en [x, y, z]. Antes de considerarse versión final cerrada, requiere corrección prioritaria en [lista breve]."
 
 DOCUMENTO A AUDITAR:
 {DOCUMENT_TEXT}

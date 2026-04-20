@@ -95,25 +95,86 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
         const margin = 25;
-        let yPos = 135; // Start after cover header
 
-        // --- PORTADA: Metadata ---
+        // --- PÁGINA 2: FICHA TÉCNICA DEL DOCUMENTO ---
+        doc.addPage();
+        let yPos = 30;
+        yPos = sectionHeader(doc, "Ficha Técnica del Manuscrito", yPos, margin, pageWidth);
+
         const addMeta = (label: string, value: string) => {
-            doc.setFontSize(10);
+            yPos = ensureSpace(doc, yPos, 10);
+            doc.setFontSize(9);
             doc.setFont(FONTS.primary, FONTS.style.bold);
             doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
-            doc.text(label, 40, yPos);
+            doc.text(label, margin, yPos);
             doc.setFont(FONTS.primary, FONTS.style.regular);
             doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
-            const valueLines = doc.splitTextToSize(value, pageWidth - 80 - 40);
-            doc.text(valueLines, 85, yPos);
-            yPos += Math.max(8, valueLines.length * 5);
+            const valueLines = doc.splitTextToSize(value, pageWidth - margin * 2 - 45);
+            doc.text(valueLines, margin + 45, yPos);
+            yPos += Math.max(6, valueLines.length * 5) + 1;
         };
 
         addMeta("DOCUMENTO:", result.documentType || "Tesis de Grado");
         addMeta("ENFOQUE:", result.methodologicalApproach || "No identificado");
         addMeta("ÁREA:", result.disciplinaryArea || "Multidisciplinar");
         addMeta("NORMATIVA:", (result.applicableStandards?.join(', ')) || "Estándar General");
+        yPos += 5;
+
+        // Resumen ejecutivo (sección A del protocolo de auditoría)
+        const exec = (result as any).executiveSummary as any | undefined;
+        if (exec) {
+            yPos = ensureSpace(doc, yPos, 30);
+            yPos = miniHeader(doc, "A. Resumen Ejecutivo", yPos, margin);
+            if (exec.overview) {
+                doc.setFontSize(9.5);
+                doc.setFont(FONTS.primary, FONTS.style.italic);
+                doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                const lines = doc.splitTextToSize(exec.overview, pageWidth - margin * 2);
+                doc.text(lines, margin, yPos);
+                yPos += lines.length * 5 + 4;
+            }
+            const col1X = margin;
+            const col2X = margin + (pageWidth - margin * 2) / 2 + 3;
+            const colW = (pageWidth - margin * 2) / 2 - 3;
+            const yStart = yPos;
+            // Fortalezas
+            doc.setFont(FONTS.primary, FONTS.style.bold);
+            doc.setFontSize(9);
+            doc.setTextColor(COLORS.status.success[0], COLORS.status.success[1], COLORS.status.success[2]);
+            doc.text("Principales Fortalezas", col1X, yPos);
+            // Debilidades
+            doc.setTextColor(COLORS.status.error[0], COLORS.status.error[1], COLORS.status.error[2]);
+            doc.text("Principales Debilidades", col2X, yPos);
+            yPos += 5;
+            const renderColList = (items: string[] | undefined, x: number, color: RGB, bullet: string) => {
+                if (!items) return yPos;
+                let yLocal = yPos;
+                doc.setFont(FONTS.primary, FONTS.style.regular);
+                doc.setFontSize(8.5);
+                doc.setTextColor(color[0], color[1], color[2]);
+                items.slice(0, 5).forEach(it => {
+                    const lines = doc.splitTextToSize(`${bullet} ${it}`, colW);
+                    doc.text(lines, x, yLocal);
+                    yLocal += lines.length * 4.5 + 1;
+                });
+                return yLocal;
+            };
+            const y1 = renderColList(exec.mainStrengths, col1X, COLORS.text.main, "+");
+            const y2 = renderColList(exec.mainWeaknesses, col2X, COLORS.text.main, "−");
+            yPos = Math.max(y1, y2) + 3;
+
+            if (exec.defensibilityLevel) {
+                yPos = ensureSpace(doc, yPos, 10);
+                const dc = qualityColor(exec.defensibilityLevel);
+                doc.setFillColor(dc[0], dc[1], dc[2]);
+                doc.roundedRect(margin, yPos, pageWidth - margin * 2, 8, 1.5, 1.5, 'F');
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setFontSize(9);
+                doc.setTextColor(255, 255, 255);
+                doc.text(`Defendibilidad académica: ${exec.defensibilityLevel.toUpperCase()}`, margin + 3, yPos + 5.5);
+                yPos += 12;
+            }
+        }
 
         // --- 1. DIAGNÓSTICO GLOBAL ---
         doc.addPage();
@@ -907,7 +968,150 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
             }
         }
 
-        // --- 14. DIAGNÓSTICO DE CIERRE ---
+        // --- 14. CUMPLIMIENTO ESTRUCTURAL INSTITUCIONAL ---
+        const structural = (result as any).structuralCompliance as any[] | undefined;
+        if (structural && structural.length > 0) {
+            doc.addPage();
+            yPos = 30;
+            yPos = sectionHeader(doc, "14. Cumplimiento Estructural Institucional", yPos, margin, pageWidth);
+
+            autoTable(doc, {
+                startY: yPos,
+                head: [['Componente', 'Estado', 'Observaciones']],
+                body: structural.map(s => [
+                    s.component ?? '-',
+                    (s.status ?? 'cumple_parcial').toString().replace('_', ' ').toUpperCase(),
+                    s.notes ?? '-'
+                ]),
+                theme: 'grid',
+                headStyles: { fillColor: COLORS.brandBlack, textColor: [255, 255, 255], fontStyle: 'bold' },
+                styles: { fontSize: 8.5, cellPadding: 3, textColor: COLORS.text.main, valign: 'top' },
+                columnStyles: {
+                    0: { fontStyle: 'bold', cellWidth: 55 },
+                    1: { halign: 'center', cellWidth: 32, fontStyle: 'bold' },
+                    2: { cellWidth: 'auto' }
+                },
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 1) {
+                        const t = (data.cell.raw as string).toUpperCase();
+                        data.cell.styles.textColor = t.includes('NO CUMPLE') ? COLORS.status.error as any
+                            : t.includes('PARCIAL') ? COLORS.status.warning as any
+                            : COLORS.status.success as any;
+                    }
+                }
+            });
+            // @ts-ignore
+            yPos = (doc as any).lastAutoTable.finalY + 10;
+        }
+
+        // --- 15. MATRIZ DE VALIDACIÓN DE REFERENCIAS (D) ---
+        const refMatrix = (result as any).referenceValidationMatrix as any[] | undefined;
+        if (refMatrix && refMatrix.length > 0) {
+            doc.addPage();
+            yPos = 30;
+            yPos = sectionHeader(doc, "15. Matriz de Validación de Referencias (Ref. por Ref.)", yPos, margin, pageWidth);
+
+            // Dashboard de veredictos
+            const counts = { m: 0, c: 0, s: 0, e: 0 };
+            refMatrix.forEach(r => {
+                const v = (r.verdict || '').toLowerCase();
+                if (v === 'mantener') counts.m++;
+                else if (v === 'corregir') counts.c++;
+                else if (v === 'sustituir') counts.s++;
+                else if (v === 'eliminar') counts.e++;
+            });
+            const drawVerdictCard = (label: string, n: number, x: number, color: RGB) => {
+                doc.setFillColor(color[0], color[1], color[2]);
+                doc.roundedRect(x, yPos, 38, 14, 1.5, 1.5, 'F');
+                doc.setFontSize(7);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(255, 255, 255);
+                doc.text(label.toUpperCase(), x + 19, yPos + 5, { align: 'center' });
+                doc.setFontSize(11);
+                doc.text(String(n), x + 19, yPos + 11, { align: 'center' });
+            };
+            drawVerdictCard("Mantener", counts.m, margin, COLORS.status.success);
+            drawVerdictCard("Corregir", counts.c, margin + 42, COLORS.status.warning);
+            drawVerdictCard("Sustituir", counts.s, margin + 84, COLORS.primaryDark);
+            drawVerdictCard("Eliminar", counts.e, margin + 126, COLORS.status.error);
+            yPos += 20;
+
+            autoTable(doc, {
+                startY: yPos,
+                head: [['#', 'Referencia', 'Calidad', 'Categoría', 'Veredicto', 'Acción']],
+                body: refMatrix.map((r, i) => [
+                    String(i + 1),
+                    r.reference ?? '-',
+                    (r.academicQuality ?? 'Media').toString(),
+                    (r.category ?? 'válida').toString().replace('_', ' '),
+                    (r.verdict ?? 'mantener').toString().toUpperCase(),
+                    r.actionDetail ?? '-'
+                ]),
+                theme: 'grid',
+                headStyles: { fillColor: COLORS.primary, textColor: [255, 255, 255], fontStyle: 'bold' },
+                styles: { fontSize: 7.5, cellPadding: 2.5, valign: 'top' },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 10, fontStyle: 'bold' },
+                    1: { cellWidth: 65 },
+                    2: { halign: 'center', cellWidth: 20 },
+                    3: { halign: 'center', cellWidth: 28 },
+                    4: { halign: 'center', cellWidth: 22, fontStyle: 'bold' },
+                    5: { cellWidth: 'auto' }
+                },
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 4) {
+                        const t = (data.cell.raw as string);
+                        data.cell.styles.textColor = t === 'MANTENER' ? COLORS.status.success as any
+                            : t === 'CORREGIR' ? COLORS.status.warning as any
+                            : t === 'SUSTITUIR' ? COLORS.primaryDark as any
+                            : COLORS.status.error as any;
+                    }
+                }
+            });
+            // @ts-ignore
+            yPos = (doc as any).lastAutoTable.finalY + 10;
+        }
+
+        // --- 16. MATRIZ DE RIESGO POR SECCIÓN (E) ---
+        const plagMatrix = (result as any).plagiarismMatrix as any[] | undefined;
+        if (plagMatrix && plagMatrix.length > 0) {
+            if (yPos > pageHeight - 80) { doc.addPage(); yPos = 30; }
+            yPos = sectionHeader(doc, "16. Matriz de Riesgo por Sección (Plagio / IA)", yPos, margin, pageWidth);
+
+            autoTable(doc, {
+                startY: yPos,
+                head: [['Sección', 'Tipo de Riesgo', 'Nivel', 'Evidencia', 'Acción Sugerida']],
+                body: plagMatrix.map(p => [
+                    p.section ?? '-',
+                    (p.riskType ?? '').toString().replace(/_/g, ' '),
+                    (p.riskLevel ?? 'Medio').toString().toUpperCase(),
+                    p.evidence ?? '-',
+                    p.suggestedAction ?? '-'
+                ]),
+                theme: 'grid',
+                headStyles: { fillColor: COLORS.brandBlack, textColor: [255, 255, 255], fontStyle: 'bold' },
+                styles: { fontSize: 7.5, cellPadding: 2.5, valign: 'top' },
+                columnStyles: {
+                    0: { fontStyle: 'bold', cellWidth: 32 },
+                    1: { cellWidth: 35 },
+                    2: { halign: 'center', cellWidth: 18, fontStyle: 'bold' },
+                    3: { cellWidth: 'auto' },
+                    4: { cellWidth: 45 }
+                },
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 2) {
+                        const t = (data.cell.raw as string).toUpperCase();
+                        data.cell.styles.textColor = t === 'ALTO' ? COLORS.status.error as any
+                            : t === 'MEDIO' ? COLORS.status.warning as any
+                            : COLORS.status.success as any;
+                    }
+                }
+            });
+            // @ts-ignore
+            yPos = (doc as any).lastAutoTable.finalY + 10;
+        }
+
+        // --- 17. DIAGNÓSTICO DE CIERRE ---
         const closing = (result as any).closingDiagnosis as any | undefined;
         if (closing) {
             doc.addPage();
@@ -1112,27 +1316,62 @@ export const exportToPDF = (type: ReportType, data: ReportData, fileName: string
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
+
+    // --- PORTADA REDISEÑADA ---
+    // Fondo crema
     doc.setFillColor(COLORS.bg.accent[0], COLORS.bg.accent[1], COLORS.bg.accent[2]);
     doc.rect(0, 0, pageWidth, pageHeight, 'F');
+    // Tarjeta interior blanca
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(20, 20, pageWidth - 40, pageHeight - 40, 5, 5, 'F');
-    let yPos = 80;
+    doc.roundedRect(18, 18, pageWidth - 36, pageHeight - 36, 6, 6, 'F');
+    // Banda superior naranja (identidad visual)
+    doc.setFillColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+    doc.roundedRect(18, 18, pageWidth - 36, 6, 3, 3, 'F');
+    doc.rect(18, 22, pageWidth - 36, 4, 'F');
+
+    // LOGO / Brand (zona alta)
+    let yPos = 50;
     doc.setFont(FONTS.primary, FONTS.style.bold);
-    doc.setFontSize(24);
+    doc.setFontSize(32);
     doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
-    doc.text("TU TESIS RD", pageWidth / 2, yPos, { align: 'center' });
-    yPos += 10;
-    doc.setFontSize(10);
+    doc.text("TuTesisRD", pageWidth / 2, yPos, { align: 'center' });
+    yPos += 7;
+    // Subtítulo sistema
+    doc.setFontSize(9);
     doc.setFont(FONTS.primary, FONTS.style.regular);
     doc.setTextColor(COLORS.text.secondary[0], COLORS.text.secondary[1], COLORS.text.secondary[2]);
-    doc.text("SISTEMA DE AUDITORÍA ACADÉMICA", pageWidth / 2, yPos, { align: 'center' });
-    yPos += 50;
-    doc.setFontSize(28);
+    doc.text("SISTEMA DE AUDITORÍA ACADÉMICA FORENSE", pageWidth / 2, yPos, { align: 'center' });
+    yPos += 3;
+    // Separador fino naranja
+    doc.setDrawColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+    doc.setLineWidth(0.5);
+    doc.line(pageWidth / 2 - 35, yPos + 3, pageWidth / 2 + 35, yPos + 3);
+
+    // TÍTULO DEL REPORTE (zona media — MUCHO más abajo para evitar solapamiento)
+    yPos = 115;
+    doc.setFontSize(11);
+    doc.setFont(FONTS.primary, FONTS.style.regular);
+    doc.setTextColor(COLORS.text.secondary[0], COLORS.text.secondary[1], COLORS.text.secondary[2]);
+    doc.text(strategy.getTitle(), pageWidth / 2, yPos, { align: 'center' }); // "INFORME DE"
+    yPos += 10;
+    doc.setFontSize(22);
     doc.setFont(FONTS.primary, FONTS.style.bold);
-    doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
-    doc.text(strategy.getTitle(), pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
-    doc.text(strategy.getSubTitle(), pageWidth / 2, yPos, { align: 'center' });
+    doc.setTextColor(COLORS.brandBlack[0], COLORS.brandBlack[1], COLORS.brandBlack[2]);
+    // Wrap subtitle si es largo
+    const subLines = doc.splitTextToSize(strategy.getSubTitle(), pageWidth - 80);
+    subLines.forEach((ln: string) => {
+        doc.text(ln, pageWidth / 2, yPos, { align: 'center' });
+        yPos += 10;
+    });
+
+    // Pie de portada: fecha + branding
+    doc.setFontSize(8);
+    doc.setFont(FONTS.primary, FONTS.style.regular);
+    doc.setTextColor(COLORS.text.light[0], COLORS.text.light[1], COLORS.text.light[2]);
+    const fecha = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.text(`Generado: ${fecha}`, pageWidth / 2, pageHeight - 35, { align: 'center' });
+    doc.text("Confidencial · Uso académico interno", pageWidth / 2, pageHeight - 30, { align: 'center' });
+
     strategy.generate(doc, data);
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {

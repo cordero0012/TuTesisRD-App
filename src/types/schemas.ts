@@ -241,6 +241,45 @@ export const ProposalClassificationSchema = z.object({
     discrepancyWarning: z.string().optional().default('') // alerta si las conclusiones hablan de "reducción real" sin intervención
 });
 
+// A) Resumen ejecutivo del reporte de auditoría
+export const ExecutiveSummarySchema = z.object({
+    overview: z.string().optional().default(''), // 3-4 líneas de diagnóstico general
+    mainStrengths: z.array(z.string()).optional().default([]), // ≥3
+    mainWeaknesses: z.array(z.string()).optional().default([]), // ≥3
+    defensibilityLevel: z.enum(['Excelente', 'Aceptable', 'Débil', 'Crítico']).or(z.string()).optional().default('Débil')
+});
+
+// Cumplimiento institucional estructural — portada, preliminares, capítulos, etc.
+export const StructuralComplianceEntrySchema = z.object({
+    component: z.string(), // portada, preliminares, índice, capítulos, conclusiones, anexos, tablas, figuras...
+    status: z.enum(['cumple', 'cumple_parcial', 'no_cumple']).or(z.string()).optional().default('cumple_parcial'),
+    notes: z.string().optional().default('')
+});
+
+// D) Matriz de validación de referencias — una entrada por referencia
+export const ReferenceValidationEntrySchema = z.object({
+    reference: z.string(), // entrada literal
+    exists: z.boolean().optional().default(false),
+    academicQuality: z.enum(['Alta', 'Media', 'Baja', 'No_académica']).or(z.string()).optional().default('Media'),
+    citationStatus: z.enum(['citada', 'no_citada', 'mal_citada']).or(z.string()).optional().default('citada'),
+    category: z.enum(['válida', 'válida_mal_citada', 'débil', 'incompleta', 'duplicada']).or(z.string()).optional().default('válida'),
+    verdict: z.enum(['mantener', 'corregir', 'sustituir', 'eliminar']).or(z.string()).optional().default('mantener'),
+    actionDetail: z.string().optional().default('')
+});
+
+// E) Matriz de riesgo de plagio / patrones IA por sección
+export const PlagiarismMatrixEntrySchema = z.object({
+    section: z.string(), // Marco teórico, Metodología, Resultados, etc.
+    riskType: z.enum([
+        'paráfrasis_deficiente', 'ensamblaje_documental', 'cita_débil',
+        'cambio_de_voz', 'repetición_formulaica', 'cierre_genérico',
+        'riesgo_coincidencia_textual', 'tono_homogéneo_IA'
+    ]).or(z.string()).optional().default('paráfrasis_deficiente'),
+    riskLevel: z.enum(['Bajo', 'Medio', 'Alto']).or(z.string()).optional().default('Medio'),
+    evidence: z.string().optional().default(''),
+    suggestedAction: z.string().optional().default('')
+});
+
 // Diagnóstico de cierre — síntesis defendible frente a asesor/jurado
 export const ClosingDiagnosisSchema = z.object({
     structuralCompliance: z.enum(['Alto', 'Medio', 'Bajo']).or(z.string()).optional().default('Medio'),
@@ -282,9 +321,13 @@ export const MatrixAnalysisSchema = z.object({
     thesisElementsEvaluation: z.array(ThesisElementEvaluationSchema).optional(),
 
     // Auditoría sistémica — framework completo de auditoría de tesis
+    executiveSummary: ExecutiveSummarySchema.optional(),
+    structuralCompliance: z.array(StructuralComplianceEntrySchema).optional(),
     auditFindings: z.array(AuditFindingSchema).optional(),
     correspondenceMatrix: z.array(CorrespondenceEntrySchema).optional(),
     numericalCoherence: z.array(NumericalInconsistencySchema).optional(),
+    referenceValidationMatrix: z.array(ReferenceValidationEntrySchema).optional(),
+    plagiarismMatrix: z.array(PlagiarismMatrixEntrySchema).optional(),
     plagiarismRiskAnalysis: PlagiarismRiskAnalysisSchema.optional(),
     aiWritingPatterns: AiWritingPatternsSchema.optional(),
     proposalClassification: ProposalClassificationSchema.optional(),
