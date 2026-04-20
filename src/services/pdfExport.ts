@@ -539,6 +539,451 @@ class ConsistencyMatrixStrategy implements PDFReportStrategy {
                 yPos += 5;
             });
         }
+
+        // --- 9. MATRIZ DE CORRESPONDENCIA (OBJETIVO ↔ INSTRUMENTO ↔ RESULTADO) ---
+        const correspondence = (result as any).correspondenceMatrix as any[] | undefined;
+        if (correspondence && correspondence.length > 0) {
+            doc.addPage();
+            yPos = 30;
+            yPos = sectionHeader(doc, "9. Trazabilidad Empírica (Objetivo ↔ Instrumento ↔ Resultado)", yPos, margin, pageWidth);
+
+            autoTable(doc, {
+                startY: yPos,
+                head: [['Objetivo', 'Instrumento', 'Resultado Esperado', 'Encontrado', 'Estado']],
+                body: correspondence.map(c => [
+                    c.objective ?? '-',
+                    c.instrumentDeclared ?? '-',
+                    c.expectedOutput ?? '-',
+                    c.actualResultFound ?? 'NO ENCONTRADO',
+                    (c.status ?? 'sin_evidencia').toString().toUpperCase().replace('_', ' ')
+                ]),
+                theme: 'grid',
+                headStyles: { fillColor: COLORS.brandBlack, textColor: [255, 255, 255], fontStyle: 'bold' },
+                styles: { fontSize: 7.5, cellPadding: 2.5, textColor: COLORS.text.main, valign: 'top' },
+                columnStyles: {
+                    0: { cellWidth: 40, fontStyle: 'bold' },
+                    1: { cellWidth: 28 },
+                    2: { cellWidth: 32 },
+                    3: { cellWidth: 'auto' },
+                    4: { cellWidth: 22, halign: 'center', fontStyle: 'bold' }
+                },
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 4) {
+                        const t = (data.cell.raw as string);
+                        data.cell.styles.textColor = t.includes('CUMPLIDO') && !t.includes('NO') ? COLORS.status.success as any
+                            : t.includes('PARCIAL') ? COLORS.status.warning as any
+                            : COLORS.status.error as any;
+                    }
+                }
+            });
+            // @ts-ignore
+            yPos = (doc as any).lastAutoTable.finalY + 10;
+
+            // Observaciones debajo de la tabla
+            const obsEntries = correspondence.filter(c => c.observation);
+            if (obsEntries.length > 0) {
+                yPos = ensureSpace(doc, yPos, 15);
+                yPos = miniHeader(doc, "Observaciones de trazabilidad", yPos, margin);
+                obsEntries.forEach((c: any) => {
+                    yPos = ensureSpace(doc, yPos, 10);
+                    doc.setFontSize(8);
+                    doc.setFont(FONTS.primary, FONTS.style.bold);
+                    doc.setTextColor(COLORS.brandBlack[0], COLORS.brandBlack[1], COLORS.brandBlack[2]);
+                    doc.text(`• ${c.objective}:`, margin + 2, yPos);
+                    yPos += 4;
+                    doc.setFont(FONTS.primary, FONTS.style.regular);
+                    doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                    const lines = doc.splitTextToSize(c.observation, pageWidth - margin * 2 - 6);
+                    doc.text(lines, margin + 6, yPos);
+                    yPos += lines.length * 4 + 2;
+                });
+            }
+        }
+
+        // --- 10. COHERENCIA NUMÉRICA ---
+        const numerical = (result as any).numericalCoherence as any[] | undefined;
+        if (numerical && numerical.length > 0) {
+            yPos = ensureSpace(doc, yPos, 40);
+            if (yPos > pageHeight - 80) { doc.addPage(); yPos = 30; }
+            yPos = sectionHeader(doc, "10. Coherencia Numérica — Cifras Contradictorias", yPos, margin, pageWidth);
+
+            autoTable(doc, {
+                startY: yPos,
+                head: [['Cifra / Métrica', 'Ubicación A', 'Ubicación B', 'Discrepancia', 'Gravedad']],
+                body: numerical.map(n => [
+                    n.figure ?? '-',
+                    n.locationA ?? '-',
+                    n.locationB ?? '-',
+                    n.discrepancy ?? '-',
+                    (n.severity ?? 'Medio').toString().toUpperCase()
+                ]),
+                theme: 'grid',
+                headStyles: { fillColor: COLORS.status.error, textColor: [255, 255, 255], fontStyle: 'bold' },
+                styles: { fontSize: 8, cellPadding: 2.5, valign: 'top' },
+                columnStyles: {
+                    0: { fontStyle: 'bold', cellWidth: 35 },
+                    1: { cellWidth: 35 },
+                    2: { cellWidth: 35 },
+                    3: { cellWidth: 'auto' },
+                    4: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }
+                },
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 4) {
+                        const t = (data.cell.raw as string).toUpperCase();
+                        data.cell.styles.textColor = t === 'CRÍTICO' ? COLORS.status.error as any
+                            : t === 'ALTO' ? COLORS.status.warning as any
+                            : COLORS.text.secondary as any;
+                    }
+                }
+            });
+            // @ts-ignore
+            yPos = (doc as any).lastAutoTable.finalY + 10;
+        }
+
+        // --- 11. HALLAZGOS POR SEVERIDAD (Crítico / Alto / Medio) ---
+        const findings = (result as any).auditFindings as any[] | undefined;
+        if (findings && findings.length > 0) {
+            doc.addPage();
+            yPos = 30;
+            yPos = sectionHeader(doc, "11. Hallazgos de Auditoría Clasificados por Severidad", yPos, margin, pageWidth);
+
+            // Contadores tipo dashboard
+            const counts = { c: 0, h: 0, m: 0 };
+            findings.forEach(f => {
+                const s = (f.severity || '').toLowerCase();
+                if (s.includes('crít') || s.includes('crit')) counts.c++;
+                else if (s.includes('alto')) counts.h++;
+                else counts.m++;
+            });
+
+            const drawCountCard = (label: string, count: number, x: number, color: RGB) => {
+                doc.setFillColor(color[0], color[1], color[2]);
+                doc.roundedRect(x, yPos, 50, 15, 1.5, 1.5, 'F');
+                doc.setFontSize(7);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(255, 255, 255);
+                doc.text(label.toUpperCase(), x + 25, yPos + 5, { align: 'center' });
+                doc.setFontSize(12);
+                doc.text(String(count), x + 25, yPos + 12, { align: 'center' });
+            };
+            drawCountCard("Críticos", counts.c, margin, COLORS.status.error);
+            drawCountCard("Altos", counts.h, margin + 55, COLORS.status.warning);
+            drawCountCard("Medios", counts.m, margin + 110, COLORS.text.secondary);
+            yPos += 22;
+
+            // Orden: críticos primero
+            const orderWeight = (s?: string) => {
+                const v = (s || '').toLowerCase();
+                if (v.includes('crít') || v.includes('crit')) return 0;
+                if (v.includes('alto')) return 1;
+                return 2;
+            };
+            const sorted = [...findings].sort((a, b) => orderWeight(a.severity) - orderWeight(b.severity));
+
+            sorted.forEach((f, idx) => {
+                yPos = ensureSpace(doc, yPos, 40);
+
+                const sev = (f.severity || 'Medio').toString();
+                const sevColor = sev.toLowerCase().includes('crít') || sev.toLowerCase().includes('crit') ? COLORS.status.error
+                    : sev.toLowerCase().includes('alto') ? COLORS.status.warning
+                    : COLORS.text.secondary;
+
+                // Badge lateral
+                doc.setFillColor(sevColor[0], sevColor[1], sevColor[2]);
+                doc.roundedRect(margin, yPos, 3, 30, 0.5, 0.5, 'F');
+
+                // Header
+                doc.setFontSize(9);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(sevColor[0], sevColor[1], sevColor[2]);
+                doc.text(`[${sev.toUpperCase()}]`, margin + 6, yPos + 4);
+                doc.setTextColor(COLORS.brandBlack[0], COLORS.brandBlack[1], COLORS.brandBlack[2]);
+                doc.text(`${idx + 1}. ${(f.component || 'Componente').toUpperCase()}`, margin + 6 + doc.getTextWidth(`[${sev.toUpperCase()}]`) + 2, yPos + 4);
+                yPos += 6;
+
+                doc.setFont(FONTS.primary, FONTS.style.regular);
+                doc.setFontSize(8);
+                doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+
+                const writeLabeled = (label: string, value: string, labelColor: RGB = COLORS.text.secondary) => {
+                    if (!value) return;
+                    yPos = ensureSpace(doc, yPos, 8);
+                    doc.setFont(FONTS.primary, FONTS.style.bold);
+                    doc.setTextColor(labelColor[0], labelColor[1], labelColor[2]);
+                    doc.text(label, margin + 6, yPos);
+                    doc.setFont(FONTS.primary, FONTS.style.regular);
+                    doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                    const lw = doc.getTextWidth(label) + 2;
+                    const lines = doc.splitTextToSize(value, pageWidth - margin * 2 - 6 - lw);
+                    doc.text(lines, margin + 6 + lw, yPos);
+                    yPos += Math.max(4, lines.length * 4) + 1;
+                };
+
+                writeLabeled("Hallazgo:", f.finding || '-', COLORS.brandBlack);
+                if (f.currentFormulation) writeLabeled("Formulación actual:", f.currentFormulation, COLORS.text.secondary);
+                writeLabeled("Evidencia:", f.evidence || '-', COLORS.primaryDark);
+                if (f.violatedRelation) writeLabeled("Relación afectada:", f.violatedRelation, COLORS.status.error);
+                if (f.impactOnThesis) writeLabeled("Impacto:", f.impactOnThesis, COLORS.status.warning);
+                writeLabeled("Corrección:", f.recommendedFix || '-', COLORS.status.success);
+                if (f.priority) writeLabeled("Prioridad:", f.priority, COLORS.primary);
+                yPos += 4;
+            });
+        }
+
+        // --- 12. ANÁLISIS DE PLAGIO Y PATRONES DE REDACCIÓN ASISTIDA ---
+        const plag = (result as any).plagiarismRiskAnalysis as any | undefined;
+        const aiPat = (result as any).aiWritingPatterns as any | undefined;
+        if (plag || aiPat) {
+            doc.addPage();
+            yPos = 30;
+            yPos = sectionHeader(doc, "12. Riesgo de Plagio y Patrones de Redacción Asistida", yPos, margin, pageWidth);
+
+            const riskColor = (lvl?: string): RGB => {
+                const v = (lvl || '').toLowerCase();
+                if (v === 'alto') return COLORS.status.error;
+                if (v === 'medio') return COLORS.status.warning;
+                return COLORS.status.success;
+            };
+
+            // Plagio
+            if (plag) {
+                yPos = miniHeader(doc, "Riesgo de Plagio (análisis estructural)", yPos, margin);
+                const pColor = riskColor(plag.overallRiskLevel);
+                doc.setFillColor(pColor[0], pColor[1], pColor[2]);
+                doc.roundedRect(margin, yPos, 55, 8, 1, 1, 'F');
+                doc.setFontSize(9);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(255, 255, 255);
+                doc.text(`Nivel: ${(plag.overallRiskLevel || 'N/D').toUpperCase()}`, margin + 27.5, yPos + 5.5, { align: 'center' });
+                yPos += 12;
+
+                if (plag.classification) {
+                    doc.setFont(FONTS.primary, FONTS.style.italic);
+                    doc.setFontSize(9);
+                    doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                    const lines = doc.splitTextToSize(`Clasificación: ${plag.classification}`, pageWidth - margin * 2);
+                    doc.text(lines, margin, yPos);
+                    yPos += lines.length * 4.5 + 3;
+                }
+
+                if (Array.isArray(plag.signals) && plag.signals.length > 0) {
+                    doc.setFont(FONTS.primary, FONTS.style.bold);
+                    doc.setTextColor(COLORS.status.error[0], COLORS.status.error[1], COLORS.status.error[2]);
+                    doc.setFontSize(9);
+                    doc.text("Señales detectadas:", margin, yPos);
+                    yPos += 5;
+                    doc.setFont(FONTS.primary, FONTS.style.regular);
+                    doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                    doc.setFontSize(8);
+                    plag.signals.forEach((s: string) => {
+                        yPos = ensureSpace(doc, yPos, 8);
+                        const lines = doc.splitTextToSize(`• ${s}`, pageWidth - margin * 2 - 4);
+                        doc.text(lines, margin + 3, yPos);
+                        yPos += lines.length * 4 + 1;
+                    });
+                    yPos += 3;
+                }
+
+                if (Array.isArray(plag.suspectExcerpts) && plag.suspectExcerpts.length > 0) {
+                    doc.setFont(FONTS.primary, FONTS.style.bold);
+                    doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+                    doc.setFontSize(9);
+                    doc.text("Fragmentos sospechosos:", margin, yPos);
+                    yPos += 5;
+                    doc.setFont(FONTS.primary, FONTS.style.regular);
+                    doc.setFontSize(8);
+                    plag.suspectExcerpts.forEach((e: any, i: number) => {
+                        yPos = ensureSpace(doc, yPos, 15);
+                        doc.setFont(FONTS.primary, FONTS.style.bold);
+                        doc.setTextColor(COLORS.text.secondary[0], COLORS.text.secondary[1], COLORS.text.secondary[2]);
+                        doc.text(`${i + 1}. ${e.page || ''}`, margin + 3, yPos);
+                        yPos += 4;
+                        doc.setFont(FONTS.primary, FONTS.style.italic);
+                        doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                        const exc = doc.splitTextToSize(`"${e.excerpt || ''}"`, pageWidth - margin * 2 - 6);
+                        doc.text(exc, margin + 6, yPos);
+                        yPos += exc.length * 4;
+                        if (e.reason) {
+                            doc.setFont(FONTS.primary, FONTS.style.regular);
+                            doc.setTextColor(COLORS.status.warning[0], COLORS.status.warning[1], COLORS.status.warning[2]);
+                            const rn = doc.splitTextToSize(`Motivo: ${e.reason}`, pageWidth - margin * 2 - 6);
+                            doc.text(rn, margin + 6, yPos);
+                            yPos += rn.length * 4;
+                        }
+                        yPos += 3;
+                    });
+                }
+                yPos += 5;
+            }
+
+            // IA
+            if (aiPat) {
+                yPos = ensureSpace(doc, yPos, 30);
+                yPos = miniHeader(doc, "Patrones Compatibles con Redacción Asistida (no es prueba, sólo señales)", yPos, margin);
+                const aColor = riskColor(aiPat.compatibilityLevel);
+                doc.setFillColor(aColor[0], aColor[1], aColor[2]);
+                doc.roundedRect(margin, yPos, 55, 8, 1, 1, 'F');
+                doc.setFontSize(9);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(255, 255, 255);
+                doc.text(`Compatibilidad: ${(aiPat.compatibilityLevel || 'N/D').toUpperCase()}`, margin + 27.5, yPos + 5.5, { align: 'center' });
+                yPos += 12;
+
+                if (Array.isArray(aiPat.detectedPatterns) && aiPat.detectedPatterns.length > 0) {
+                    doc.setFont(FONTS.primary, FONTS.style.regular);
+                    doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                    doc.setFontSize(8);
+                    aiPat.detectedPatterns.forEach((pt: string) => {
+                        yPos = ensureSpace(doc, yPos, 8);
+                        const lines = doc.splitTextToSize(`• ${pt}`, pageWidth - margin * 2 - 4);
+                        doc.text(lines, margin + 3, yPos);
+                        yPos += lines.length * 4 + 1;
+                    });
+                }
+                if (aiPat.notes) {
+                    yPos = ensureSpace(doc, yPos, 8);
+                    doc.setFont(FONTS.primary, FONTS.style.italic);
+                    doc.setTextColor(COLORS.text.secondary[0], COLORS.text.secondary[1], COLORS.text.secondary[2]);
+                    doc.setFontSize(8);
+                    const lines = doc.splitTextToSize(aiPat.notes, pageWidth - margin * 2);
+                    doc.text(lines, margin, yPos);
+                    yPos += lines.length * 4;
+                }
+            }
+        }
+
+        // --- 13. CLASIFICACIÓN DE LA PROPUESTA ---
+        const prop = (result as any).proposalClassification as any | undefined;
+        if (prop && prop.type && prop.type !== 'no_aplica') {
+            yPos = ensureSpace(doc, yPos, 40);
+            if (yPos > pageHeight - 60) { doc.addPage(); yPos = 30; }
+            yPos = sectionHeader(doc, "13. Clasificación de la Propuesta (Diseño vs. Implementación)", yPos, margin, pageWidth);
+
+            const typeLabel = (prop.type || 'no_aplica').toString().toUpperCase();
+            const typeColor: RGB = typeLabel.includes('IMPLEMENT') ? COLORS.status.success
+                : typeLabel.includes('DISEÑ') ? COLORS.status.warning
+                : typeLabel.includes('PROYECT') || typeLabel.includes('SIMUL') ? COLORS.status.error
+                : COLORS.text.secondary;
+
+            doc.setFillColor(typeColor[0], typeColor[1], typeColor[2]);
+            doc.roundedRect(margin, yPos, 60, 9, 1.5, 1.5, 'F');
+            doc.setFontSize(10);
+            doc.setFont(FONTS.primary, FONTS.style.bold);
+            doc.setTextColor(255, 255, 255);
+            doc.text(typeLabel, margin + 30, yPos + 6, { align: 'center' });
+            yPos += 14;
+
+            const propField = (label: string, value: string, color: RGB) => {
+                if (!value) return;
+                yPos = ensureSpace(doc, yPos, 10);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(color[0], color[1], color[2]);
+                doc.setFontSize(9);
+                doc.text(label, margin, yPos);
+                yPos += 4;
+                doc.setFont(FONTS.primary, FONTS.style.regular);
+                doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                const lines = doc.splitTextToSize(value, pageWidth - margin * 2);
+                doc.text(lines, margin, yPos);
+                yPos += lines.length * 4.5 + 2;
+            };
+            propField("Evidencia en el manuscrito:", prop.evidence, COLORS.brandBlack);
+            propField("Impacto reclamado por el autor:", prop.claimedImpact, COLORS.primary);
+            propField("Impacto verificable con los datos:", prop.verifiableImpact, COLORS.status.success);
+            if (prop.discrepancyWarning) {
+                yPos = ensureSpace(doc, yPos, 15);
+                doc.setFillColor(COLORS.status.error[0], COLORS.status.error[1], COLORS.status.error[2]);
+                doc.roundedRect(margin, yPos, pageWidth - margin * 2, 8, 1, 1, 'F');
+                doc.setFontSize(9);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(255, 255, 255);
+                doc.text("⚠ ALERTA DE SOBREAFIRMACIÓN", margin + 3, yPos + 5.5);
+                yPos += 11;
+                doc.setFont(FONTS.primary, FONTS.style.regular);
+                doc.setTextColor(COLORS.status.error[0], COLORS.status.error[1], COLORS.status.error[2]);
+                const lines = doc.splitTextToSize(prop.discrepancyWarning, pageWidth - margin * 2);
+                doc.text(lines, margin, yPos);
+                yPos += lines.length * 4.5 + 3;
+            }
+        }
+
+        // --- 14. DIAGNÓSTICO DE CIERRE ---
+        const closing = (result as any).closingDiagnosis as any | undefined;
+        if (closing) {
+            doc.addPage();
+            yPos = 30;
+            yPos = sectionHeader(doc, "14. Diagnóstico Técnico de Cierre", yPos, margin, pageWidth);
+
+            // Dos cards: estructural + metodológico
+            const drawGrade = (label: string, grade: string, x: number) => {
+                const c = qualityColor(grade);
+                doc.setFillColor(COLORS.bg.card[0], COLORS.bg.card[1], COLORS.bg.card[2]);
+                doc.roundedRect(x, yPos, 80, 22, 2, 2, 'F');
+                doc.setDrawColor(c[0], c[1], c[2]);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(x, yPos, 80, 22, 2, 2, 'S');
+                doc.setFontSize(8);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(COLORS.text.secondary[0], COLORS.text.secondary[1], COLORS.text.secondary[2]);
+                doc.text(label.toUpperCase(), x + 40, yPos + 7, { align: 'center' });
+                doc.setFontSize(14);
+                doc.setTextColor(c[0], c[1], c[2]);
+                doc.text((grade || 'N/D').toUpperCase(), x + 40, yPos + 16, { align: 'center' });
+            };
+            drawGrade("Cumplimiento Estructural", closing.structuralCompliance, margin);
+            drawGrade("Consistencia Metodológica", closing.methodologicalConsistency, margin + 85);
+            yPos += 28;
+
+            const renderList = (title: string, items: string[] | undefined, color: RGB, bullet: string) => {
+                if (!items || items.length === 0) return;
+                yPos = ensureSpace(doc, yPos, 15);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setTextColor(color[0], color[1], color[2]);
+                doc.setFontSize(10);
+                doc.text(title, margin, yPos);
+                yPos += 5;
+                doc.setFont(FONTS.primary, FONTS.style.regular);
+                doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                doc.setFontSize(9);
+                items.forEach(it => {
+                    yPos = ensureSpace(doc, yPos, 8);
+                    const lines = doc.splitTextToSize(`${bullet} ${it}`, pageWidth - margin * 2 - 4);
+                    doc.text(lines, margin + 3, yPos);
+                    yPos += lines.length * 4.5 + 1;
+                });
+                yPos += 4;
+            };
+
+            renderList("Principales Fortalezas", closing.mainStrengths, COLORS.status.success, "✓");
+            renderList("Principales Debilidades", closing.mainWeaknesses, COLORS.status.error, "✗");
+            renderList("Correcciones Críticas Requeridas", closing.criticalFixesRequired, COLORS.status.warning, "!");
+            renderList("Validaciones Pendientes", closing.pendingValidations, COLORS.primary, "○");
+
+            if (closing.technicalClosingStatement) {
+                yPos = ensureSpace(doc, yPos, 30);
+                doc.setFillColor(COLORS.bg.accent[0], COLORS.bg.accent[1], COLORS.bg.accent[2]);
+                const boxX = margin;
+                const boxW = pageWidth - margin * 2;
+                const text = closing.technicalClosingStatement;
+                doc.setFont(FONTS.primary, FONTS.style.italic);
+                doc.setFontSize(10);
+                const lines = doc.splitTextToSize(text, boxW - 10);
+                const boxH = lines.length * 5 + 14;
+                doc.roundedRect(boxX, yPos, boxW, boxH, 2, 2, 'F');
+                doc.setDrawColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+                doc.setLineWidth(0.5);
+                doc.line(boxX, yPos, boxX, yPos + boxH);
+                doc.setFont(FONTS.primary, FONTS.style.bold);
+                doc.setFontSize(9);
+                doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+                doc.text("DECLARACIÓN TÉCNICA DE CIERRE", boxX + 5, yPos + 6);
+                doc.setFont(FONTS.primary, FONTS.style.italic);
+                doc.setFontSize(10);
+                doc.setTextColor(COLORS.text.main[0], COLORS.text.main[1], COLORS.text.main[2]);
+                doc.text(lines, boxX + 5, yPos + 12);
+                yPos += boxH + 5;
+            }
+        }
     }
 }
 

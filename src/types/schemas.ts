@@ -180,6 +180,78 @@ export const ApaComplianceScoreSchema = z.object({
     thresholdMet: z.boolean().optional().default(false)
 });
 
+// Auditoría sistémica — hallazgos clasificados por severidad
+export const AuditFindingSchema = z.object({
+    component: z.string(), // título, problema, objetivos, hipótesis, instrumentos, resultados, conclusiones, citas, referencias, estilo, etc.
+    currentFormulation: z.string().optional().default(''),
+    finding: z.string(),
+    evidence: z.string(), // Pág. X — "fragmento literal"
+    severity: z.enum(['Crítico', 'Alto', 'Medio']).or(z.string()).optional().default('Medio'),
+    violatedRelation: z.string().optional().default(''), // qué componentes entran en contradicción
+    impactOnThesis: z.string().optional().default(''),
+    recommendedFix: z.string(),
+    priority: z.enum(['Inmediata', 'Alta', 'Normal']).or(z.string()).optional().default('Normal')
+});
+
+// Matriz objetivo ↔ instrumento ↔ resultado (trazabilidad empírica)
+export const CorrespondenceEntrySchema = z.object({
+    objective: z.string(), // objetivo específico N
+    instrumentDeclared: z.string().optional().default(''),
+    expectedOutput: z.string().optional().default(''),
+    actualResultFound: z.string().optional().default(''),
+    resultSection: z.string().optional().default(''), // Pág. X, Cap. Y
+    status: z.enum(['cumplido', 'parcial', 'no_cumplido', 'sin_evidencia']).or(z.string()).optional().default('sin_evidencia'),
+    observation: z.string().optional().default('')
+});
+
+// Incoherencia numérica — misma cifra, dos lugares, valores distintos
+export const NumericalInconsistencySchema = z.object({
+    figure: z.string(), // "porcentaje de accidentes"
+    locationA: z.string(), // "Planteamiento Pág. 12: 45%"
+    locationB: z.string(), // "Resultados Pág. 87: 52%"
+    discrepancy: z.string(),
+    severity: z.enum(['Crítico', 'Alto', 'Medio']).or(z.string()).optional().default('Alto')
+});
+
+// Riesgo de plagio — análisis estructural, no acusatorio
+export const PlagiarismRiskAnalysisSchema = z.object({
+    overallRiskLevel: z.enum(['Bajo', 'Medio', 'Alto']).or(z.string()).optional().default('Bajo'),
+    signals: z.array(z.string()).optional().default([]), // cambios de voz, paráfrasis débil, etc.
+    suspectExcerpts: z.array(z.object({
+        page: z.string().optional().default(''),
+        excerpt: z.string().optional().default(''),
+        reason: z.string().optional().default('')
+    })).optional().default([]),
+    classification: z.string().optional().default('') // "bajo riesgo", "riesgo medio de paráfrasis débil", "alto riesgo de copia parcial"
+});
+
+// Patrones compatibles con redacción asistida por IA (no prueba, sólo señales)
+export const AiWritingPatternsSchema = z.object({
+    compatibilityLevel: z.enum(['Bajo', 'Medio', 'Alto']).or(z.string()).optional().default('Bajo'),
+    detectedPatterns: z.array(z.string()).optional().default([]),
+    notes: z.string().optional().default('')
+});
+
+// Clasificación de la propuesta — diseñada vs implementada vs proyectada
+export const ProposalClassificationSchema = z.object({
+    type: z.enum(['diseñada', 'implementada', 'proyectada', 'simulada', 'no_aplica']).or(z.string()).optional().default('no_aplica'),
+    evidence: z.string().optional().default(''),
+    claimedImpact: z.string().optional().default(''),
+    verifiableImpact: z.string().optional().default(''),
+    discrepancyWarning: z.string().optional().default('') // alerta si las conclusiones hablan de "reducción real" sin intervención
+});
+
+// Diagnóstico de cierre — síntesis defendible frente a asesor/jurado
+export const ClosingDiagnosisSchema = z.object({
+    structuralCompliance: z.enum(['Alto', 'Medio', 'Bajo']).or(z.string()).optional().default('Medio'),
+    methodologicalConsistency: z.enum(['Alta', 'Media', 'Baja']).or(z.string()).optional().default('Media'),
+    mainStrengths: z.array(z.string()).optional().default([]),
+    mainWeaknesses: z.array(z.string()).optional().default([]),
+    criticalFixesRequired: z.array(z.string()).optional().default([]),
+    pendingValidations: z.array(z.string()).optional().default([]),
+    technicalClosingStatement: z.string().optional().default('') // párrafo de cierre técnico
+});
+
 export const MatrixAnalysisSchema = z.object({
     documentType: z.string().optional(),
     methodologicalApproach: z.string().optional(),
@@ -208,6 +280,15 @@ export const MatrixAnalysisSchema = z.object({
 
     // Evaluación exhaustiva por elemento de la tesis (problema, objetivos, metodología, etc.)
     thesisElementsEvaluation: z.array(ThesisElementEvaluationSchema).optional(),
+
+    // Auditoría sistémica — framework completo de auditoría de tesis
+    auditFindings: z.array(AuditFindingSchema).optional(),
+    correspondenceMatrix: z.array(CorrespondenceEntrySchema).optional(),
+    numericalCoherence: z.array(NumericalInconsistencySchema).optional(),
+    plagiarismRiskAnalysis: PlagiarismRiskAnalysisSchema.optional(),
+    aiWritingPatterns: AiWritingPatternsSchema.optional(),
+    proposalClassification: ProposalClassificationSchema.optional(),
+    closingDiagnosis: ClosingDiagnosisSchema.optional(),
 
     rawAnalysis: z.string().optional(),
     analysisStatus: z.enum(['ok', 'partial', 'insufficient_input', 'model_noncompliant', 'error']).optional(),
