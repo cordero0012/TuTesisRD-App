@@ -93,6 +93,7 @@ export const logPageView = (url: string) => {
 
     if (typeof window.gtag !== 'undefined' && GA_MEASUREMENT_ID) {
         const params: Record<string, unknown> = {
+            send_to: GA_MEASUREMENT_ID,
             page_path: url,
             page_location: window.location.href,
             page_title: document.title,
@@ -113,6 +114,7 @@ export const logEvent = (action: string, category: string, label: string, value?
     // GA4 Tracking
     if (typeof window.gtag !== 'undefined' && GA_MEASUREMENT_ID) {
         window.gtag('event', action, {
+            send_to: GA_MEASUREMENT_ID,
             event_category: category,
             event_label: label,
             value: value,
