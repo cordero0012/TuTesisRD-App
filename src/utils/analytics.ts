@@ -2,17 +2,20 @@
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
 
-// Fuentes que se consideran tráfico interno/testing.
-// El tráfico marcado con traffic_type='internal' es excluido por el
-// Data Filter de Internal Traffic en GA4 Admin (debe estar ACTIVE).
+// Sources treated as internal/testing traffic.
+// GA4 excludes traffic marked as traffic_type='internal' when the
+// Internal Traffic data filter is active in GA4 Admin.
 const INTERNAL_REFERRERS = [
-    'tagassistant.google.com', // sesiones de debug con GTM/GA Tag Assistant
-    'vercel.com',              // accesos desde el dashboard de Vercel a producción
+    'tagassistant.google.com',
+    'vercel.com',
 ];
 
+let gaInitialized = false;
+let metaPixelInitialized = false;
+
 /**
- * Detecta si la sesión viene de una fuente de testing interna.
- * Se evalúa en tiempo de ejecución en el navegador, no en build.
+ * Detects sessions that come from internal testing sources.
+ * This is evaluated in the browser at runtime, not at build time.
  */
 const isInternalTraffic = (): boolean => {
     if (typeof document === 'undefined') return false;
@@ -32,45 +35,55 @@ declare global {
 // Initialize Analytics (GA4 + Meta Pixel)
 export const initGA = () => {
     // 1. Google Analytics 4
-    if (GA_MEASUREMENT_ID && !document.querySelector(`script[src*="googletagmanager"]`)) {
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-        document.head.appendChild(script);
+    if (GA_MEASUREMENT_ID && !gaInitialized) {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function gtag() {
+            window.dataLayer.push(arguments);
+        };
 
-        const inlineScript = document.createElement('script');
-        inlineScript.innerHTML = `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            (function() {
-                var ref = document.referrer || '';
-                var internalSources = ['tagassistant.google.com', 'vercel.com'];
-                var isInternal = internalSources.some(function(r) { return ref.indexOf(r) > -1; });
-                var config = isInternal ? { traffic_type: 'internal' } : {};
-                gtag('config', '${GA_MEASUREMENT_ID}', config);
-            })();
-        `;
-        document.head.appendChild(inlineScript);
+        const existingScript = document.querySelector(
+            `script[src="https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}"]`
+        );
+
+        if (!existingScript) {
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+            document.head.appendChild(script);
+        }
+
+        window.gtag('js', new Date());
+
+        const config: Record<string, unknown> = { send_page_view: false };
+        if (isInternalTraffic()) config.traffic_type = 'internal';
+        window.gtag('config', GA_MEASUREMENT_ID, config);
+        gaInitialized = true;
     }
 
     // 2. Meta Pixel
-    if (META_PIXEL_ID && !document.querySelector(`script[id="meta-pixel"]`)) {
-        const pixelScript = document.createElement('script');
-        pixelScript.id = 'meta-pixel';
-        pixelScript.innerHTML = `
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '${META_PIXEL_ID}');
-        fbq('track', 'PageView');
-        `;
-        document.head.appendChild(pixelScript);
+    if (META_PIXEL_ID && !metaPixelInitialized) {
+        if (typeof window.fbq === 'undefined') {
+            const pixelScript = document.createElement('script');
+            pixelScript.id = 'meta-pixel';
+            pixelScript.innerHTML = `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            `;
+            document.head.appendChild(pixelScript);
+        }
+
+        if (!isInternalTraffic() && typeof window.fbq !== 'undefined') {
+            window.fbq('init', META_PIXEL_ID);
+            window.fbq('track', 'PageView');
+        }
+
+        metaPixelInitialized = true;
     }
 };
 
@@ -79,11 +92,13 @@ export const logPageView = (url: string) => {
     const internal = isInternalTraffic();
 
     if (typeof window.gtag !== 'undefined' && GA_MEASUREMENT_ID) {
-        // Mantener traffic_type='internal' en cada navegación SPA para que
-        // el Data Filter de GA4 siga excluyendo la sesión correctamente.
-        const config: Record<string, unknown> = { page_path: url };
-        if (internal) config.traffic_type = 'internal';
-        window.gtag('config', GA_MEASUREMENT_ID, config);
+        const params: Record<string, unknown> = {
+            page_path: url,
+            page_location: window.location.href,
+            page_title: document.title,
+        };
+        if (internal) params.traffic_type = 'internal';
+        window.gtag('event', 'page_view', params);
     }
 
     if (!internal && typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
@@ -93,8 +108,6 @@ export const logPageView = (url: string) => {
 
 // Log Event
 export const logEvent = (action: string, category: string, label: string, value?: number) => {
-    // No disparar eventos de conversión desde sesiones de testing interno.
-    // Segunda línea de defensa además del traffic_type en el config.
     if (isInternalTraffic()) return;
 
     // GA4 Tracking
@@ -116,7 +129,7 @@ export const logEvent = (action: string, category: string, label: string, value?
             fbEvent = 'Lead';
         } else if (action === 'view_item') {
             fbEvent = 'ViewContent';
-        } else if (action === 'purchase') { // Future proofing
+        } else if (action === 'purchase') {
             fbEvent = 'Purchase';
             params.currency = 'DOP';
         } else if (action === 'sign_up') {
