@@ -5,7 +5,6 @@ import { useProject } from '../contexts/ProjectContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { analyzeConsistencyStrict } from '../services/consistency/strictAnalyzer';
 import { ConsistencyAnalysisResult } from '../services/consistency/matrixAnalyzer';
-import { ConsistencyAnalysisResults } from '../components/consistency/ConsistencyAnalysisResults';
 import { ConsistencyDashboard } from '../components/consistency/ConsistencyDashboard';
 import { MatrixInteractive } from '../components/consistency/MatrixInteractive';
 import { AnalysisErrorBoundary } from '../components/common/AnalysisErrorBoundary';
@@ -254,7 +253,7 @@ export const ConsistencyMatrix = () => {
                                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
                                             }`}
                                     >
-                                        Dashboard
+                                            Informe
                                     </button>
                                     <button
                                         onClick={() => setViewMode('matrix')}
@@ -263,7 +262,7 @@ export const ConsistencyMatrix = () => {
                                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
                                             }`}
                                     >
-                                        Matriz
+                                            Vista interactiva
                                     </button>
                                 </div>
                             )}
@@ -272,7 +271,7 @@ export const ConsistencyMatrix = () => {
                                 <button
                                     onClick={async () => {
                                         try {
-                                            const { generateConsistencyMatrixPDF } = await import('../services/pdfExport');
+                                            const { generateConsistencyMatrixPDF } = await import('../services/consistency/reportPdf');
                                             generateConsistencyMatrixPDF(result, 'Informe_Consistencia_ScholarAI');
                                             showNotification("Informe PDF generado", "success");
                                         } catch (err) {

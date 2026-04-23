@@ -5,7 +5,7 @@ const path = require('path');
 const dataPath = path.resolve(__dirname, '../src/data/universities.json');
 const universities = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
-const BASE_URL = 'https://tutesisrd.com';
+const BASE_URL = 'https://www.tutesisrd.online';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const staticPages = [
@@ -14,9 +14,11 @@ const staticPages = [
     '/servicios',
     '/universidades',
     '/blog',
-    '/registro',
+    '/recursos/que-es-tesis',
+    '/recursos/ejemplos-tesis',
+    '/recursos/como-hacer-tesis',
     '/herramientas/auditor',
-    '/design'
+    '/herramientas/matriz'
 ];
 
 let sitemap = `<?xml version="1.0" encoding="UTF-8"?>

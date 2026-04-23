@@ -1,190 +1,439 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ConsistencyAnalysisResult } from '../../services/consistency/matrixAnalyzer';
-import { mapMatrixToWordExport } from '../../services/export/mapper';
-import { wordExportService } from '../../services/wordExportService';
+import {
+    AuditMatrixRow,
+    ObjectiveMatrixRow,
+    ReferenceMatrixRow,
+    RiskMatrixRow,
+    StructuralRow,
+    buildConsistencyReportViewModel
+} from '../../services/consistency/reportViewModel';
 
 interface ConsistencyDashboardProps {
     result: ConsistencyAnalysisResult;
 }
 
-export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ result }) => {
+type TableColumn<T> = {
+    header: string;
+    widthClass?: string;
+    cell: (row: T) => React.ReactNode;
+};
 
-    const handleExport = () => {
-        const dto = mapMatrixToWordExport(result);
-        wordExportService.generateWordDocument(dto, 'Analisis_Consistencia.docx');
-    };
+const sectionTitleClass = 'text-lg font-black uppercase tracking-[0.18em] text-slate-900 dark:text-white';
 
-    // Helper colors for scores
-    const getScoreColor = (score: number) => {
-        if (score >= 90) return 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20';
-        if (score >= 70) return 'text-amber-500 bg-amber-50 dark:bg-amber-900/20';
-        return 'text-red-500 bg-red-50 dark:bg-red-900/20';
-    };
+const riskBadgeClass = (value: string) => {
+    const normalized = value.toLowerCase();
 
-    const riskLevelColor: Record<string, string> = {
-        'Excelente': 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30',
-        'Aceptable': 'text-blue-600 bg-blue-100 dark:bg-blue-900/30',
-        'Débil': 'text-amber-600 bg-amber-100 dark:bg-amber-900/30',
-        'Crítico': 'text-red-600 bg-red-100 dark:bg-red-900/30'
-    };
+    if (
+        normalized.includes('crít') ||
+        normalized.includes('crit') ||
+        normalized.includes('alto') ||
+        normalized === 'no' ||
+        normalized.includes('inexist')
+    ) {
+        return 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300';
+    }
+
+    if (normalized.includes('medio') || normalized.includes('parcial')) {
+        return 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300';
+    }
+
+    return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300';
+};
+
+const sectionShell = (title: string, description: string, content: React.ReactNode) => (
+    <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div className="border-b border-slate-200 bg-slate-50/90 px-6 py-5 dark:border-slate-800 dark:bg-slate-900/70">
+            <h2 className={sectionTitleClass}>{title}</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400">{description}</p>
+        </div>
+        <div className="px-6 py-6">{content}</div>
+    </section>
+);
+
+const MetricCard = ({ label, value, tone }: { label: string; value: string; tone: string }) => (
+    <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 dark:border-slate-800 dark:bg-slate-950">
+        <div className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${tone}`}>
+            {label}
+        </div>
+        <div className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white">{value}</div>
+    </div>
+);
+
+const EmptyState = ({ message }: { message: string }) => (
+    <div className="rounded-2xl border border-dashed border-slate-300 px-5 py-6 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+        {message}
+    </div>
+);
+
+function ReportTable<T>({
+    rows,
+    columns,
+    emptyMessage
+}: {
+    rows: T[];
+    columns: TableColumn<T>[];
+    emptyMessage: string;
+}) {
+    if (rows.length === 0) {
+        return <EmptyState message={emptyMessage} />;
+    }
 
     return (
-        <div className="space-y-8 animate-fade-in p-6 max-w-7xl mx-auto">
-
-            {/* Warning Banner */}
-            {(result.analysisStatus === 'partial' || (result.analysisWarnings && result.analysisWarnings.length > 0)) && (
-                <div className="bg-amber-50 dark:bg-amber-900/10 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg animate-fade-in mx-auto max-w-7xl">
-                    <div className="flex items-start">
-                        <div className="flex-shrink-0">
-                            <span className="material-symbols-outlined text-amber-500">warning</span>
-                        </div>
-                        <div className="ml-3">
-                            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-200">
-                                Análisis Parcialmente Completado
-                            </h3>
-                            <div className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-                                <ul className="list-disc pl-5 space-y-1">
-                                    {result.analysisWarnings && result.analysisWarnings.length > 0 ? (
-                                        result.analysisWarnings.map((w, i) => <li key={i}>{w}</li>)
-                                    ) : (
-                                        <li>Algunas secciones contienen datos genéricos debido a limitaciones en la respuesta del modelo.</li>
-                                    )}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Header Actions */}
-            <div className="flex justify-end mb-4">
-                <button
-                    onClick={handleExport}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold shadow-lg hover:-translate-y-1 transition-transform"
-                >
-                    <span className="material-symbols-outlined text-sm">download</span>
-                    Exportar Informe DOCX
-                </button>
-            </div>
-
-            {/* 1. Global Diagnosis Header */}
-            <div className="flex flex-col md:flex-row gap-6 items-start">
-                <div className="flex-1 bg-white dark:bg-surface-dark p-8 rounded-[2rem] border border-slate-100 dark:border-surface-border shadow-xl">
-                    <div className="flex items-start justify-between mb-6">
-                        <div>
-                            <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Diagnóstico Global</span>
-                            <h2 className={`text-4xl font-black mt-2 ${riskLevelColor[result.globalDiagnosis.level].split(' ')[0]}`}>
-                                {result.globalDiagnosis.level}
-                            </h2>
-                        </div>
-                        <div className={`px-4 py-2 rounded-full font-bold text-sm ${riskLevelColor[result.globalDiagnosis.level]}`}>
-                            Riesgo: {result.globalDiagnosis.level === 'Excelente' ? 'Bajo' : result.globalDiagnosis.level === 'Aceptable' ? 'Medio' : 'Alto'}
-                        </div>
-                    </div>
-
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-6 border-l-4 border-slate-200 dark:border-slate-700 pl-4 py-1 italic">
-                        "{result.globalDiagnosis.auditSummary || "Análisis completado exitosamente."}"
-                    </p>
-
-                    {/* Key Metrics Grid */}
-                    <div className="grid grid-cols-3 gap-4">
-                        <MetricCard
-                            label="Consistencia"
-                            value={result.globalDiagnosis.internalConsistencyDegree}
-                            color={getScoreColor(result.globalDiagnosis.internalConsistencyDegree)}
-                        />
-                        <MetricCard
-                            label="Publicabilidad"
-                            value={result.globalDiagnosis.publishabilityLevel}
-                            color={getScoreColor(result.globalDiagnosis.publishabilityLevel)}
-                        />
-                        <MetricCard
-                            label="Estilo Académico"
-                            value={result.normativeCompliance.academicWritingScore}
-                            color={getScoreColor(result.normativeCompliance.academicWritingScore)}
-                        />
-                    </div>
-                </div>
-
-                {/* 2. Critical Alerts Panel */}
-                <div className="w-full md:w-1/3 bg-slate-50 dark:bg-[#0d1017] p-6 rounded-[2rem] border border-slate-200 dark:border-surface-border h-full">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-red-100 dark:bg-red-900/20 text-red-600 rounded-lg">
-                            <span className="material-symbols-outlined">warning</span>
-                        </div>
-                        <h3 className="font-bold text-slate-900 dark:text-white">Alertas Críticas</h3>
-                    </div>
-
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                        {(result.methodologicalAnalysis?.criticalAlerts?.length ?? 0) > 0 ? (
-                            result.methodologicalAnalysis!.criticalAlerts.map((alert, i) => (
-                                <div key={i} className="flex gap-3 text-sm p-3 bg-white dark:bg-surface-dark rounded-xl border border-red-100 dark:border-red-900/30">
-                                    <span className="material-symbols-outlined text-red-500 text-xs mt-1 shrink-0">error</span>
-                                    <span className="text-slate-700 dark:text-slate-300">{alert}</span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8 text-slate-400">
-                                <span className="material-symbols-outlined text-4xl mb-2 opacity-50">check_circle</span>
-                                <p className="text-sm">Sin alertas críticas detectadas</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* 3. Forensic Reasoning Box */}
-            {result.methodologicalAnalysis?.forensicReasoning && (
-                <div className="bg-slate-900 border-2 border-brand-orange/30 text-slate-300 p-8 rounded-[2rem] relative overflow-hidden shadow-2xl shadow-brand-orange/5">
-                    <div className="absolute top-0 right-0 p-32 bg-brand-orange/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-                    <div className="flex items-center gap-3 mb-4 relative z-10">
-                        <span className="material-symbols-outlined text-brand-orange text-3xl">psychology</span>
-                        <h3 className="font-black text-white uppercase tracking-[0.2em] text-sm">Dictamen Forense de IA</h3>
-                    </div>
-                    <p className="text-xl leading-relaxed relative z-10 font-medium text-slate-200">
-                        {result.methodologicalAnalysis.forensicReasoning}
-                    </p>
-                </div>
-            )}
-
-            {/* 4. Recommendations List */}
-            <div>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-8 flex items-center gap-4">
-                    <div className="size-10 rounded-xl bg-brand-orange/10 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-brand-orange">app_registration</span>
-                    </div>
-                    Acciones Correctivas Priorizadas
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {result.prioritizedRecommendations.map((rec, idx) => (
-                        <div key={idx} className="bg-white dark:bg-slate-800/40 p-8 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:border-brand-orange/30 hover:shadow-2xl hover:shadow-brand-orange/5 transition-all duration-500 group">
-                            <div className="flex justify-between items-start mb-6">
-                                <span className={`text-[10px] font-black uppercase px-4 py-1.5 rounded-full tracking-widest ${rec.priority === 'Crítica' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-brand-orange/10 text-brand-orange'}`}>
-                                    Prioridad {rec.priority}
-                                </span>
-                                <span className="text-slate-200 dark:text-slate-700 text-5xl font-black opacity-40 group-hover:opacity-100 transition-opacity">
-                                    {String(idx + 1).padStart(2, '0')}
-                                </span>
-                            </div>
-                            <h4 className="font-black text-slate-800 dark:text-white mb-3 text-lg leading-tight uppercase tracking-tight">{rec.what}</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">{rec.why}</p>
-                            <div className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-white/5">
-                                <span className="font-black block mb-2 text-brand-orange uppercase tracking-widest text-[10px]">Hoja de Ruta:</span>
-                                <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{rec.how}</p>
-                            </div>
-                        </div>
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+            <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800">
+                <thead className="bg-slate-100 text-left text-[11px] font-black uppercase tracking-[0.16em] text-slate-600 dark:bg-slate-900 dark:text-slate-400">
+                    <tr>
+                        {columns.map((column) => (
+                            <th key={column.header} className={`px-4 py-3 align-top ${column.widthClass || ''}`}>
+                                {column.header}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
+                    {rows.map((row, rowIndex) => (
+                        <tr key={rowIndex} className="align-top odd:bg-white even:bg-slate-50/60 dark:odd:bg-slate-950 dark:even:bg-slate-900/30">
+                            {columns.map((column) => (
+                                <td key={column.header} className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                                    {column.cell(row)}
+                                </td>
+                            ))}
+                        </tr>
                     ))}
-                </div>
-            </div>
+                </tbody>
+            </table>
+        </div>
+    );
+}
 
+const structuralColumns: TableColumn<StructuralRow>[] = [
+    {
+        header: 'Componente',
+        widthClass: 'w-[24%]',
+        cell: (row) => <span className="font-semibold text-slate-900 dark:text-white">{row.component}</span>
+    },
+    {
+        header: 'Estado',
+        widthClass: 'w-[16%]',
+        cell: (row) => <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${riskBadgeClass(row.status)}`}>{row.status}</span>
+    },
+    {
+        header: 'Observación',
+        widthClass: 'w-[60%]',
+        cell: (row) => <span className="leading-6">{row.notes}</span>
+    }
+];
+
+const auditColumns: TableColumn<AuditMatrixRow>[] = [
+    {
+        header: 'Componente auditado',
+        widthClass: 'w-[12%]',
+        cell: (row) => <span className="font-semibold text-slate-900 dark:text-white">{row.component}</span>
+    },
+    {
+        header: 'Formulación o estado actual',
+        widthClass: 'w-[16%]',
+        cell: (row) => <span className="leading-6">{row.currentState}</span>
+    },
+    {
+        header: 'Hallazgo o discrepancia',
+        widthClass: 'w-[16%]',
+        cell: (row) => <span className="leading-6">{row.finding}</span>
+    },
+    {
+        header: 'Evidencia',
+        widthClass: 'w-[18%]',
+        cell: (row) => <span className="font-mono text-[12px] leading-6 text-slate-500 dark:text-slate-400">{row.evidence}</span>
+    },
+    {
+        header: 'Nivel de riesgo',
+        widthClass: 'w-[10%]',
+        cell: (row) => <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${riskBadgeClass(row.riskLevel)}`}>{row.riskLevel}</span>
+    },
+    {
+        header: 'Impacto en la tesis',
+        widthClass: 'w-[14%]',
+        cell: (row) => <span className="leading-6">{row.impact}</span>
+    },
+    {
+        header: 'Corrección recomendada',
+        widthClass: 'w-[14%]',
+        cell: (row) => <span className="font-medium leading-6 text-slate-900 dark:text-white">{row.recommendedFix}</span>
+    }
+];
+
+const objectiveColumns: TableColumn<ObjectiveMatrixRow>[] = [
+    {
+        header: 'Objetivo específico',
+        widthClass: 'w-[24%]',
+        cell: (row) => <span className="font-semibold text-slate-900 dark:text-white">{row.objective}</span>
+    },
+    {
+        header: 'Instrumento(s) que deberían responderlo',
+        widthClass: 'w-[20%]',
+        cell: (row) => <span className="leading-6">{row.instrument}</span>
+    },
+    {
+        header: 'Resultado visible en la tesis',
+        widthClass: 'w-[24%]',
+        cell: (row) => <span className="leading-6">{row.result}</span>
+    },
+    {
+        header: '¿Cumple?',
+        widthClass: 'w-[10%]',
+        cell: (row) => <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${riskBadgeClass(row.complyLabel)}`}>{row.complyLabel}</span>
+    },
+    {
+        header: 'Observación',
+        widthClass: 'w-[22%]',
+        cell: (row) => <span className="leading-6">{row.observation}</span>
+    }
+];
+
+const referenceColumns: TableColumn<ReferenceMatrixRow>[] = [
+    {
+        header: 'Referencia',
+        widthClass: 'w-[30%]',
+        cell: (row) => <span className="leading-6 text-slate-900 dark:text-white">{row.reference}</span>
+    },
+    {
+        header: '¿Existe?',
+        widthClass: 'w-[10%]',
+        cell: (row) => <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${riskBadgeClass(row.existsLabel)}`}>{row.existsLabel}</span>
+    },
+    {
+        header: 'Calidad académica',
+        widthClass: 'w-[14%]',
+        cell: (row) => <span>{row.quality}</span>
+    },
+    {
+        header: 'Estado de citación',
+        widthClass: 'w-[14%]',
+        cell: (row) => <span>{row.citationStatus}</span>
+    },
+    {
+        header: 'Veredicto',
+        widthClass: 'w-[12%]',
+        cell: (row) => <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${riskBadgeClass(row.verdict)}`}>{row.verdict}</span>
+    },
+    {
+        header: 'Acción',
+        widthClass: 'w-[20%]',
+        cell: (row) => <span className="leading-6">{row.action}</span>
+    }
+];
+
+const riskColumns: TableColumn<RiskMatrixRow>[] = [
+    {
+        header: 'Sección',
+        widthClass: 'w-[16%]',
+        cell: (row) => <span className="font-semibold text-slate-900 dark:text-white">{row.section}</span>
+    },
+    {
+        header: 'Tipo de riesgo detectado',
+        widthClass: 'w-[18%]',
+        cell: (row) => <span>{row.riskType}</span>
+    },
+    {
+        header: 'Nivel de riesgo',
+        widthClass: 'w-[10%]',
+        cell: (row) => <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${riskBadgeClass(row.riskLevel)}`}>{row.riskLevel}</span>
+    },
+    {
+        header: 'Evidencia',
+        widthClass: 'w-[28%]',
+        cell: (row) => <span className="font-mono text-[12px] leading-6 text-slate-500 dark:text-slate-400">{row.evidence}</span>
+    },
+    {
+        header: 'Acción sugerida',
+        widthClass: 'w-[28%]',
+        cell: (row) => <span className="leading-6">{row.action}</span>
+    }
+];
+
+export const ConsistencyDashboard: React.FC<ConsistencyDashboardProps> = ({ result }) => {
+    const report = useMemo(() => buildConsistencyReportViewModel(result), [result]);
+
+    const summaryCards = [
+        {
+            label: 'Consistencia interna',
+            value: `${result.globalDiagnosis?.internalConsistencyDegree ?? 0}%`,
+            tone: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+        },
+        {
+            label: 'Consistencia metodológica',
+            value: result.closingDiagnosis?.methodologicalConsistency || 'Media',
+            tone: 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300'
+        },
+        {
+            label: 'APA 7',
+            value: `${Math.round(result.apaComplianceScore?.weightedFinalScore ?? result.normativeCompliance?.apa7Score ?? 0)}%`,
+            tone: 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300'
+        },
+        {
+            label: 'Publicabilidad',
+            value: `${result.globalDiagnosis?.publishabilityLevel ?? 0}%`,
+            tone: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'
+        }
+    ];
+
+    return (
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 pb-12">
+            {(result.analysisStatus === 'partial' || result.analysisWarnings?.length) && (
+                <div className="rounded-[2rem] border border-amber-300 bg-amber-50 px-6 py-5 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+                    <p className="font-bold uppercase tracking-[0.18em]">Advertencia de análisis parcial</p>
+                    <ul className="mt-3 space-y-2 leading-6">
+                        {(result.analysisWarnings || ['La salida llegó incompleta y requiere validación manual puntual.']).map((warning, index) => (
+                            <li key={index}>- {warning}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {sectionShell(
+                'A. Diagnóstico General',
+                'Resumen ejecutivo del estado estructural, metodológico y de defendibilidad del manuscrito auditado.',
+                <div className="space-y-6">
+                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        {summaryCards.map((item) => (
+                            <MetricCard key={item.label} label={item.label} value={item.value} tone={item.tone} />
+                        ))}
+                    </div>
+
+                    <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-5 dark:border-slate-800 dark:bg-slate-900/50">
+                            <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200">
+                                Síntesis de auditoría
+                            </h3>
+                            <ol className="mt-4 space-y-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                                {report.diagnosticLines.length > 0 ? (
+                                    report.diagnosticLines.map((line, index) => (
+                                        <li key={index} className="flex gap-3">
+                                            <span className="min-w-[1.75rem] font-black text-slate-400 dark:text-slate-500">{String(index + 1).padStart(2, '0')}</span>
+                                            <span>{line}</span>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li>No se generó un diagnóstico general suficiente.</li>
+                                )}
+                            </ol>
+                        </div>
+
+                        <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 dark:border-slate-800 dark:bg-slate-950">
+                            <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200">
+                                Cumplimiento estructural
+                            </h3>
+                            <div className="mt-4 grid grid-cols-3 gap-3">
+                                <MetricCard
+                                    label="Cumple"
+                                    value={String(report.structuralSummary.comply)}
+                                    tone="bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                                />
+                                <MetricCard
+                                    label="Parcial"
+                                    value={String(report.structuralSummary.partial)}
+                                    tone="bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+                                />
+                                <MetricCard
+                                    label="No cumple"
+                                    value={String(report.structuralSummary.fail)}
+                                    tone="bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <ReportTable
+                        rows={report.structuralRows}
+                        columns={structuralColumns}
+                        emptyMessage="La auditoría no devolvió una matriz explícita de cumplimiento estructural."
+                    />
+                </div>
+            )}
+
+            {sectionShell(
+                'B. Matriz de Auditoría Integral',
+                'Hallazgos sistémicos verificados contra el manuscrito, ordenados por nivel de riesgo e impacto académico.',
+                <ReportTable
+                    rows={report.auditRows}
+                    columns={auditColumns}
+                    emptyMessage="No se encontraron hallazgos estructurados en la salida del auditor."
+                />
+            )}
+
+            {sectionShell(
+                'C. Matriz Objetivo - Instrumento - Resultado',
+                'Trazabilidad empírica para detectar objetivos sin evidencia, instrumentos declarados sin salida visible y resultados sin soporte metodológico.',
+                <ReportTable
+                    rows={report.objectiveRows}
+                    columns={objectiveColumns}
+                    emptyMessage="No se recibió una matriz de correspondencia objetivo-instrumento-resultado."
+                />
+            )}
+
+            {sectionShell(
+                'D. Matriz de Validación de Referencias',
+                'Validación una por una de las referencias declaradas, su estado de citación y la acción correctiva sugerida.',
+                <ReportTable
+                    rows={report.referenceRows}
+                    columns={referenceColumns}
+                    emptyMessage="No se recibieron referencias estructuradas para validar."
+                />
+            )}
+
+            {sectionShell(
+                'E. Matriz de Riesgo de Plagio / IA',
+                'Patrones verificables compatibles con paráfrasis deficiente, ensamblaje documental o redacción asistida que requieren intervención editorial.',
+                <ReportTable
+                    rows={report.riskRows}
+                    columns={riskColumns}
+                    emptyMessage="No se reportaron riesgos textuales o patrones compatibles con IA."
+                />
+            )}
+
+            {sectionShell(
+                'F. Priorización de Correcciones',
+                'Correcciones agrupadas por severidad para orientar la intervención académica antes del cierre del manuscrito.',
+                <div className="grid gap-4 lg:grid-cols-3">
+                    {(['Crítico', 'Alto', 'Medio'] as const).map((severity) => {
+                        const items = report.prioritizedCorrections[severity];
+                        return (
+                            <div key={severity} className="rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-5 dark:border-slate-800 dark:bg-slate-900/50">
+                                <div className={`inline-flex rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] ${riskBadgeClass(severity)}`}>
+                                    {severity}
+                                </div>
+                                <div className="mt-4 space-y-4">
+                                    {items.length > 0 ? (
+                                        items.map((item, index) => (
+                                            <article key={`${severity}-${index}`} className="space-y-2 rounded-2xl border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950">
+                                                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">{item.component}</p>
+                                                <p className="text-sm font-semibold leading-6 text-slate-900 dark:text-white">{item.finding}</p>
+                                                <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{item.recommendedFix}</p>
+                                                <p className="font-mono text-[12px] leading-5 text-slate-400 dark:text-slate-500">{item.evidence}</p>
+                                            </article>
+                                        ))
+                                    ) : (
+                                        <EmptyState message={`No hay hallazgos clasificados como ${severity.toLowerCase()}.`} />
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {sectionShell(
+                'G. Dictamen Final',
+                'Cierre técnico consolidado del auditor académico para decisión de revisión, corrección o cierre.',
+                <div className="rounded-[2rem] border border-slate-200 bg-slate-50 px-6 py-6 dark:border-slate-800 dark:bg-slate-900/60">
+                    <blockquote className="border-l-4 border-slate-900 pl-5 text-base leading-8 text-slate-700 dark:border-slate-200 dark:text-slate-200">
+                        {report.finalVerdict}
+                    </blockquote>
+                </div>
+            )}
         </div>
     );
 };
 
-// Subcomponent: Metric Card
-const MetricCard = ({ label, value, color }: { label: string, value: number, color: string }) => (
-    <div className={`p-6 rounded-[2rem] border border-transparent shadow-sm ${color.split(' ')[1].replace('/20', '/5')}`}>
-        <div className={`text-4xl font-black ${color.split(' ')[0]} mb-2 tracking-tighter`}>{value}<span className="text-base ml-1 opacity-60">%</span></div>
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 text-slate-500 dark:text-slate-400">{label}</div>
-    </div>
-);
+export default ConsistencyDashboard;

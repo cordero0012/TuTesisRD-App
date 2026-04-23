@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { axe } from '../setup';
 import RegisterWizard from '../../pages/Register/RegisterWizard';
@@ -40,14 +40,14 @@ describe('RegisterWizard Accessibility', () => {
     });
 
     it('should have proper form labels', () => {
-        render(
+        const { getAllByRole } = render(
             <BrowserRouter>
                 <RegisterWizard />
             </BrowserRouter>
         );
 
         // All form inputs should have associated labels
-        const inputs = screen.getAllByRole('textbox');
+        const inputs = getAllByRole('textbox');
         inputs.forEach(input => {
             const label = document.querySelector(`label[for="${input.id}"]`);
             const ariaLabel = input.getAttribute('aria-label');

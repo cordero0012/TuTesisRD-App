@@ -13,6 +13,29 @@ interface SEOProps {
     type?: 'website' | 'article' | 'profile';
 }
 
+const SITE_URL = "https://www.tutesisrd.online";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+
+const normalizeCanonicalUrl = (canonical?: string) => {
+    const source = canonical || (typeof window !== 'undefined' ? window.location.pathname : '/');
+
+    try {
+        const url = new URL(source, SITE_URL);
+        url.protocol = 'https:';
+        url.hostname = 'www.tutesisrd.online';
+        url.search = '';
+        url.hash = '';
+
+        if (url.pathname !== '/') {
+            url.pathname = url.pathname.replace(/\/+$/, '');
+        }
+
+        return url.toString();
+    } catch {
+        return SITE_URL;
+    }
+};
+
 const SEO: React.FC<SEOProps> = ({
     title,
     description,
@@ -44,9 +67,7 @@ const SEO: React.FC<SEOProps> = ({
     ];
     const allKeywords = keywords.length > 0 ? keywords : defaultKeywords;
 
-    // Canonical URL constant to ensure consistency across the app
-    const SITE_URL = "https://www.tutesisrd.online";
-    const defaultOgImage = `${SITE_URL}/og-image.png`;
+    const canonicalUrl = normalizeCanonicalUrl(canonical);
 
     useEffect(() => {
         document.title = fullTitle;
@@ -78,8 +99,8 @@ const SEO: React.FC<SEOProps> = ({
         updateMeta('og:title', fullTitle, true);
         updateMeta('og:description', currentDescription, true);
         updateMeta('og:type', type, true);
-        updateMeta('og:url', canonical || window.location.href, true);
-        updateMeta('og:image', ogImage || defaultOgImage, true);
+        updateMeta('og:url', canonicalUrl, true);
+        updateMeta('og:image', ogImage || DEFAULT_OG_IMAGE, true);
         updateMeta('og:image:width', '1200', true);
         updateMeta('og:image:height', '630', true);
         updateMeta('og:locale', 'es_DO', true);
@@ -100,12 +121,11 @@ const SEO: React.FC<SEOProps> = ({
         updateMeta('twitter:card', 'summary_large_image');
         updateMeta('twitter:title', fullTitle);
         updateMeta('twitter:description', currentDescription);
-        updateMeta('twitter:image', ogImage || defaultOgImage);
+        updateMeta('twitter:image', ogImage || DEFAULT_OG_IMAGE);
         updateMeta('twitter:site', '@tutesisrd');
 
         // Update canonical
         let linkCanonical = document.querySelector('link[rel="canonical"]');
-        const canonicalUrl = canonical || window.location.href;
         if (!linkCanonical) {
             linkCanonical = document.createElement('link');
             linkCanonical.setAttribute('rel', 'canonical');
@@ -128,7 +148,7 @@ const SEO: React.FC<SEOProps> = ({
         } else if (scriptSchema) {
             scriptSchema.remove();
         }
-    }, [fullTitle, currentDescription, canonical, schema, allKeywords, ogImage, publishedTime, modifiedTime, author, type]);
+    }, [fullTitle, currentDescription, canonicalUrl, schema, allKeywords, ogImage, publishedTime, modifiedTime, author, type]);
 
     return null;
 };
