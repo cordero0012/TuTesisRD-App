@@ -35,28 +35,15 @@ declare global {
 // Initialize Analytics (GA4 + Meta Pixel)
 export const initGA = () => {
     // 1. Google Analytics 4
+    // GTM (GTM-MSLMDDLR) owns GA4 configuration and gclid attribution.
+    // Do NOT load gtag.js or call gtag('config') here — a duplicate config
+    // call resets session attribution and breaks google/cpc in GA4 reports.
+    // Only ensure window.gtag and dataLayer exist as fallbacks for logEvent.
     if (GA_MEASUREMENT_ID && !gaInitialized) {
         window.dataLayer = window.dataLayer || [];
         window.gtag = window.gtag || function gtag() {
             window.dataLayer.push(arguments);
         };
-
-        const existingScript = document.querySelector(
-            `script[src="https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}"]`
-        );
-
-        if (!existingScript) {
-            const script = document.createElement('script');
-            script.async = true;
-            script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-            document.head.appendChild(script);
-        }
-
-        window.gtag('js', new Date());
-
-        const config: Record<string, unknown> = { send_page_view: false };
-        if (isInternalTraffic()) config.traffic_type = 'internal';
-        window.gtag('config', GA_MEASUREMENT_ID, config);
         gaInitialized = true;
     }
 
