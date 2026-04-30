@@ -212,6 +212,7 @@ const LandingPage: React.FC = () => {
                                             event: 'form_submit',
                                             'dlv - service_type': 'Diagnostico Rapido'
                                         });
+                                        (window as any).fbq?.('track', 'Lead');
                                     }
                                     window.open('https://wa.me/message/YESJDSE3MZ3IM1', '_blank');
                                 }}>

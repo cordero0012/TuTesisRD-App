@@ -150,6 +150,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                         phone_number: formData.phone
                     }
                 });
+                (window as any).fbq?.('track', 'Lead');
             }
 
             // Success
