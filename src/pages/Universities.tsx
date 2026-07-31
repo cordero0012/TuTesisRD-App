@@ -39,7 +39,7 @@ const Universities: React.FC = () => {
                                 No te preocupes. Nuestra metodología es adaptable a cualquier normativa institucional (APA, Vancouver, ISO, etc.).
                                 Analizamos el manual de tesis de tu universidad para garantizar el cumplimiento del 100% de los requisitos de forma.
                             </p>
-                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-50 transition-colors">
+                            <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-50 transition-colors">
                                 Consultar Disponibilidad
                             </a>
                         </div>
