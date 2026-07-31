@@ -1,0 +1,26 @@
+Categoria,KPI,Definicion,Formula,Fuente,Frecuencia,Segmentacion,Responsable,Calidad_actual,Decision_que_habilita
+Visibilidad,Impresiones organicas,Veces que el sitio aparece en resultados de busqueda,Suma de impresiones,Search Console,Semanal,Consulta / pagina / dispositivo,Marketing,NO DISPONIBLE - sin acceso,Que temas trabajar en contenido
+Visibilidad,Posicion media,Posicion promedio en resultados,Media ponderada de posicion,Search Console,Semanal,Consulta / pagina,Marketing,NO DISPONIBLE - sin acceso,Que paginas optimizar primero
+Visibilidad,Paginas indexadas,URLs indexadas frente a enviadas,Indexadas / enviadas en sitemap,Search Console,Mensual,Tipo de pagina,Tecnico,NO DISPONIBLE - critico por H-10,Si el prerenderizado es necesario
+Visibilidad,Alcance social,Cuentas alcanzadas por canal,Suma de alcance,Instagram/Facebook Insights,Semanal,Canal / formato / tema,Marketing,NO DISPONIBLE - sin acceso,Que formatos priorizar
+Interaccion,CTR organico,Clics dividido entre impresiones,Clics / impresiones,Search Console,Semanal,Consulta / pagina,Marketing,NO DISPONIBLE,Si hay que reescribir titulos y descripciones
+Interaccion,Tasa de engagement social,Interacciones sobre alcance,(Likes+comentarios+guardados+compartidos) / alcance,Insights nativos,Semanal,Publicacion / formato / tema,Marketing,NO DISPONIBLE,Que pilares editoriales funcionan
+Interaccion,Sesiones con interaccion,Sesiones que superan el umbral de GA4,Sesiones con interaccion / sesiones,GA4,Semanal,Canal / dispositivo / landing,Marketing,NO DISPONIBLE - sin acceso,Calidad del trafico por canal
+Interaccion,Profundidad de lectura del blog,Porcentaje de scroll en articulos,Evento scroll 75%,GA4,Mensual,Articulo,Contenido,NO INSTRUMENTADO,Que articulos ampliar o recortar
+Adquisicion,Sesiones por canal,Sesiones agrupadas por canal predeterminado,Conteo de sesiones,GA4,Semanal,Canal / campana / dispositivo,Marketing,NO DISPONIBLE,Reparto de presupuesto entre canales
+Adquisicion,Coste por clic,Inversion dividida entre clics,Coste / clics,Google Ads,Semanal,Campana / grupo / keyword,Marketing,NO DISPONIBLE - sin acceso,Eficiencia de la puja
+Adquisicion,Cuota de impresiones,Impresiones obtenidas frente a elegibles,Impresiones / impresiones elegibles,Google Ads,Mensual,Campana,Marketing,NO DISPONIBLE,Si conviene subir presupuesto
+Conversion,Contactos por WhatsApp,Clics en enlaces wa.me,Conteo del evento contact_whatsapp,GA4 via GTM,Diario,Pagina / posicion / canal,Marketing,NO INSTRUMENTADO - H-04,KPI PRINCIPAL - eficacia real de cada canal
+Conversion,Registros completados,Registros con proyecto creado,Conteo de filas en projects,Supabase + GA4,Diario,Canal / tipo de servicio,Producto,PARCIAL - evento sin nombre GA4 + H-02,Salud del embudo de producto
+Conversion,Tasa de conversion a contacto,Contactos sobre sesiones,contact_whatsapp / sesiones,GA4,Semanal,Landing / canal / dispositivo,Marketing,NO CALCULABLE,Que landing convierte mejor
+Conversion,Abandono del wizard,Abandono entre inicio y envio,1 - (envios / inicios),GA4,Semanal,Paso del wizard,Producto,NO INSTRUMENTADO,Que paso eliminar - hipotesis C-1 y C-2
+Conversion,Uso de herramientas,Analisis completados en Auditor y Matriz,Conteo de tool_complete,GA4,Semanal,Herramienta,Producto,NO INSTRUMENTADO,Si las herramientas generan leads
+Comercial,Leads calificados,Contactos con intencion e informacion suficiente,Conteo manual o via CRM,CRM (inexistente),Semanal,Canal / servicio / universidad,Comercial,NO EXISTE CRM,Calidad real por canal
+Comercial,Tasa de contacto,Leads contactados con exito,Contactados / leads,CRM,Semanal,Canal,Comercial,NO EXISTE CRM,Capacidad del equipo comercial
+Comercial,Tasa de calificacion,Leads que cumplen criterio,Calificados / leads,CRM,Mensual,Canal,Comercial,NO EXISTE CRM,Si un canal trae volumen sin calidad
+Comercial,Tasa de cierre,Calificados que contratan,Clientes / calificados,CRM,Mensual,Canal / servicio,Comercial,NO EXISTE CRM,Donde se pierde el negocio
+Comercial,Tiempo hasta conversion,Dias entre primer contacto y contratacion,Media de dias,CRM,Mensual,Canal,Comercial,NO EXISTE CRM,Duracion de la ventana de atribucion
+Rentabilidad,Coste por lead,Inversion dividida entre leads,Inversion / leads,Google Ads + Meta + CRM,Semanal,Canal / campana,Marketing,NO CALCULABLE,Techo de puja sostenible
+Rentabilidad,Coste por cliente,Inversion dividida entre clientes,Inversion / clientes,Ads + CRM,Mensual,Canal,Propietario,NO CALCULABLE,Si la publicidad es rentable
+Rentabilidad,Valor medio del proyecto,Importe medio contratado,Media de total_amount,Supabase,Mensual,Tipo de servicio / universidad,Propietario,DISPONIBLE - campo existe en projects,Que servicio promocionar
+Rentabilidad,Retorno de la inversion publicitaria,Ingresos sobre inversion,Ingresos / inversion,Ads + Supabase,Mensual,Canal,Propietario,NO CALCULABLE,Decision de escalar o parar

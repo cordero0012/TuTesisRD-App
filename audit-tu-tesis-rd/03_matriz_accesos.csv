@@ -1,0 +1,23 @@
+Activo,Propietario,Plataforma,Acceso_disponible,Nivel_permiso,Metodo_autenticacion,Organizacion_asociada,Estado,Riesgo,Informacion_faltante
+Repositorio TuTesisRD-App,cordero0012,GitHub,SI,Escritura,Git HTTPS local,Tu Tesis RD,Verificado,ALTO - token de Ads en historial (H-01),Visibilidad del repositorio (gh devolvio 401)
+Codigo fuente local,cordero0012,Sistema de archivos,SI,Lectura/Escritura,Local,Tu Tesis RD,Verificado,Bajo,Ninguna
+Sitio en produccion,Tu Tesis RD,Vercel,SI - solo publico,Anonimo,Ninguno,Tu Tesis RD,Verificado,Bajo,Acceso al panel de Vercel
+Panel de Vercel,Tu Tesis RD,Vercel,NO,-,-,Tu Tesis RD,No evaluado,Medio,Variables de entorno de produccion y analytics
+Google Tag Manager GTM-MSLMDDLR,Tu Tesis RD,GTM,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Etiquetas activadores variables versiones y consentimiento - LAGUNA CRITICA
+GA4 G-2XTMDMXZFC,Tu Tesis RD,Google Analytics,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Eventos clave conversiones audiencias filtros atribucion
+Google Ads Tu Tesis RD,Tu Tesis RD,Google Ads,NO,-,-,Tu Tesis RD,No evaluado,ALTO,ID de cuenta estructura inversion conversiones
+Google Search Console,Desconocido,GSC,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Propiedad verificada consultas cobertura Core Web Vitals
+Meta Pixel 1885949815441420,Tu Tesis RD,Meta Events Manager,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Eventos EMQ Conversions API deduplicacion
+Meta Business Portfolio,Desconocido,Meta,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Propiedad de activos usuarios y roles
+Instagram @tutesisrd,Tu Tesis RD,Instagram,NO,-,-,Tu Tesis RD,No evaluado,Medio,Insights 90 dias y contenido publicado
+Facebook /tutesisrd,Tu Tesis RD,Facebook,NO,-,-,Tu Tesis RD,No evaluado,Medio,Insights 90 dias
+Twitter/X @tutesisrd,Desconocido,X,NO,-,-,Desconocido,No evaluado,Bajo,Confirmar si la marca lo controla (H-22)
+Google Business Profile,Desconocido,GBP,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Existencia verificacion resenas e insights
+Supabase Tu Tesis RD,Tu Tesis RD,Supabase,NO,-,-,Tu Tesis RD,No evaluado,ALTO,Politicas RLS calidad de la base de leads volumen de spam
+WhatsApp Business,Tu Tesis RD,WhatsApp,NO,-,-,Tu Tesis RD,No evaluado,Medio,Volumen de conversaciones y tiempos de respuesta
+Google Ads NES CAMP 4456869415,NES CAMP,Google Ads API,SI,Lectura via API,ADC compartido,NES CAMP,Verificado,ALTO - identidad cruzada (H-00),Ninguna - no es objeto de esta auditoria
+GA4 NES CAMP 546040776,NES CAMP,GA Admin API,SI,Lectura via API,ADC compartido,NES CAMP,Verificado,ALTO - identidad cruzada (H-00),Ninguna - no es objeto de esta auditoria
+Supabase NES CAMP,NES CAMP,Supabase Management API,SI,Lectura via API,Token de organizacion,NES CAMP,Verificado,ALTO - identidad cruzada (H-00),Ninguna - no es objeto de esta auditoria
+MCC Google Ads 6869393137,NES CAMP,Google Ads,SI - como login-customer-id,Desconocido,ADC compartido,NES CAMP,Verificado,ALTO,Que cuentas cuelgan de este MCC
+Credencial ADC de Windows,NES CAMP,Google Cloud,SI,Completo,OAuth ADC,NES CAMP,Verificado,CRITICO,Archivo unico por usuario - impide coexistencia de identidades
+Token de desarrollador de Google Ads,NES CAMP,Google Ads API,SI - en .mcp.json,Completo,Token estatico,NES CAMP,Verificado,CRITICO,Expuesto en git commit dea5f0b - ROTAR (H-01)
