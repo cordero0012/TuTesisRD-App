@@ -1,6 +1,6 @@
 # 00 · Resumen ejecutivo — Auditoría del ecosistema digital de Tu Tesis RD
 
-**Fecha:** 2026-07-31 · **Modo:** solo lectura · **No se ejecutó ningún cambio**
+**Fecha:** 2026-07-31 · **Auditoría:** solo lectura · **Correcciones posteriores:** ver `15_correcciones_aplicadas.md`
 
 ---
 
@@ -22,6 +22,7 @@ Los tres son de código, los tres tienen evidencia de archivo y línea, y el pri
 
 | ID | Hallazgo | Evidencia | Por qué importa |
 |----|----------|-----------|-----------------|
+| **H-24** | **3 tokens de la API de Meta en texto plano, versionados en git** | 23 entradas en `.claude/settings.local.json`, cuenta `act_777831645113258`, commits `85237fb` y `8219809` | Permiten operar sobre la cuenta de Meta Ads. Siguen en el historial: **rotar** |
 | **H-01** | Token de desarrollador de Google Ads **versionado en git** | `.mcp.json` trackeado; commit `dea5f0b`; remoto en GitHub | Está en el historial: borrarlo del archivo no lo elimina. Requiere rotación |
 | **H-00** | **Todas las integraciones autenticadas pertenecen a NES CAMP, ninguna a Tu Tesis RD** | Google Ads, GA4 y Supabase devuelven únicamente cuentas de NES CAMP | Bloquea las fases 3, 4 y 5. Y crea riesgo de operar sobre los activos equivocados |
 | **H-02** | La ruta `/student/success` **no existe** | `RegisterWizard.tsx:157` navega ahí; `App.tsx:138` define `/exito`; no hay ruta catch-all | Pantalla en blanco tras convertir. El usuario nunca ve su código de seguimiento |
