@@ -10,6 +10,36 @@
             ],
             "destination": "https://www.tutesisrd.online/$1",
             "permanent": true
+        },
+        {
+            "source": "/blog/blog-4",
+            "destination": "/blog/metodologia-de-tesis-como-elegir",
+            "permanent": true
+        },
+        {
+            "source": "/blog/blog-5",
+            "destination": "/blog/planteamiento-del-problema-tesis",
+            "permanent": true
+        },
+        {
+            "source": "/blog/blog-6",
+            "destination": "/blog/marco-teorico-sin-plagio",
+            "permanent": true
+        },
+        {
+            "source": "/blog/blog-7",
+            "destination": "/blog/disenar-encuestas-para-tesis",
+            "permanent": true
+        },
+        {
+            "source": "/blog/blog-8",
+            "destination": "/blog/resultados-vs-discusion-tesis",
+            "permanent": true
+        },
+        {
+            "source": "/blog/blog-9",
+            "destination": "/blog/como-defender-tu-tesis",
+            "permanent": true
         }
     ],
     "rewrites": [

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useProject } from '../contexts/ProjectContext';
 import { usePersistence } from '../contexts/PersistenceContext';
 import { fetchStudentActiveProject, StudentProjectDetails } from '../services/student/studentService';
+import SEO from '../components/SEO';
 
 const StudentPortal: React.FC = () => {
     const { status } = usePersistence();
@@ -61,6 +62,7 @@ const StudentPortal: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-white overflow-hidden transition-colors duration-200">
+            <SEO title="Portal del Estudiante" description="Panel privado de seguimiento de tu proyecto." noIndex />
             <aside className="hidden md:flex w-72 flex-col bg-surface-light dark:bg-surface-dark border-r border-slate-200 dark:border-slate-800 h-full p-6 transition-colors duration-200">
                 <div className="flex items-center gap-3 mb-8 cursor-pointer" onClick={() => window.location.href = '/'}>
                     <div className="size-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">

@@ -14,6 +14,7 @@ import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import mammoth from 'mammoth';
 import universitiesData from '../data/universities.json';
 import { AuthButton } from '../components/common/AuthButton';
+import SEO from '../components/SEO';
 
 // Configure PDF worker
 try {
@@ -211,6 +212,21 @@ export const ConsistencyMatrix = () => {
 
     return (
         <div className="min-h-screen font-sans text-slate-700 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+            <SEO
+                title="Matriz de Consistencia de Tesis con IA"
+                description="Verifica gratis la coherencia de tu tesis: relación entre objetivos, instrumentos y resultados, normas APA y trazabilidad metodológica. Informe descargable en PDF."
+                canonical="/herramientas/matriz"
+                keywords={['matriz de consistencia', 'coherencia de tesis', 'objetivos e instrumentos', 'revisar tesis con IA', 'APA 7']}
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "SoftwareApplication",
+                    "name": "Matriz de Consistencia TuTesisRD",
+                    "applicationCategory": "EducationalApplication",
+                    "operatingSystem": "Web",
+                    "description": "Herramienta de análisis de consistencia metodológica y cumplimiento APA para tesis universitarias.",
+                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "DOP" }
+                }}
+            />
             <Navbar />
 
             {/* BEGIN: Main Dashboard Container */}

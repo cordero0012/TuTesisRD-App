@@ -4,11 +4,14 @@
 User-agent: *
 Allow: /
 
-# Block sensitive areas
-Disallow: /admin/
+# Block sensitive areas (paths must match the real routes in src/App.tsx)
+Disallow: /admin
 Disallow: /api/
-Disallow: /portal/
-Disallow: /register/
+Disallow: /portal
+Disallow: /registro
+Disallow: /monitoreo
+Disallow: /exito
+Disallow: /design
 
 # Sitemap location
 Sitemap: https://www.tutesisrd.online/sitemap.xml
