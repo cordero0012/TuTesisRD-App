@@ -3,6 +3,7 @@ import blogData from '../data/blogPosts.json';
 import { Link } from 'react-router-dom';
 import Skeleton from '../components/common/Skeleton';
 import BlogLayout from '../components/blog/BlogLayout';
+import SEO from '../components/SEO';
 
 const Blog: React.FC = () => {
     const [isLoading, setIsLoading] = React.useState(true);
@@ -12,8 +13,28 @@ const Blog: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    const blogListSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Blog Académico TuTesisRD",
+        "description": "Guías de tesis, normas APA, metodología y redacción académica para estudiantes en República Dominicana.",
+        "itemListElement": (blogData as any[]).map((post, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "url": `https://www.tutesisrd.online/blog/${post.id}`,
+            "name": post.title
+        }))
+    };
+
     return (
         <BlogLayout>
+            <SEO
+                title="Blog Académico: Guías de Tesis, APA y Metodología"
+                description="Estrategias de investigación, redacción académica y consejos prácticos para tu tesis. Guías sobre normas APA, anteproyecto, marco teórico y defensa."
+                canonical="/blog"
+                keywords={['blog tesis', 'guía de tesis', 'normas APA', 'metodología de tesis', 'anteproyecto', 'redacción académica']}
+                schema={blogListSchema}
+            />
             <section className="px-6 py-10 md:py-12 md:px-12 max-w-5xl mx-auto">
 
                 {/* Premium Header */}
