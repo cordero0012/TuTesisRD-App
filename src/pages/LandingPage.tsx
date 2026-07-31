@@ -4,6 +4,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 import { buildWhatsAppUrl } from '../config';
+import { saveHeroLead } from '../services/leads/heroLeadService';
 
 const ETAPAS = [
     'Tengo la idea inicial / Anteproyecto',
@@ -29,27 +30,37 @@ const LandingPage: React.FC = () => {
     const handleDiagnosticoSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (typeof window !== 'undefined') {
-            (window as any).dataLayer = (window as any).dataLayer || [];
-            (window as any).dataLayer.push({
-                event: 'form_submit',
-                'dlv - service_type': 'Diagnostico Rapido',
-                diagnostico_etapa: etapa,
-                diagnostico_nivel: nivel
-            });
-            (window as any).fbq?.('track', 'Lead', {
-                content_name: 'Diagnostico Rapido',
-                content_category: nivel
-            });
-        }
-
         const mensaje = [
             'Hola, quiero mi diagnóstico gratis.',
             `Etapa: ${etapa}`,
             `Nivel académico: ${nivel}`
         ].join('\n');
 
+        // Open WhatsApp synchronously. Awaiting the database write first would
+        // detach this call from the user gesture and pop-up blockers would kill
+        // it — getting the student into the conversation matters more than the
+        // record of it.
         window.open(buildWhatsAppUrl(mensaje), '_blank', 'noopener,noreferrer');
+
+        // Persist, then report. The conversion event carries whether the row
+        // was actually stored, so a silent database failure shows up in the
+        // analytics instead of hiding behind a conversion that looks fine.
+        saveHeroLead({ etapa, nivel }).then((stored) => {
+            if (typeof window === 'undefined') return;
+
+            (window as any).dataLayer = (window as any).dataLayer || [];
+            (window as any).dataLayer.push({
+                event: 'form_submit',
+                'dlv - service_type': 'Diagnostico Rapido',
+                diagnostico_etapa: etapa,
+                diagnostico_nivel: nivel,
+                lead_stored: stored
+            });
+            (window as any).fbq?.('track', 'Lead', {
+                content_name: 'Diagnostico Rapido',
+                content_category: nivel
+            });
+        });
     };
 
     const toggleService = (index: number) => {
