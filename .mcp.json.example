@@ -1,0 +1,22 @@
+{
+  "_comment": "Copy to .mcp.json and fill in your own values. .mcp.json is gitignored — never commit real credentials.",
+  "mcpServers": {
+    "google-analytics": {
+      "command": "<ruta-absoluta-a-python.exe>",
+      "args": ["-m", "analytics_mcp.server"],
+      "env": {
+        "_comment": "Usar una credencial POR ORGANIZACION, no el ADC global compartido. Ver audit-tu-tesis-rd/10_separacion_nes_camp.md",
+        "GOOGLE_APPLICATION_CREDENTIALS": "<ruta-a-la-credencial-de-ESTA-organizacion>.json",
+        "GOOGLE_PROJECT_ID": "<google-cloud-project-id>"
+      }
+    },
+    "google-ads": {
+      "command": "<ruta-absoluta-a-python.exe>",
+      "args": ["-m", "ads_mcp.server"],
+      "env": {
+        "GOOGLE_ADS_DEVELOPER_TOKEN": "<developer-token>",
+        "GOOGLE_ADS_LOGIN_CUSTOMER_ID": "<mcc-id-sin-guiones>"
+      }
+    }
+  }
+}
