@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { initGA, logPageView } from '../utils/analytics';
+import { initGA, initWhatsAppTracking, logPageView } from '../utils/analytics';
 
 export const useAnalytics = () => {
     const location = useLocation();
@@ -8,6 +8,7 @@ export const useAnalytics = () => {
     useEffect(() => {
         // Initialize GA on mount
         initGA();
+        initWhatsAppTracking();
     }, []);
 
     useEffect(() => {

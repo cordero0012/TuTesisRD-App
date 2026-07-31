@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Confetti from 'react-dom-confetti';
+import SEO from '../../components/SEO';
 
 const SuccessScreen: React.FC = () => {
     const location = useLocation();
@@ -35,6 +36,7 @@ const SuccessScreen: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-blue-50 dark:bg-[#101922] flex items-center justify-center p-4 font-display transition-colors duration-200">
+            <SEO title="Registro Completado" description="Tu proyecto de tesis fue registrado correctamente." noIndex />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                 <Confetti active={isExploding} config={config} />
             </div>
