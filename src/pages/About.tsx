@@ -66,7 +66,7 @@ const About: React.FC = () => {
                                         <p className="text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Contacto Directo</p>
                                         <p className="text-gray-900 dark:text-white font-medium">Higüey, La Altagracia (Servicio Nacional)</p>
                                     </div>
-                                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-brand-orange text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md flex items-center">
+                                    <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-brand-orange text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md flex items-center">
                                         <i className="fab fa-whatsapp mr-2"></i> Contactar a Miguel
                                     </a>
                                 </div>
