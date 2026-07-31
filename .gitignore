@@ -63,3 +63,11 @@ dist-ssr
 .vercel
 
 .agent/
+
+# MCP server config — contains API credentials (Google Ads developer token).
+# Never commit. Use .mcp.json.example as the template.
+.mcp.json
+
+# Claude Code local settings — machine-specific, may capture credentials
+# in allowed-command entries. Never commit.
+.claude/settings.local.json
