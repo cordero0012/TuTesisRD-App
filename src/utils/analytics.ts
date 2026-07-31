@@ -65,13 +65,42 @@ export const initGA = () => {
             document.head.appendChild(pixelScript);
         }
 
+        // Only initialize here. The PageView is sent by logPageView(), which
+        // also runs on mount — sending it here too produced two PageView hits
+        // on every first load.
         if (!isInternalTraffic() && typeof window.fbq !== 'undefined') {
             window.fbq('init', META_PIXEL_ID);
-            window.fbq('track', 'PageView');
         }
 
         metaPixelInitialized = true;
     }
+};
+
+let whatsappTrackingBound = false;
+
+/**
+ * Tracks clicks on every WhatsApp CTA via a single delegated listener.
+ *
+ * WhatsApp is the primary conversion of the business and there are 17 links to
+ * it spread across 8 components, none of which emitted an event. Delegation
+ * covers all of them — including any added later — without touching each one.
+ */
+export const initWhatsAppTracking = () => {
+    if (typeof document === 'undefined' || whatsappTrackingBound) return;
+
+    document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const link = target?.closest?.('a[href*="wa.me"]') as HTMLAnchorElement | null;
+        if (!link) return;
+
+        logEvent(
+            'contact_whatsapp',
+            'Contacto',
+            link.textContent?.trim().slice(0, 100) || 'WhatsApp CTA',
+        );
+    }, { capture: true });
+
+    whatsappTrackingBound = true;
 };
 
 // Log Page View
@@ -110,22 +139,28 @@ export const logEvent = (action: string, category: string, label: string, value?
 
     // Meta Pixel Tracking
     if (typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
-        // Map common GA4 events to Facebook Standard Events
-        let fbEvent = 'CustomEvent';
+        // Map GA4 events to Meta Standard Events. Anything without a standard
+        // equivalent must go through 'trackCustom' — 'track' only accepts the
+        // official event names and silently discards anything else.
         const params: any = { content_category: category, content_name: label, value: value };
+        let standardEvent: string | null = null;
 
-        if (action === 'generate_lead' || action === 'contact') {
-            fbEvent = 'Lead';
+        if (action === 'generate_lead' || action === 'contact' || action === 'contact_whatsapp') {
+            standardEvent = 'Lead';
         } else if (action === 'view_item') {
-            fbEvent = 'ViewContent';
+            standardEvent = 'ViewContent';
         } else if (action === 'purchase') {
-            fbEvent = 'Purchase';
+            standardEvent = 'Purchase';
             params.currency = 'DOP';
         } else if (action === 'sign_up') {
-            fbEvent = 'CompleteRegistration';
+            standardEvent = 'CompleteRegistration';
         }
 
-        window.fbq('track', fbEvent, params);
+        if (standardEvent) {
+            window.fbq('track', standardEvent, params);
+        } else {
+            window.fbq('trackCustom', action, params);
+        }
     }
 
     if (!GA_MEASUREMENT_ID && !META_PIXEL_ID) {
