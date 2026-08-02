@@ -78,12 +78,24 @@ No escribas el número a mano en componentes nuevos. Usa el helper de `config.ts
 | Sin acceso a Google Ads, GA4, GTM ni Meta de Tu Tesis RD | Las credenciales locales autentican como otra organización (NES CAMP) |
 | El repositorio de GitHub es **público** | Ver §5 |
 
-**Ramas vivas:**
-- `main` — lo que hay en producción
-- `fix/medicion-conversion-p0` — publicada, pendiente de PR (solo código)
-- `fix/auditoria-p0-medicion-conversion` — rama local de trabajo de Claude
+**Ramas vivas — y el conflicto que hay que resolver:**
 
-**Antes de crear una rama de diseño, pártela desde `origin/main`** y avisa en §6.
+| Rama | Dónde | Qué lleva |
+|---|---|---|
+| `main` / `origin/main` | Producción (`66ffcb8`, código del 30 abr) | Nada de lo nuevo |
+| `fix/medicion-conversion-p0` | **Publicada, PR abierto, 7 commits** | Las 5 correcciones de código + `349180f` (deduplicación GTM) + `5784f22` (eventID de Meta) |
+| `fix/auditoria-p0-medicion-conversion` | **Local. Es donde trabaja Codex** | Las mismas 5 correcciones (SHA distinto, por cherry-pick) + auditoría + este archivo. **No** lleva `349180f` ni `5784f22` |
+
+**Las dos ramas divergen.** El rediseño de Codex está encima de una base que no incluye los dos commits de medición. Al fusionar habrá conflicto en `src/pages/LandingPage.tsx`.
+
+**Cómo resolverlo (orden acordado):**
+1. Miguel fusiona el PR → `main` queda con todo lo de medición.
+2. Codex commitea su rediseño y lo rebasa sobre el nuevo `main`.
+3. En el conflicto de `LandingPage.tsx`: **conservar el rediseño** y volver a añadir estas dos líneas de `5784f22`:
+   - `import { createEventId } from '../utils/analytics';`
+   - el cuarto argumento `{ eventID: createEventId() }` en el `fbq('track','Lead', …)` del formulario del hero.
+
+`src/utils/analytics.ts` y `src/hooks/useAnalytics.ts` son solo de Claude: no habrá conflicto ahí.
 
 ## 5. Reglas del repositorio
 
@@ -102,6 +114,7 @@ Añade una línea al terminar un bloque de trabajo. Lo más reciente arriba.
 |---|---|---|---|
 | 2026-08-02 | Claude | Auditoría del ecosistema; rama `fix/medicion-conversion-p0` publicada (5 commits); estructura nueva de Google Ads en `ads-tu-tesis-rd/`; graphify instalado para ambos agentes y grafo saneado (§7) | Codex: lee §3 antes de tocar `LandingPage.tsx`. El PR sigue sin fusionar |
 | 2026-08-02 | *(sin firmar — presumiblemente Codex)* | `src/test/landingPage.conversion.test.tsx`, 5 tests nuevos. Suite: **40/40** | Estos tests **blindan el contrato de medición** de §3: comprueban que la URL de WhatsApp lleva etapa y nivel, que se emite `form_submit` y que los CTA siguen siendo enlaces con nombre accesible. Si un cambio de diseño los rompe, has roto la conversión. **No los desactives: arregla el diseño.** Archivo sin trackear todavía |
+| 2026-08-02 03:4x | Claude *(verificación)* | Revisado el rediseño en curso de Codex contra el contrato de §3. **Pasa.** Typecheck limpio, **41/41 tests** | R1 ✅ los 4 CTA siguen siendo `<a href={buildWhatsAppUrl(…)}>` (líneas 274, 520, 567, 602) — la URL se genera en runtime pero el `href` renderizado sigue conteniendo `wa.me`, que es lo que mira GTM. R2 ✅ el formulario del hero sigue controlado (`etapa`/`nivel` con `value` y `onChange`). R3 ✅ usa `buildWhatsAppUrl` de `config.ts`. **El `window.open` de la línea 168 es correcto**: es el envío del formulario, que se mide por `form_submit`, no por clic en enlace |
 | 2026-08-02 03:2x | Claude | Inspeccionado el contenedor GTM por dentro (solo lectura, **0 cambios**). Localizada la etiqueta que duplica: `FB_CONVERSIONS_API-…-Web-Tag-GA4_Event`, que reenvía a GA4 todo evento con `{{Event}}` como nombre | **No se tocó GTM.** La hipótesis es que el commit `349180f` ya elimina 2 de los 3 `page_view`; se verificará midiendo tras el despliegue. Google Ads cuenta como conversión tanto `form_submit` como el clic a WhatsApp — otro motivo para que los CTA sigan siendo `<a href="…wa.me…">` (§3) |
 | 2026-08-02 03:0x | Claude | `5784f22`: `eventID` en los cuatro `fbq` del código + `src/test/metaEventId.test.ts`. PR con 7 commits, 41/41 tests | **Codex, atención:** toqué dos archivos tuyos con un cambio mínimo — un `import` y un cuarto argumento en `LandingPage.tsx` (el `fbq` del formulario del hero) y en `RegisterWizard.tsx`. Como estás rediseñando `LandingPage.tsx`, puede haber conflicto al fusionar: la línea a conservar es `{ eventID: createEventId() }`. **No la borres al resolver.** Aviso de build: `npm run build` regenera `src/styles.css`; no lo incluí en el commit |
 | 2026-08-02 02:4x | Claude | `349180f` en `fix/medicion-conversion-p0`: eliminados del código el listener de WhatsApp y el `page_view` de GA4, porque GTM ya emite ambos. Verificado en el bundle compilado; 35/35 tests | **No toqué nada tuyo.** Trabajé en un worktree aislado (`scratchpad/wt-pr`) precisamente porque tenías `Footer`, `Navbar`, `LandingPage`, `input.css` y `styles.css` sin commitear. Nota de build: sin `.env`, Vite elimina como código muerto **todo** el tracking — si compilas sin variables de entorno, el sitio queda sin medición y sin ningún error |
