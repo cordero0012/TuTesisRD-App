@@ -5,7 +5,8 @@ import { buildWhatsAppUrl } from '../../config';
 
 const NAV_ITEMS = [
     { to: '/', label: 'Inicio', section: 'inicio' },
-    { to: '/#servicios', label: 'Servicios', section: 'servicios' },
+    { to: '/servicios', label: 'Servicios' },
+    { to: '/universidades', label: 'Universidades' },
     { to: '/#metodo', label: 'Cómo funciona', section: 'metodo' },
     { to: '/#defensa', label: 'Defensa', section: 'defensa' },
     { to: '/#preguntas', label: 'Preguntas', section: 'preguntas' },
@@ -51,6 +52,9 @@ const Navbar: React.FC = () => {
 
     const isActive = (path: string, section?: string) => {
         if (location.pathname === '/' && section) return activeSection === section;
+        if (path === '/universidades') {
+            return location.pathname === '/universidades' || location.pathname.startsWith('/tesis/');
+        }
         return location.pathname === path;
     };
     const closeMenu = () => setIsMobileMenuOpen(false);
