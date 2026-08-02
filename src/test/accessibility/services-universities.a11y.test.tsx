@@ -134,6 +134,35 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
         expect(lowContrastTemplateBreadcrumbs.length).toBe(0);
     });
 
+    it('uses one SVG icon system across the redesigned Services and Universities main content', () => {
+        const { container: servicesContainer } = render(
+            <MemoryRouter initialEntries={['/servicios']}>
+                <Services />
+            </MemoryRouter>
+        );
+
+        const { container: directoryContainer } = render(
+            <MemoryRouter initialEntries={['/universidades']}>
+                <UniversityDirectory />
+            </MemoryRouter>
+        );
+
+        const { container: templateContainer } = render(
+            <MemoryRouter initialEntries={['/tesis/uasd']}>
+                <Routes>
+                    <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        [servicesContainer, directoryContainer, templateContainer].forEach((container) => {
+            const main = container.querySelector('main');
+            expect(main).not.toBeNull();
+            expect(main?.querySelectorAll('.material-icons')).toHaveLength(0);
+            expect(main?.querySelectorAll('svg').length).toBeGreaterThan(0);
+        });
+    });
+
     it('Services page has exactly one H1 and passes structural axe checks', async () => {
         const { container } = render(
             <MemoryRouter initialEntries={['/servicios']}>

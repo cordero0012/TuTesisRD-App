@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, CircleHelp, FileText, Gavel, MessageCircle } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import SEO from '../../components/SEO';
@@ -38,8 +39,8 @@ const UniversityDirectory: React.FC = () => {
                     {/* University Cards Grid */}
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-16">
                         {universitiesData.map((uni) => (
-                            <Link key={uni.id} to={`/tesis/${uni.id}`} className="group block h-full">
-                                <Card className="h-full p-6 md:p-8 flex flex-col justify-between border border-tutesis-black/15 dark:border-tutesis-white/20 bg-tutesis-white dark:bg-tutesis-black group-hover:border-tutesis-orange relative overflow-hidden rounded-md transition-all duration-200">
+                            <Link key={uni.id} to={`/tesis/${uni.id}`} className="group block h-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 dark:focus-visible:ring-offset-tutesis-black">
+                                <Card className="relative flex h-full flex-col justify-between overflow-hidden rounded-md border border-tutesis-black/15 bg-tutesis-white p-6 transition-colors duration-200 group-hover:border-tutesis-orange dark:border-tutesis-white/20 dark:bg-tutesis-black md:p-8">
                                     <div className="flex items-start justify-between mb-6">
                                         <div className="w-16 h-16 md:w-20 md:h-20 bg-tutesis-white dark:bg-tutesis-black rounded-md p-2.5 flex items-center justify-center border border-tutesis-black/15 dark:border-tutesis-white/20 shadow-sm">
                                             <img src={uni.logo} alt={`Logo ${uni.shortName}`} className="max-w-full max-h-full object-contain" />
@@ -59,11 +60,11 @@ const UniversityDirectory: React.FC = () => {
 
                                         <div className="space-y-2 mb-4 text-xs md:text-sm text-tutesis-black/80 dark:text-tutesis-white/80">
                                             <div className="flex items-center gap-2 bg-tutesis-black/5 dark:bg-tutesis-white/5 p-2.5 rounded-md border border-tutesis-black/10 dark:border-tutesis-white/10">
-                                                <span className="material-icons text-tutesis-orange text-base">gavel</span>
+                                                <Gavel className="h-4 w-4 shrink-0 text-tutesis-orange" aria-hidden="true" />
                                                 <span className="font-semibold truncate">{uni.regulations.style}</span>
                                             </div>
                                             <div className="flex items-center gap-2 bg-tutesis-black/5 dark:bg-tutesis-white/5 p-2.5 rounded-md border border-tutesis-black/10 dark:border-tutesis-white/10">
-                                                <span className="material-icons text-tutesis-orange text-base">description</span>
+                                                <FileText className="h-4 w-4 shrink-0 text-tutesis-orange" aria-hidden="true" />
                                                 <span>{uni.regulations.minPages} - {uni.regulations.maxPages} páginas</span>
                                             </div>
                                         </div>
@@ -85,7 +86,7 @@ const UniversityDirectory: React.FC = () => {
 
                                     <div className="pt-4 border-t border-tutesis-black/15 dark:border-tutesis-white/20 flex items-center justify-between text-sm font-bold text-tutesis-black dark:text-tutesis-white group-hover:underline group-hover:decoration-tutesis-orange transition-colors">
                                         <span>Ver guía de {uni.shortName}</span>
-                                        <span className="material-icons text-base">arrow_forward</span>
+                                        <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
                                     </div>
                                 </Card>
                             </Link>
@@ -93,8 +94,8 @@ const UniversityDirectory: React.FC = () => {
                     </div>
 
                     {/* Unlisted University CTA */}
-                    <div className="bg-tutesis-black text-tutesis-white rounded-md p-8 md:p-12 text-center max-w-4xl mx-auto border border-tutesis-white/20">
-                        <span className="material-icons text-tutesis-orange text-4xl mb-4">help_outline</span>
+                    <div id="universidades-cta-final" className="mx-auto max-w-4xl scroll-mt-28 rounded-md border border-tutesis-white/20 bg-tutesis-black p-8 text-center text-tutesis-white md:p-12">
+                        <CircleHelp className="mx-auto mb-4 h-10 w-10 text-tutesis-orange" aria-hidden="true" />
                         <h3 className="font-display text-2xl md:text-3xl font-extrabold mb-3 text-tutesis-white">¿Tu universidad no aparece en este listado?</h3>
                         <p className="text-tutesis-white/75 max-w-xl mx-auto mb-8 text-sm md:text-base leading-relaxed">
                             Si tu universidad no aparece en este listado, escríbenos directamente por WhatsApp para revisar tu manual y guías vigentes.
@@ -103,9 +104,9 @@ const UniversityDirectory: React.FC = () => {
                             href={unlistedUniUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold font-extrabold text-sm md:text-base px-8 py-4 rounded-md shadow-md transition-colors"
+                            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-md bg-tutesis-orange px-8 py-4 text-sm font-extrabold text-tutesis-black shadow-md transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black md:text-base"
                         >
-                            <span className="material-icons">chat</span>
+                            <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
                             <span>Consultar mi universidad por WhatsApp</span>
                         </a>
                     </div>
