@@ -204,16 +204,22 @@ const pricingCategories: ServiceCategory[] = [
     }
 ];
 
+import { buildWhatsAppUrl } from '../../config';
+
 const PricingCatalog: React.FC = () => {
-    const [activeCategory, setActiveCategory] = useState<string>(pricingCategories[0].id);
-
-    const activeData = pricingCategories.find(c => c.id === activeCategory);
-
-    const generateWhatsAppLink = (planTitle: string, categoryName: string) => {
-        const phone = "18297513267";
-        const message = `Hola TuTesisRD, me interesa consultar y obtener una cotización formal para el "${planTitle}" en la categoría de "${categoryName}". ¿Podemos hablar al respecto?`;
-        return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    const scrollToCategory = (id: string) => {
+        const elem = document.getElementById(id);
+        if (elem) {
+            elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     };
+
+    const getPlanWhatsAppUrl = (planTitle: string, categoryName: string) => {
+        const message = `Hola TuTesisRD, me interesa consultar y obtener una cotización formal para el "${planTitle}" en la categoría de "${categoryName}". ¿Podemos hablar al respecto?`;
+        return buildWhatsAppUrl(message);
+    };
+
+    const diagnosticUrl = buildWhatsAppUrl('Hola TuTesisRD, no sé cuál plan elegir para mi trabajo de grado. Deseo solicitar un diagnóstico gratuito.');
 
     return (
         <section className="pt-6 md:pt-10 pb-12 md:pb-24 bg-background-light dark:bg-background-dark relative overflow-hidden transition-colors duration-300">
@@ -228,36 +234,44 @@ const PricingCatalog: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Categories Tabs Navigator */}
-                <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12 md:mb-20">
+                {/* Categories Index Navigator (Anchors) */}
+                <nav aria-label="Categorías de servicios" className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12 md:mb-20 sticky top-20 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md py-3 border-b border-slate-200/50 dark:border-slate-800/50">
                     {pricingCategories.map((category) => (
                         <button
                             key={category.id}
-                            onClick={() => setActiveCategory(category.id)}
-                            className={`flex items-center gap-2 px-5 py-3 md:px-6 md:py-4 rounded-xl font-bold transition-all duration-300 ${activeCategory === category.id
-                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl scale-105 transform'
-                                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-                                }`}
+                            type="button"
+                            onClick={() => scrollToCategory(category.id)}
+                            className="flex items-center gap-2 px-4 py-2.5 md:px-5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-brand-orange hover:text-white dark:hover:bg-brand-orange dark:hover:text-white shadow-sm border border-slate-200 dark:border-slate-800"
                         >
-                            <span className="material-icons text-xl md:text-2xl">{category.icon}</span>
-                            <span className="text-sm md:text-base whitespace-nowrap">{category.name}</span>
+                            <span className="material-icons text-base md:text-lg">{category.icon}</span>
+                            <span className="whitespace-nowrap">{category.name}</span>
                         </button>
                     ))}
-                </div>
+                </nav>
 
-                {/* Pricing Grid Body */}
-                <div className="animate-fade-in-up">
-                    {activeData && (
-                        <>
-                            {activeData.note && (
-                                <div className="max-w-3xl mx-auto mb-8 md:mb-12 p-4 bg-orange-50 dark:bg-orange-900/10 border border-brand-orange/20 rounded-2xl flex items-start gap-3">
+                {/* All 5 Categories Mounted Simultaneously in DOM */}
+                <div className="space-y-16 md:space-y-24">
+                    {pricingCategories.map((category) => (
+                        <div
+                            key={category.id}
+                            id={category.id}
+                            data-testid={`category-${category.id}`}
+                            className="scroll-mt-28"
+                        >
+                            <div className="flex items-center gap-3 mb-6 md:mb-8 pb-3 border-b border-slate-200 dark:border-slate-800">
+                                <span className="material-icons text-brand-orange text-2xl md:text-3xl">{category.icon}</span>
+                                <h3 className="text-xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{category.name}</h3>
+                            </div>
+
+                            {category.note && (
+                                <div className="max-w-4xl mb-8 p-4 bg-orange-50 dark:bg-orange-900/10 border border-brand-orange/20 rounded-2xl flex items-start gap-3">
                                     <span className="material-icons text-brand-orange shrink-0">info</span>
-                                    <p className="text-xs md:text-sm text-slate-700 dark:text-slate-300 font-medium">{activeData.note}</p>
+                                    <p className="text-xs md:text-sm text-slate-700 dark:text-slate-300 font-medium">{category.note}</p>
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pb-10">
-                                {activeData.plans.map((plan, idx) => (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                                {category.plans.map((plan, idx) => (
                                     <div
                                         key={idx}
                                         className={`bg-white dark:bg-surface-dark rounded-3xl p-6 md:p-8 flex flex-col hover:shadow-2xl transition-all h-full ${plan.isPremium
@@ -265,22 +279,22 @@ const PricingCatalog: React.FC = () => {
                                             : 'border border-slate-100 dark:border-slate-800 relative z-0'
                                             }`}
                                     >
-                                        {/* Premium Badge */}
+                                        {/* Neutral Badge replacing 'Más Popular' */}
                                         {plan.isPremium && (
                                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-orange text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full whitespace-nowrap shadow-md">
-                                                Más Popular
+                                                Incluye extras
                                             </div>
                                         )}
 
-                                        <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{plan.title}</h3>
+                                        <h4 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{plan.title}</h4>
                                         <div className="flex items-baseline gap-1 mb-8">
-                                            <span className="text-3xl font-black text-slate-900 dark:text-white">{plan.price}</span>
+                                            <span className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">{plan.price}</span>
                                         </div>
 
                                         <ul className="space-y-4 mb-8 flex-grow">
                                             {plan.features.map((feature, fIdx) => (
                                                 <li key={fIdx} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                                    <span className="material-icons text-green-500 text-lg shrink-0">check_circle</span>
+                                                    <span className="material-icons text-brand-orange text-lg shrink-0">check_circle</span>
                                                     <span>{feature}</span>
                                                 </li>
                                             ))}
@@ -288,22 +302,39 @@ const PricingCatalog: React.FC = () => {
 
                                         <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                                             <a
-                                                href={generateWhatsAppLink(plan.title, activeData.name)}
+                                                href={getPlanWhatsAppUrl(plan.title, category.name)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className={`w-full flex justify-center py-4 rounded-xl font-bold transition-all ${plan.isPremium
+                                                className={`w-full flex justify-center py-4 rounded-xl font-bold transition-all text-center ${plan.isPremium
                                                     ? 'bg-brand-orange text-white shadow-lg hover:bg-orange-600'
                                                     : 'border border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white'
                                                     }`}
                                             >
-                                                Cotizar Plan
+                                                Cotizar este plan
                                             </a>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                        </>
-                    )}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Final Diagnostic CTA */}
+                <div className="mt-16 md:mt-24 text-center bg-slate-900 text-white rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                    <h3 className="text-2xl md:text-4xl font-extrabold mb-4">¿Dudas sobre cuál plan se adapta a tu etapa?</h3>
+                    <p className="text-slate-300 max-w-2xl mx-auto mb-8 text-base md:text-lg leading-relaxed">
+                        Revisamos la etapa exacta de tu trabajo de grado y te recomendamos el acompañamiento justo sin compromisos.
+                    </p>
+                    <a
+                        href={diagnosticUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-3 bg-brand-orange text-white hover:bg-orange-600 font-extrabold text-base md:text-lg px-8 py-4 rounded-xl shadow-lg transition-transform hover:scale-105"
+                    >
+                        <span className="material-icons">chat</span>
+                        <span>No sé cuál elegir: solicitar diagnóstico</span>
+                    </a>
                 </div>
             </div>
         </section>
