@@ -35,11 +35,8 @@ describe('Services & PricingCatalog Inventory & Measurement Contract', () => {
 
             cat.plans.forEach((plan) => {
                 totalPlansCount++;
-                // Verify title inside category
                 expect(catElem.textContent).toContain(plan.title);
-                // Verify price inside category
                 expect(catElem.textContent).toContain(plan.price);
-                // Verify benefits inside category
                 plan.features.forEach((feature) => {
                     totalBenefitsCount++;
                     expect(catElem.textContent).toContain(feature);
@@ -51,22 +48,44 @@ describe('Services & PricingCatalog Inventory & Measurement Contract', () => {
         expect(totalBenefitsCount).toBe(84);
     });
 
-    it('ensures every plan CTA link is a valid <a> with wa.me href containing plan title and category', () => {
-        const { container } = renderServices();
+    it('verifies exactly 28 unique plan CTAs where each decoded URL simultaneously contains BOTH plan title and category name', () => {
+        renderServices();
+
+        const uniquePlanUrls = new Set<string>();
 
         pricingCategories.forEach((cat) => {
             const catElem = screen.getByTestId(`category-${cat.id}`);
+            
             cat.plans.forEach((plan) => {
-                const planCtas = Array.from(catElem.querySelectorAll('a[href*="wa.me"]'));
-                const matchedCta = planCtas.find(cta => {
-                    const href = cta.getAttribute('href') || '';
-                    return href.includes(encodeURIComponent(plan.title)) || href.includes(encodeURIComponent(cat.name));
-                });
-                expect(matchedCta).toBeDefined();
-                expect(matchedCta?.tagName.toLowerCase()).toBe('a');
-                expect(matchedCta?.querySelector('button')).toBeNull();
+                // Find title element for this specific plan inside category container
+                const titleHeading = Array.from(catElem.querySelectorAll('h4')).find(
+                    (h4) => h4.textContent?.trim() === plan.title
+                );
+                expect(titleHeading).toBeDefined();
+
+                // Find card container wrapping this heading
+                const planCard = titleHeading?.closest('div');
+                expect(planCard).not.toBeNull();
+
+                // Find plan's specific CTA link
+                const ctaLink = planCard?.querySelector('a[href*="wa.me"]');
+                expect(ctaLink).not.toBeNull();
+                expect(ctaLink?.tagName.toLowerCase()).toBe('a');
+                expect(ctaLink?.querySelector('button')).toBeNull(); // No nested <button> inside <a>
+
+                const rawHref = ctaLink?.getAttribute('href') || '';
+                const decodedHref = decodeURIComponent(rawHref);
+
+                // MUST SIMULTANEOUSLY CONTAIN BOTH PLAN TITLE AND CATEGORY NAME
+                expect(decodedHref).toContain(plan.title);
+                expect(decodedHref).toContain(cat.name);
+
+                uniquePlanUrls.add(rawHref);
             });
         });
+
+        // Exactly 28 distinct, unique plan CTA links
+        expect(uniquePlanUrls.size).toBe(28);
     });
 
     it('preserves the printing variation note in adicionales', () => {

@@ -6948,6 +6948,10 @@ body {
   background-color: rgb(217 154 78 / 0.15);
 }
 
+.dark\:bg-tutesis-white\/10:is(.dark *) {
+  background-color: rgb(247 247 247 / 0.1);
+}
+
 .dark\:bg-tutesis-white\/5:is(.dark *) {
   background-color: rgb(247 247 247 / 0.05);
 }
@@ -7183,6 +7187,11 @@ body {
 }
 
 .dark\:hover\:border-brand-orange:hover:is(.dark *) {
+  --tw-border-opacity: 1;
+  border-color: rgb(242 151 39 / var(--tw-border-opacity, 1));
+}
+
+.dark\:hover\:border-tutesis-orange:hover:is(.dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(242 151 39 / var(--tw-border-opacity, 1));
 }

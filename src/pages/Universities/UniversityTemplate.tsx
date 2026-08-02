@@ -118,7 +118,7 @@ const UniversityTemplate: React.FC = () => {
                 {/* Regulations Section */}
                 <section className="py-12 md:py-16 mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
                     <div className="text-center max-w-3xl mx-auto mb-10">
-                        <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange/15 text-tutesis-orange font-bold uppercase tracking-widest text-xs mb-3">
+                        <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange text-tutesis-black font-extrabold uppercase tracking-widest text-xs mb-3">
                             Lineamientos Específicos
                         </span>
                         <h2 className="font-display text-2xl md:text-4xl font-extrabold tracking-tight text-tutesis-black dark:text-tutesis-white">

@@ -7,8 +7,8 @@ import UniversityTemplate from '../pages/Universities/UniversityTemplate';
 import universitiesData from '../data/universities.json';
 
 describe('University Directory & Detail Page Suite', () => {
-    it('renders all 9 canonical universities in UniversityDirectory with logos and program counts', () => {
-        render(
+    it('renders all 9 canonical universities in UniversityDirectory with logos, program counts, AND visible program names', () => {
+        const { container } = render(
             <MemoryRouter initialEntries={['/universidades']}>
                 <Routes>
                     <Route path="/universidades" element={<UniversityDirectory />} />
@@ -24,14 +24,22 @@ describe('University Directory & Detail Page Suite', () => {
             expect(uni).toBeDefined();
             expect(screen.getByText(uni!.shortName)).toBeInTheDocument();
             expect(screen.getByAltText(`Logo ${uni!.shortName}`)).toBeInTheDocument();
+
+            // Verify program names are visibly rendered on each card in directory
+            uni!.programs.forEach((prog) => {
+                expect(container.textContent).toContain(prog);
+            });
         });
     });
 
-    it('iterates through all 9 canonical universities verifying programs (37 total) and tips (21 total)', () => {
+    it('iterates through all 9 canonical universities asserting exact ID, description, style, page range, 37 programs, 21 tips, and contextual CTA', () => {
         let totalProgramsVerified = 0;
         let totalTipsVerified = 0;
+        const verifiedIds = new Set<string>();
 
         universitiesData.forEach((uni) => {
+            verifiedIds.add(uni.id);
+
             const { container, unmount } = render(
                 <MemoryRouter initialEntries={[`/tesis/${uni.id}`]}>
                     <Routes>
@@ -40,35 +48,54 @@ describe('University Directory & Detail Page Suite', () => {
                 </MemoryRouter>
             );
 
-            // Verify title & style
+            // 1. Verify Full Name & Short Name
             expect(screen.getAllByText(new RegExp(uni.shortName, 'i')).length).toBeGreaterThan(0);
-            expect(screen.getByText(uni.regulations.style)).toBeInTheDocument();
+            expect(container.textContent).toContain(uni.name);
 
-            // Verify programs
+            // 2. Verify Logo
+            const logoImg = screen.getByAltText(`Logo de ${uni.name}`);
+            expect(logoImg).toBeInTheDocument();
+            expect(logoImg.getAttribute('src')).toBe(uni.logo);
+
+            // 3. Verify Description
+            expect(container.textContent).toContain(uni.description);
+
+            // 4. Verify Style & Page Range
+            expect(screen.getByText(uni.regulations.style)).toBeInTheDocument();
+            expect(container.textContent).toContain(`${uni.regulations.minPages} a ${uni.regulations.maxPages} páginas`);
+
+            // 5. Verify every single program
             uni.programs.forEach((prog) => {
                 totalProgramsVerified++;
                 expect(container.textContent).toContain(prog);
             });
 
-            // Verify tips
+            // 6. Verify every single tip
             uni.tips.forEach((tip) => {
                 totalTipsVerified++;
                 expect(container.textContent).toContain(tip);
             });
 
-            // Verify WhatsApp CTA link structure
-            const waLink = container.querySelector('a[href*="wa.me"]');
+            // 7. Verify Contextual WhatsApp CTA inside main (decoded URL includes uni.shortName)
+            const mainElem = container.querySelector('main');
+            const waLink = mainElem?.querySelector('a[href*="wa.me"]');
             expect(waLink).not.toBeNull();
             expect(waLink?.tagName.toLowerCase()).toBe('a');
             expect(waLink?.querySelector('button')).toBeNull();
 
-            // Verify tool link & disclaimer
+            const rawHref = waLink?.getAttribute('href') || '';
+            const decodedHref = decodeURIComponent(rawHref);
+            expect(decodedHref).toContain(uni.shortName);
+
+            // 8. Verify tool link & disclaimer
             expect(container.querySelector('a[href*="/herramientas/matriz"]')).not.toBeNull();
             expect(screen.getAllByText(/manual/i).length).toBeGreaterThan(0);
 
             unmount();
         });
 
+        // Assert 9 unique university IDs, 37 total programs, and 21 total tips verified
+        expect(verifiedIds.size).toBe(9);
         expect(totalProgramsVerified).toBe(37);
         expect(totalTipsVerified).toBe(21);
     });
