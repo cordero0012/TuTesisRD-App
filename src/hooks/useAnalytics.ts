@@ -6,7 +6,8 @@ export const useAnalytics = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Initialize GA on mount
+        // Initialize GA on mount. WhatsApp click tracking is owned by GTM —
+        // see the note in utils/analytics.ts.
         initGA();
     }, []);
 

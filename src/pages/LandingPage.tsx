@@ -3,9 +3,66 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
+import { buildWhatsAppUrl } from '../config';
+import { saveHeroLead } from '../services/leads/heroLeadService';
+import { createEventId } from '../utils/analytics';
+
+const ETAPAS = [
+    'Tengo la idea inicial / Anteproyecto',
+    'Desarrollando Marco Teórico',
+    'Aplicando Metodología / Instrumentos',
+    'Tesis terminada pero con correcciones de formato (APA)',
+    'Tengo observaciones de mi asesor y no sé qué hacer',
+    'Me preparo para la defensa'
+];
+
+const NIVELES = ['Grado / Licenciatura', 'Maestría / Posgrado', 'Doctorado'];
 
 const LandingPage: React.FC = () => {
     const [expandedService, setExpandedService] = React.useState<number | null>(null);
+
+    // The diagnostic form used to be uncontrolled: the selects had no name, no
+    // value and no handler, so whatever the student picked was discarded on
+    // submit while a Lead conversion fired anyway. Now the answers are captured
+    // and carried into the WhatsApp message, so the advisor gets the context.
+    const [etapa, setEtapa] = React.useState(ETAPAS[0]);
+    const [nivel, setNivel] = React.useState(NIVELES[0]);
+
+    const handleDiagnosticoSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const mensaje = [
+            'Hola, quiero mi diagnóstico gratis.',
+            `Etapa: ${etapa}`,
+            `Nivel académico: ${nivel}`
+        ].join('\n');
+
+        // Open WhatsApp synchronously. Awaiting the database write first would
+        // detach this call from the user gesture and pop-up blockers would kill
+        // it — getting the student into the conversation matters more than the
+        // record of it.
+        window.open(buildWhatsAppUrl(mensaje), '_blank', 'noopener,noreferrer');
+
+        // Persist, then report. The conversion event carries whether the row
+        // was actually stored, so a silent database failure shows up in the
+        // analytics instead of hiding behind a conversion that looks fine.
+        saveHeroLead({ etapa, nivel }).then((stored) => {
+            if (typeof window === 'undefined') return;
+
+            (window as any).dataLayer = (window as any).dataLayer || [];
+            (window as any).dataLayer.push({
+                event: 'form_submit',
+                'dlv - service_type': 'Diagnostico Rapido',
+                diagnostico_etapa: etapa,
+                diagnostico_nivel: nivel,
+                lead_stored: stored
+            });
+            (window as any).fbq?.('track', 'Lead', {
+                content_name: 'Diagnostico Rapido',
+                content_category: nivel
+            }, { eventID: createEventId() });
+        });
+    };
 
     const toggleService = (index: number) => {
         setExpandedService(expandedService === index ? null : index);
@@ -25,7 +82,7 @@ const LandingPage: React.FC = () => {
             "height": "60"
         },
         "description": "Asesoría experta en tesis de grado, tesis doctoral y anteproyectos en República Dominicana. Más de 7 años ayudando a estudiantes universitarios a graduarse con éxito.",
-        "telephone": "+18297513267",
+        "telephone": "+18094557280",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "Higüey, La Altagracia",
@@ -44,11 +101,11 @@ const LandingPage: React.FC = () => {
             "name": "República Dominicana"
         },
         "sameAs": [
-            "https://wa.me/message/YESJDSE3MZ3IM1"
+            "https://wa.me/18297513267"
         ],
         "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "+18297513267",
+            "telephone": "+18094557280",
             "contactType": "Customer Service",
             "areaServed": "DO",
             "availableLanguage": "Spanish"
@@ -172,10 +229,10 @@ const LandingPage: React.FC = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-3.5 md:py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
+                                <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-brand-orange text-white font-bold py-3.5 md:py-4 px-8 rounded-full shadow-xl shadow-brand-orange/20 hover:shadow-2xl hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300">
                                     <span className="material-icons mr-2" aria-hidden="true">fact_check</span> Inicia tu Diagnóstico Gratis
                                 </a>
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-3.5 md:py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
+                                <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-white dark:bg-white/5 text-slate-700 dark:text-white font-bold py-3.5 md:py-4 px-8 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300">
                                     <span className="material-icons mr-2 text-brand-orange" aria-hidden="true">chat</span> Hablar por WhatsApp
                                 </a>
                             </div>
@@ -203,36 +260,29 @@ const LandingPage: React.FC = () => {
                                 <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2 text-center">Diagnóstico Rápido</h2>
                                 <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm text-center mb-6">Completa este breve formulario y evaluaremos exactamente en qué necesitas ayuda.</p>
 
-                                <form className="space-y-4" onSubmit={(e) => {
-                                    e.preventDefault();
-                                    // Push to GTM dataLayer
-                                    if (typeof window !== 'undefined') {
-                                        (window as any).dataLayer = (window as any).dataLayer || [];
-                                        (window as any).dataLayer.push({
-                                            event: 'form_submit',
-                                            'dlv - service_type': 'Diagnostico Rapido'
-                                        });
-                                        (window as any).fbq?.('track', 'Lead');
-                                    }
-                                    window.open('https://wa.me/message/YESJDSE3MZ3IM1', '_blank');
-                                }}>
+                                <form className="space-y-4" onSubmit={handleDiagnosticoSubmit}>
                                     <div>
                                         <label htmlFor="hero-etapa" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">¿En qué etapa estás?</label>
-                                        <select id="hero-etapa" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all">
-                                            <option>Tengo la idea inicial / Anteproyecto</option>
-                                            <option>Desarrollando Marco Teórico</option>
-                                            <option>Aplicando Metodología / Instrumentos</option>
-                                            <option>Tesis terminada pero con correcciones de formato (APA)</option>
-                                            <option>Tengo observaciones de mi asesor y no sé qué hacer</option>
-                                            <option>Me preparo para la defensa</option>
+                                        <select
+                                            id="hero-etapa"
+                                            name="etapa"
+                                            value={etapa}
+                                            onChange={(e) => setEtapa(e.target.value)}
+                                            className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all"
+                                        >
+                                            {ETAPAS.map(opcion => <option key={opcion} value={opcion}>{opcion}</option>)}
                                         </select>
                                     </div>
                                     <div>
                                         <label htmlFor="hero-nivel" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nivel Académico</label>
-                                        <select id="hero-nivel" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all">
-                                            <option>Grado / Licenciatura</option>
-                                            <option>Maestría / Posgrado</option>
-                                            <option>Doctorado</option>
+                                        <select
+                                            id="hero-nivel"
+                                            name="nivel"
+                                            value={nivel}
+                                            onChange={(e) => setNivel(e.target.value)}
+                                            className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-all"
+                                        >
+                                            {NIVELES.map(opcion => <option key={opcion} value={opcion}>{opcion}</option>)}
                                         </select>
                                     </div>
                                     <button type="submit" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 rounded-xl hover:-translate-y-1 transition-transform duration-300 shadow-lg mt-2 flex items-center justify-center gap-2">
@@ -299,7 +349,7 @@ const LandingPage: React.FC = () => {
                             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
                                 Un sistema estructurado de 4 pasos diseñado para minimizar errores, optimizar tu tiempo y garantizar la aprobación de tu investigación.
                             </p>
-                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center font-bold text-brand-orange hover:text-orange-600 transition-colors group">
+                            <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center font-bold text-brand-orange hover:text-orange-600 transition-colors group">
                                 Iniciar Proceso <span className="material-icons ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
                             </a>
                         </div>
@@ -408,7 +458,7 @@ const LandingPage: React.FC = () => {
                             Diseñamos un ecosistema de servicios para cubrir cada etapa de tu investigación, desde la idea inicial hasta la sustentación.
                         </p>
                         <div className="flex justify-center">
-                            <a href="https://wa.me/message/YESJDSE3MZ3IM1" className="group flex items-center gap-3 px-8 py-4 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-slate-900 rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-slate-200/50 dark:shadow-none">
+                            <a href="https://wa.me/18297513267" className="group flex items-center gap-3 px-8 py-4 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-slate-900 rounded-full font-bold transition-all hover:-translate-y-1 shadow-lg shadow-slate-200/50 dark:shadow-none">
                                 <span className="uppercase tracking-wider text-sm">Ver Planes</span>
                                 <span className="material-icons group-hover:translate-x-1 transition-transform text-sm">arrow_forward</span>
                             </a>
@@ -653,7 +703,7 @@ const LandingPage: React.FC = () => {
                                         <p className="text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Contacto Directo</p>
                                         <p className="text-gray-900 dark:text-white font-medium">Higüey, La Altagracia</p>
                                     </div>
-                                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-6 py-3 bg-brand-orange text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md flex items-center justify-center">
+                                    <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-6 py-3 bg-brand-orange text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md flex items-center justify-center">
                                         <span className="material-icons mr-2 text-sm" aria-hidden="true">chat</span> Hablar con Miguel
                                     </a>
                                 </div>
@@ -668,7 +718,7 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
                     <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6 leading-tight">¡Únete a los cientos de estudiantes satisfechos!</h2>
                     <p className="text-white text-base md:text-xl mb-8 md:mb-10 max-w-2xl mx-auto font-medium">Han alcanzado el éxito académico con nuestra ayuda. ¿Qué esperas para ser el próximo?</p>
-                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105 group">
+                    <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-white text-brand-orange font-bold py-5 px-12 rounded-full shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105 group">
                         <span className="material-icons mr-3 text-2xl group-hover:rotate-12 transition-transform" aria-hidden="true">chat</span> <span className="text-lg">Hablar con un Asesor</span>
                     </a>
                 </div>
@@ -696,7 +746,7 @@ const LandingPage: React.FC = () => {
             <Footer />
 
             {/* Floating WhatsApp Button */}
-            <a href="https://wa.me/message/YESJDSE3MZ3IM1"
+            <a href="https://wa.me/18297513267"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center animate-bounce-slow"

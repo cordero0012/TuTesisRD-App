@@ -46,7 +46,7 @@ const Navbar: React.FC = () => {
                     <Link to="/registro" className="ml-4 px-6 py-2.5 bg-brand-orange text-white rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
                         <span className="material-icons text-lg">person_add</span> Registrarse
                     </Link>
-                    <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="ml-2 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
+                    <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="ml-2 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
                         <i className="fab fa-whatsapp text-lg"></i> Contactar
                     </a>
                 </nav>
@@ -70,7 +70,7 @@ const Navbar: React.FC = () => {
                 <Link to="/registro" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-white font-bold bg-brand-orange">
                     <span className="material-icons mr-2">person_add</span> Registrarse Ahora
                 </Link>
-                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-brand-orange font-bold bg-orange-50/50 dark:bg-orange-900/10">
+                <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-brand-orange font-bold bg-orange-50/50 dark:bg-orange-900/10">
                     <i className="fab fa-whatsapp mr-2"></i> Contactar por WhatsApp
                 </a>
             </div>

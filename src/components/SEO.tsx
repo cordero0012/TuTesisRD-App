@@ -11,6 +11,8 @@ interface SEOProps {
     modifiedTime?: string;
     author?: string;
     type?: 'website' | 'article' | 'profile';
+    /** Keeps the page out of the index. Use for private/app routes. */
+    noIndex?: boolean;
 }
 
 const SITE_URL = "https://www.tutesisrd.online";
@@ -46,9 +48,14 @@ const SEO: React.FC<SEOProps> = ({
     publishedTime,
     modifiedTime,
     author = "TuTesisRD",
-    type = 'website'
+    type = 'website',
+    noIndex = false
 }) => {
-    const fullTitle = `${title} | TuTesisRD - Asesoría de Tesis en República Dominicana`;
+    // Several pages already carry the brand in their own title. Appending the
+    // suffix unconditionally produced titles like "… | TuTesisRD | TuTesisRD -
+    // Asesoría …" — over 100 characters, with the brand twice, truncated in
+    // search results. Only append when the brand isn't there already.
+    const fullTitle = /tutesisrd/i.test(title) ? title : `${title} | TuTesisRD`;
     const defaultDescription = "Asesoría experta en tesis, anteproyectos y monográficos en República Dominicana. Más de 7 años ayudando a estudiantes a graduarse con éxito.";
     const currentDescription = description || defaultDescription;
 
@@ -88,7 +95,9 @@ const SEO: React.FC<SEOProps> = ({
         updateMeta('description', currentDescription);
         updateMeta('keywords', allKeywords.join(', '));
         updateMeta('author', author);
-        updateMeta('robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
+        updateMeta('robots', noIndex
+            ? 'noindex, nofollow'
+            : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
 
         // Language and region
         updateMeta('language', 'Spanish');
@@ -148,7 +157,7 @@ const SEO: React.FC<SEOProps> = ({
         } else if (scriptSchema) {
             scriptSchema.remove();
         }
-    }, [fullTitle, currentDescription, canonicalUrl, schema, allKeywords, ogImage, publishedTime, modifiedTime, author, type]);
+    }, [fullTitle, currentDescription, canonicalUrl, schema, allKeywords, ogImage, publishedTime, modifiedTime, author, type, noIndex]);
 
     return null;
 };

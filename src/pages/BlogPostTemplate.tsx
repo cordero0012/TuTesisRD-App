@@ -162,7 +162,7 @@ const BlogPostTemplate: React.FC = () => {
                                         </Link>
 
                                         <a
-                                            href="https://wa.me/message/YESJDSE3MZ3IM1"
+                                            href="https://wa.me/18297513267"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex items-center justify-center w-full bg-white/10 hover:bg-white/20 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-colors backdrop-blur-sm border border-white/10"

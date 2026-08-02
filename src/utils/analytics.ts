@@ -65,32 +65,75 @@ export const initGA = () => {
             document.head.appendChild(pixelScript);
         }
 
+        // Only initialize here. The PageView is sent by logPageView(), which
+        // also runs on mount — sending it here too produced two PageView hits
+        // on every first load.
         if (!isInternalTraffic() && typeof window.fbq !== 'undefined') {
             window.fbq('init', META_PIXEL_ID);
-            window.fbq('track', 'PageView');
         }
 
         metaPixelInitialized = true;
     }
 };
 
-// Log Page View
-export const logPageView = (url: string) => {
-    const internal = isInternalTraffic();
+// WhatsApp click tracking is NOT implemented here on purpose.
+//
+// The GTM container (GTM-MSLMDDLR) already owns it: a Click - Just Links
+// trigger whose condition is `gtm.elementUrl` contains "wa.me", firing the
+// GA4 event `contact_whatsapp` to G-2XTMDMXZFC. Verified on 2026-08-02 by
+// decoding the public container.
+//
+// A delegated listener here would fire a second contact_whatsapp on the same
+// click and double the primary conversion of the business.
+//
+// This is why every WhatsApp CTA must stay an <a> whose href contains
+// "wa.me" — GTM matches on the href, so replacing an anchor with a button
+// silently stops the conversion. See AGENTS.md section 3.
 
-    if (typeof window.gtag !== 'undefined' && GA_MEASUREMENT_ID) {
-        const params: Record<string, unknown> = {
-            send_to: GA_MEASUREMENT_ID,
-            page_path: url,
-            page_location: window.location.href,
-            page_title: document.title,
-        };
-        if (internal) params.traffic_type = 'internal';
-        window.gtag('event', 'page_view', params);
+/**
+ * Generates an event ID for Meta deduplication.
+ *
+ * Meta collapses two events that share the same (event name, eventID) pair
+ * inside a 48h window. Passing one here means a single user action reported
+ * through two paths is counted once instead of twice.
+ *
+ * What this does NOT do: deduplicate against the events GTM already sends.
+ * The container derives its own eventID as
+ *   "bca3a99a-…-c150e8ff1b90_" + gtm.start + "." + gtm.uniqueEventId
+ * which comes from GTM's internal event counter and cannot be reproduced from
+ * here. Deduplicating against CAPI requires the same logical event to carry the
+ * same ID on both sides, so it has to be GTM that emits both — see
+ * ads-tu-tesis-rd/01_conexiones_medicion_verificadas.md.
+ */
+export const createEventId = (): string => {
+    try {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+    } catch {
+        // Fall through to the manual ID below.
     }
+    return `ttrd-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+};
 
-    if (!internal && typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
-        window.fbq('track', 'PageView');
+// Log Page View
+export const logPageView = (_url: string) => {
+    // GA4 page_view is NOT sent here on purpose.
+    //
+    // GTM already emits page_view to G-2XTMDMXZFC on load and on SPA route
+    // change. Measuring production on 2026-08-02 showed 3 page_view hits per
+    // initial load and 5 per SPA navigation for the same URL and session; this
+    // call was one of them. Sending it from here as well inflates every
+    // per-view metric in GA4 and any Ads bidding fed from it.
+    //
+    // Meta is the opposite case: the PageView beacons observed carried no
+    // eventID, meaning they came from this call and not from GTM. GTM does not
+    // send a Meta PageView, so removing the call below would leave Meta with no
+    // PageView at all.
+    if (isInternalTraffic()) return;
+
+    if (typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
+        window.fbq('track', 'PageView', {}, { eventID: createEventId() });
     }
 };
 
@@ -110,22 +153,30 @@ export const logEvent = (action: string, category: string, label: string, value?
 
     // Meta Pixel Tracking
     if (typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
-        // Map common GA4 events to Facebook Standard Events
-        let fbEvent = 'CustomEvent';
+        // Map GA4 events to Meta Standard Events. Anything without a standard
+        // equivalent must go through 'trackCustom' — 'track' only accepts the
+        // official event names and silently discards anything else.
         const params: any = { content_category: category, content_name: label, value: value };
+        let standardEvent: string | null = null;
 
-        if (action === 'generate_lead' || action === 'contact') {
-            fbEvent = 'Lead';
+        if (action === 'generate_lead' || action === 'contact' || action === 'contact_whatsapp') {
+            standardEvent = 'Lead';
         } else if (action === 'view_item') {
-            fbEvent = 'ViewContent';
+            standardEvent = 'ViewContent';
         } else if (action === 'purchase') {
-            fbEvent = 'Purchase';
+            standardEvent = 'Purchase';
             params.currency = 'DOP';
         } else if (action === 'sign_up') {
-            fbEvent = 'CompleteRegistration';
+            standardEvent = 'CompleteRegistration';
         }
 
-        window.fbq('track', fbEvent, params);
+        const options = { eventID: createEventId() };
+
+        if (standardEvent) {
+            window.fbq('track', standardEvent, params, options);
+        } else {
+            window.fbq('trackCustom', action, params, options);
+        }
     }
 
     if (!GA_MEASUREMENT_ID && !META_PIXEL_ID) {

@@ -38,6 +38,7 @@ const BlogPostTemplate = lazy(() => import('./pages/BlogPostTemplate'));
 const ConsistencyMatrix = lazy(() => import('./pages/ConsistencyMatrix'));
 const AuditPage = lazy(() => import('./pages/AuditPage'));
 const HistoryPage = lazy(() => import('./pages/HistoryPage'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // SEO Resources
 const QueEsTesis = lazy(() => import('./pages/Recursos/QueEsTesis'));
@@ -172,6 +173,9 @@ const App = () => {
                             <Route path="universidades" element={<AdminUniversities />} />
                             <Route path="settings" element={<AdminSettings />} />
                         </Route>
+
+                        {/* Catch-all — must stay last */}
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                     </Suspense>
                     {/* <AIChat /> */}

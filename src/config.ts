@@ -1,3 +1,34 @@
+/**
+ * Single source of truth for contact data.
+ *
+ * These values were duplicated as string literals across 20+ components, which
+ * is how three different phone numbers ended up representing the brand at the
+ * same time. Import from here instead of hardcoding.
+ */
+export const CONTACT = {
+    /** WhatsApp number used by every CTA on the site (digits only, for wa.me). */
+    WHATSAPP: "18297513267",
+    /** Landline declared in schema.org and the footer. */
+    PHONE: "+18094557280",
+    EMAIL: "ttesisrd@gmail.com",
+    INSTAGRAM: "https://www.instagram.com/tutesisrd/",
+    FACEBOOK: "https://www.facebook.com/tutesisrd"
+} as const;
+
+/**
+ * Builds a wa.me link carrying a prefilled message.
+ *
+ * Every WhatsApp link on the site used to open an empty chat, so the sales team
+ * received conversations with no context and no way to tell which page or
+ * campaign produced them. `context` is echoed back in the message so the origin
+ * survives the jump into WhatsApp.
+ */
+export const buildWhatsAppUrl = (context?: string): string => {
+    const base = `https://wa.me/${CONTACT.WHATSAPP}`;
+    if (!context) return base;
+    return `${base}?text=${encodeURIComponent(context)}`;
+};
+
 export const CONFIG = {
     APP_NAME: "TuTesisRD",
     VERSION: "2.0.0",

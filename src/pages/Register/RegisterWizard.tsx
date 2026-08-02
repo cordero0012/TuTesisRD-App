@@ -7,6 +7,8 @@ import { RegisterStep1 } from '../../components/register/RegisterStep1';
 import { RegisterStep2 } from '../../components/register/RegisterStep2';
 import { RegisterStep3 } from '../../components/register/RegisterStep3';
 import { RegisterMonitor } from '../../components/register/RegisterMonitor';
+import SEO from '../../components/SEO';
+import { createEventId } from '../../utils/analytics';
 
 interface RegisterWizardProps {
     initialMode?: RegisterMode;
@@ -150,11 +152,11 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                         phone_number: formData.phone
                     }
                 });
-                (window as any).fbq?.('track', 'Lead');
+                (window as any).fbq?.('track', 'Lead', {}, { eventID: createEventId() });
             }
 
             // Success
-            navigate('/student/success', { state: { trackingCode: projectData.tracking_code } });
+            navigate('/exito', { state: { trackingCode: projectData.tracking_code } });
 
         } catch (error: any) {
             console.error('Registration Error:', error);
@@ -251,6 +253,11 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
 
     return (
         <div className="flex h-screen w-full font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-white transition-colors duration-200">
+            <SEO
+                title="Registro de Proyecto"
+                description="Registra tu proyecto de tesis con TuTesisRD."
+                noIndex
+            />
             {/* Accessible notification region - always present for screen readers */}
             <div
                 role="status"

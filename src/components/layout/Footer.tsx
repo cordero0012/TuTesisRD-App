@@ -25,7 +25,11 @@ const Footer: React.FC = () => {
                             </li>
                             <li className="flex items-center">
                                 <span className="material-icons mr-3 text-brand-orange text-sm">chat</span>
-                                <a href="https://wa.me/message/YESJDSE3MZ3IM1" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Chat WhatsApp</a>
+                                <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">WhatsApp: +1 (829) 751-3267</a>
+                            </li>
+                            <li className="flex items-center">
+                                <span className="material-icons mr-3 text-brand-orange text-sm">call</span>
+                                <a href="tel:+18094557280" className="hover:text-white transition">Llamadas: +1 (809) 455-7280</a>
                             </li>
                         </ul>
                     </div>
