@@ -4924,6 +4924,10 @@ h1,
   text-decoration-color: #F29727;
 }
 
+.decoration-2 {
+  text-decoration-thickness: 2px;
+}
+
 .decoration-4 {
   text-decoration-thickness: 4px;
 }
@@ -6116,6 +6120,18 @@ body {
 
 .hover\:underline:hover {
   text-decoration-line: underline;
+}
+
+.hover\:decoration-tutesis-orange:hover {
+  text-decoration-color: #F29727;
+}
+
+.hover\:decoration-2:hover {
+  text-decoration-thickness: 2px;
+}
+
+.hover\:decoration-4:hover {
+  text-decoration-thickness: 4px;
 }
 
 .hover\:opacity-100:hover {

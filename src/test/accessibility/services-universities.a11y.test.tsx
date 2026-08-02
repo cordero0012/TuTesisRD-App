@@ -48,7 +48,7 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
         return results.violations;
     };
 
-    it('programmatically validates WCAG 2.2 AA (>= 4.5:1) for ALL rendered text and background color pairs (including badges, buttons, and hover states)', () => {
+    it('programmatically validates WCAG 2.2 AA contrast ratios (>= 4.5:1 / 7.0:1) for key palette color pairs', () => {
         const black = '#0E0E0F';
         const softWhite = '#F7F7F7';
         const orange = '#F29727';
@@ -74,12 +74,35 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
         const blackOnGold = getContrastRatio(black, gold);
         expect(blackOnGold).toBeGreaterThanOrEqual(4.5); // 5.8:1 (Exceeds AA 4.5:1)
 
-        // 6. Hover state: Black text on solid orange background (#F29727)
+        // 6. Solid orange button hover state: Black text on solid orange background (#F29727)
         const hoverBlackOnOrange = getContrastRatio(black, orange);
         expect(hoverBlackOnOrange).toBeGreaterThanOrEqual(7.0); // 7.4:1 (Exceeds AAA 7.0:1)
     });
 
-    it('asserts zero low-contrast text-tutesis-orange or bg-tutesis-orange/15 badges on light backgrounds in rendered DOM', () => {
+    it('verifies UniversityTemplate breadcrumbs use high-contrast text and zero low-contrast hover:text-tutesis-orange foreground styling', () => {
+        const { container } = render(
+            <MemoryRouter initialEntries={['/tesis/uasd']}>
+                <Routes>
+                    <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        const breadcrumbNav = container.querySelector('nav[aria-label="Miga de pan"]');
+        expect(breadcrumbNav).not.toBeNull();
+
+        const breadcrumbLinks = breadcrumbNav?.querySelectorAll('a');
+        expect(breadcrumbLinks?.length).toBeGreaterThan(0);
+
+        breadcrumbLinks?.forEach((link) => {
+            // Ensure no breadcrumb link uses low-contrast hover:text-tutesis-orange (which was 1.91:1 on light background)
+            expect(link.className).not.toContain('hover:text-tutesis-orange');
+            // Ensure breadcrumb links use high-contrast text styling
+            expect(link.className).toContain('text-tutesis-black');
+        });
+    });
+
+    it('asserts zero low-contrast text-tutesis-orange or bg-tutesis-orange/15 badges on light backgrounds across all 3 pages', () => {
         const { container: servicesContainer } = render(
             <MemoryRouter initialEntries={['/servicios']}>
                 <Services />
@@ -92,12 +115,23 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
             </MemoryRouter>
         );
 
-        // Ensure no badge or text element renders low-contrast bg-tutesis-orange/15 + text-tutesis-orange on light backgrounds
-        const lowContrastBadgesServices = servicesContainer.querySelectorAll('.bg-tutesis-orange\\/15.text-tutesis-orange');
-        expect(lowContrastBadgesServices.length).toBe(0);
+        const { container: templateContainer } = render(
+            <MemoryRouter initialEntries={['/tesis/uasd']}>
+                <Routes>
+                    <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
+                </Routes>
+            </MemoryRouter>
+        );
 
-        const lowContrastBadgesDirectory = directoryContainer.querySelectorAll('.bg-tutesis-orange\\/20.text-tutesis-orange');
-        expect(lowContrastBadgesDirectory.length).toBe(0);
+        // Ensure no badge or text element renders low-contrast bg-tutesis-orange/15 + text-tutesis-orange on light backgrounds
+        const lowContrastServices = servicesContainer.querySelectorAll('.bg-tutesis-orange\\/15.text-tutesis-orange');
+        expect(lowContrastServices.length).toBe(0);
+
+        const lowContrastDirectory = directoryContainer.querySelectorAll('.bg-tutesis-orange\\/20.text-tutesis-orange');
+        expect(lowContrastDirectory.length).toBe(0);
+
+        const lowContrastTemplateBreadcrumbs = templateContainer.querySelectorAll('nav[aria-label="Miga de pan"] a.hover\\:text-tutesis-orange');
+        expect(lowContrastTemplateBreadcrumbs.length).toBe(0);
     });
 
     it('Services page has exactly one H1 and passes structural axe checks', async () => {

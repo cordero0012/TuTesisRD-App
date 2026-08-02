@@ -621,7 +621,7 @@ const LandingPage: React.FC = () => {
                         </EditorialReveal>
                         <EditorialReveal className="lg:col-span-7 lg:pt-14" delay={0.08}>
                             <p className="max-w-2xl text-xl leading-9 text-tutesis-black/70">
-                                Nuestro papel es ayudarte a comprender, estructurar y responder mejor. Las decisiones académicas se documentan, se explican y se alinean con las indicaciones de tu <Link to="/universidades" className="text-tutesis-black underline decoration-tutesis-orange hover:text-tutesis-orange font-semibold">universidad</Link>.
+                                Nuestro papel es ayudarte a comprender, estructurar y responder mejor. Las decisiones académicas se documentan, se explican y se alinean con las indicaciones de tu <Link to="/universidades" className="text-tutesis-black dark:text-tutesis-white underline decoration-tutesis-orange decoration-2 hover:decoration-4 font-semibold">universidad</Link>.
                             </p>
                             <div className="mt-10 grid gap-px border border-tutesis-black/20 bg-tutesis-black/20 sm:grid-cols-3">
                                 {[

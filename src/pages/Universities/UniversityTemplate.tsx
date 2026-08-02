@@ -70,9 +70,9 @@ const UniversityTemplate: React.FC = () => {
                 <div className="bg-tutesis-black/5 dark:bg-tutesis-white/5 border-b border-tutesis-black/15 dark:border-tutesis-white/20 py-3">
                     <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
                         <nav aria-label="Miga de pan" className="flex items-center gap-2 text-xs md:text-sm text-tutesis-black/70 dark:text-tutesis-white/70">
-                            <Link to="/" className="hover:text-tutesis-orange transition-colors">Inicio</Link>
+                            <Link to="/" className="hover:underline hover:decoration-tutesis-orange hover:decoration-2 transition-colors text-tutesis-black dark:text-tutesis-white">Inicio</Link>
                             <span className="material-icons text-xs text-tutesis-orange">chevron_right</span>
-                            <Link to="/universidades" className="hover:text-tutesis-orange transition-colors">Universidades</Link>
+                            <Link to="/universidades" className="hover:underline hover:decoration-tutesis-orange hover:decoration-2 transition-colors text-tutesis-black dark:text-tutesis-white">Universidades</Link>
                             <span className="material-icons text-xs text-tutesis-orange">chevron_right</span>
                             <span className="font-semibold text-tutesis-black dark:text-tutesis-white">{university.shortName}</span>
                         </nav>
@@ -160,7 +160,7 @@ const UniversityTemplate: React.FC = () => {
                 </section>
 
                 {/* Tips & Guidance Section */}
-                <section className="py-12 bg-tutesis-black/5 dark:bg-tutesis-white/5 border-y border-tutesis-black/15 dark:border-tutesis-white/20">
+                <section id="consejos-y-cta" className="py-12 bg-tutesis-black/5 dark:bg-tutesis-white/5 border-y border-tutesis-black/15 dark:border-tutesis-white/20">
                     <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
                         <div className="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
                             <div>
