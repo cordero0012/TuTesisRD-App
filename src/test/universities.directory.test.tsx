@@ -7,7 +7,7 @@ import UniversityTemplate from '../pages/Universities/UniversityTemplate';
 import universitiesData from '../data/universities.json';
 
 describe('University Directory & Detail Page Suite', () => {
-    it('renders all 9 canonical universities in UniversityDirectory', () => {
+    it('renders all 9 canonical universities in UniversityDirectory with logos and program counts', () => {
         render(
             <MemoryRouter initialEntries={['/universidades']}>
                 <Routes>
@@ -23,34 +23,54 @@ describe('University Directory & Detail Page Suite', () => {
             const uni = universitiesData.find((u) => u.id === id);
             expect(uni).toBeDefined();
             expect(screen.getByText(uni!.shortName)).toBeInTheDocument();
+            expect(screen.getByAltText(`Logo ${uni!.shortName}`)).toBeInTheDocument();
         });
     });
 
-    it('renders detail view for /tesis/uasd with canonical details and wa.me link', () => {
-        const { container } = render(
-            <MemoryRouter initialEntries={['/tesis/uasd']}>
-                <Routes>
-                    <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
-                </Routes>
-            </MemoryRouter>
-        );
+    it('iterates through all 9 canonical universities verifying programs (37 total) and tips (21 total)', () => {
+        let totalProgramsVerified = 0;
+        let totalTipsVerified = 0;
 
-        // Header and description
-        expect(screen.getAllByText(/UASD/i).length).toBeGreaterThan(0);
-        expect(screen.getByText(/Universidad Autónoma de Santo Domingo/i)).toBeInTheDocument();
+        universitiesData.forEach((uni) => {
+            const { container, unmount } = render(
+                <MemoryRouter initialEntries={[`/tesis/${uni.id}`]}>
+                    <Routes>
+                        <Route path="/tesis/:universityId" element={<UniversityTemplate />} />
+                    </Routes>
+                </MemoryRouter>
+            );
 
-        // WhatsApp CTA must be a valid <a> containing wa.me and no nested button
-        const waLink = container.querySelector('a[href*="wa.me"]');
-        expect(waLink).not.toBeNull();
-        expect(waLink?.tagName.toLowerCase()).toBe('a');
-        expect(waLink?.querySelector('button')).toBeNull();
+            // Verify title & style
+            expect(screen.getAllByText(new RegExp(uni.shortName, 'i')).length).toBeGreaterThan(0);
+            expect(screen.getByText(uni.regulations.style)).toBeInTheDocument();
 
-        // Tool link
-        const toolLink = container.querySelector('a[href*="/herramientas/matriz"]');
-        expect(toolLink).not.toBeNull();
+            // Verify programs
+            uni.programs.forEach((prog) => {
+                totalProgramsVerified++;
+                expect(container.textContent).toContain(prog);
+            });
 
-        // Disclaimer for official manual
-        expect(screen.getByText(/manual/i)).toBeInTheDocument();
+            // Verify tips
+            uni.tips.forEach((tip) => {
+                totalTipsVerified++;
+                expect(container.textContent).toContain(tip);
+            });
+
+            // Verify WhatsApp CTA link structure
+            const waLink = container.querySelector('a[href*="wa.me"]');
+            expect(waLink).not.toBeNull();
+            expect(waLink?.tagName.toLowerCase()).toBe('a');
+            expect(waLink?.querySelector('button')).toBeNull();
+
+            // Verify tool link & disclaimer
+            expect(container.querySelector('a[href*="/herramientas/matriz"]')).not.toBeNull();
+            expect(screen.getAllByText(/manual/i).length).toBeGreaterThan(0);
+
+            unmount();
+        });
+
+        expect(totalProgramsVerified).toBe(37);
+        expect(totalTipsVerified).toBe(21);
     });
 
     it('handles unknown universityId by providing a link back to /universidades', () => {
