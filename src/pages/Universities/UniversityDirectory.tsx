@@ -44,7 +44,7 @@ const UniversityDirectory: React.FC = () => {
                                         <div className="w-16 h-16 md:w-20 md:h-20 bg-tutesis-white dark:bg-tutesis-black rounded-md p-2.5 flex items-center justify-center border border-tutesis-black/15 dark:border-tutesis-white/20 shadow-sm">
                                             <img src={uni.logo} alt={`Logo ${uni.shortName}`} className="max-w-full max-h-full object-contain" />
                                         </div>
-                                        <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-tutesis-orange/15 text-tutesis-orange border border-tutesis-orange/30">
+                                        <span className="text-xs font-extrabold px-3 py-1.5 rounded-full bg-tutesis-orange text-tutesis-black">
                                             {uni.programs.length} Programas
                                         </span>
                                     </div>
@@ -53,11 +53,11 @@ const UniversityDirectory: React.FC = () => {
                                         <h2 className="font-display text-2xl font-black mb-1 group-hover:text-tutesis-orange transition-colors tracking-tight text-tutesis-black dark:text-tutesis-white">
                                             {uni.shortName}
                                         </h2>
-                                        <p className="text-xs md:text-sm text-tutesis-black/70 dark:text-tutesis-white/70 mb-6 line-clamp-2 min-h-10">
+                                        <p className="text-xs md:text-sm text-tutesis-black/70 dark:text-tutesis-white/70 mb-4 line-clamp-2 min-h-10">
                                             {uni.name}
                                         </p>
 
-                                        <div className="space-y-2 mb-6 text-xs md:text-sm text-tutesis-black/80 dark:text-tutesis-white/80">
+                                        <div className="space-y-2 mb-4 text-xs md:text-sm text-tutesis-black/80 dark:text-tutesis-white/80">
                                             <div className="flex items-center gap-2 bg-tutesis-black/5 dark:bg-tutesis-white/5 p-2.5 rounded-md border border-tutesis-black/10 dark:border-tutesis-white/10">
                                                 <span className="material-icons text-tutesis-orange text-base">gavel</span>
                                                 <span className="font-semibold truncate">{uni.regulations.style}</span>
@@ -67,9 +67,23 @@ const UniversityDirectory: React.FC = () => {
                                                 <span>{uni.regulations.minPages} - {uni.regulations.maxPages} páginas</span>
                                             </div>
                                         </div>
+
+                                        {/* Visible Program Names List */}
+                                        <div className="mb-6">
+                                            <span className="text-[11px] font-bold uppercase tracking-wider text-tutesis-black/70 dark:text-tutesis-white/70 mb-2 block">
+                                                Programas orientados:
+                                            </span>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {uni.programs.map((prog, pIdx) => (
+                                                    <span key={pIdx} className="text-xs font-semibold px-2 py-1 rounded bg-tutesis-black/5 dark:bg-tutesis-white/10 text-tutesis-black dark:text-tutesis-white border border-tutesis-black/10 dark:border-tutesis-white/10">
+                                                        {prog}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="pt-4 border-t border-tutesis-black/15 dark:border-tutesis-white/20 flex items-center justify-between text-sm font-bold text-tutesis-orange">
+                                    <div className="pt-4 border-t border-tutesis-black/15 dark:border-tutesis-white/20 flex items-center justify-between text-sm font-bold text-tutesis-black dark:text-tutesis-white group-hover:text-tutesis-orange transition-colors">
                                         <span>Ver guía de {uni.shortName}</span>
                                         <span className="material-icons text-base">arrow_forward</span>
                                     </div>

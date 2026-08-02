@@ -17,7 +17,7 @@ const Services: React.FC = () => {
                 {/* Hero Editorial Compacto */}
                 <section className="border-b border-tutesis-white/20 bg-tutesis-black py-12 text-tutesis-white md:py-16">
                     <div className="mx-auto max-w-[1280px] px-5 sm:px-8 text-center lg:px-10 max-w-4xl">
-                        <span className="inline-block rounded-full bg-tutesis-orange/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-tutesis-orange mb-4">
+                        <span className="inline-block rounded-full bg-tutesis-orange px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-tutesis-black mb-4">
                             Inversión Transparente
                         </span>
                         <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black mb-6 tracking-tight text-tutesis-white">

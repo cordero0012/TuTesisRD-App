@@ -301,9 +301,9 @@ const PricingCatalog: React.FC = () => {
                                                 href={getPlanWhatsAppUrl(plan.title, category.name)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className={`w-full flex justify-center py-3.5 rounded-md font-bold transition-colors text-center text-sm ${plan.isPremium
+                                                className={`w-full flex justify-center py-3.5 rounded-md font-extrabold transition-colors text-center text-sm ${plan.isPremium
                                                     ? 'bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold'
-                                                    : 'border border-tutesis-orange text-tutesis-orange hover:bg-tutesis-orange hover:text-tutesis-black'
+                                                    : 'border-2 border-tutesis-black text-tutesis-black dark:border-tutesis-white dark:text-tutesis-white hover:bg-tutesis-orange hover:text-tutesis-black hover:border-tutesis-orange dark:hover:bg-tutesis-orange dark:hover:text-tutesis-black dark:hover:border-tutesis-orange'
                                                     }`}
                                             >
                                                 Cotizar este plan
