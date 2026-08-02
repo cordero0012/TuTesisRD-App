@@ -61,11 +61,12 @@ const Navbar: React.FC = () => {
 
     return (
         <header className={`fixed inset-x-0 top-0 z-50 backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-300 dark:border-tutesis-white/20 dark:bg-tutesis-black/95 ${isScrolled ? 'border-b border-tutesis-black/15 bg-tutesis-white/95 shadow-[0_8px_30px_rgba(14,14,15,0.06)]' : 'border-b border-transparent bg-tutesis-white/80'}`}>
-            <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-5 sm:px-8 lg:px-10">
+            <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-16">
                 <Link
                     to="/"
                     onClick={closeMenu}
-                    className="group relative inline-flex h-14 w-36 shrink-0 items-center overflow-hidden rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-4"
+                    data-testid="brand-logo-link"
+                    className="group relative inline-flex h-16 w-40 shrink-0 items-center overflow-visible rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-4"
                     aria-label="Tu Tesis RD — Inicio"
                 >
                     <img
@@ -73,7 +74,7 @@ const Navbar: React.FC = () => {
                         alt=""
                         width="1000"
                         height="1000"
-                        className="absolute left-1/2 top-1/2 w-44 max-w-none -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 group-hover:scale-[1.03]"
+                        className="pointer-events-none absolute left-1/2 top-1/2 w-48 max-w-none -translate-x-1/2 -translate-y-[40%] select-none transition-transform duration-200 group-hover:scale-[1.03]"
                     />
                     <span className="sr-only">Tu Tesis RD — Inicio</span>
                 </Link>
@@ -124,7 +125,7 @@ const Navbar: React.FC = () => {
                 id="mobile-navigation"
                 className={`border-t border-tutesis-black/15 bg-tutesis-white dark:border-tutesis-white/20 dark:bg-tutesis-black lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}
             >
-                <nav className="mx-auto max-h-[calc(100vh-5rem)] max-w-[1280px] overflow-y-auto px-5 py-5 sm:px-8" aria-label="Navegación móvil">
+                <nav className="mx-auto max-h-[calc(100vh-5rem)] max-w-[1600px] overflow-y-auto px-5 py-5 sm:px-8 lg:px-12 xl:px-16" aria-label="Navegación móvil">
                     {NAV_ITEMS.map((item, index) => (
                         <Link
                             key={item.to}

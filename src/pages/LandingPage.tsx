@@ -327,17 +327,17 @@ const LandingPage: React.FC = () => {
             <PageScrollProgress />
 
             <main>
-                <section id="inicio" className="research-grid relative border-b border-tutesis-black/20 pt-28 md:pt-36 lg:pt-40">
-                    <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-14 px-5 pb-20 sm:px-8 md:pb-28 lg:grid-cols-12 lg:gap-10 lg:px-10">
-                        <HeroEntrance className="flex flex-col justify-center lg:col-span-7 lg:pr-8">
+                <section id="inicio" className="research-grid relative border-b border-tutesis-black/20 pt-24 sm:pt-28 md:pt-32 xl:pt-36">
+                    <div data-testid="landing-hero-layout" className="mx-auto grid w-full max-w-[1760px] grid-cols-1 gap-12 px-5 pb-20 sm:px-8 md:pb-24 lg:px-12 xl:grid-cols-12 xl:items-center xl:gap-14 xl:px-16 2xl:gap-20 2xl:px-20">
+                        <HeroEntrance className="flex flex-col justify-center xl:col-span-7 xl:pr-4 2xl:pr-10">
                             <SectionLabel index="01">Diagnóstico inicial gratuito · República Dominicana</SectionLabel>
 
-                            <h1 className="max-w-[14ch] font-display text-[clamp(2.55rem,6.2vw,6.2rem)] font-extrabold leading-[0.94] tracking-[-0.055em] text-tutesis-black">
+                            <h1 className="max-w-[13ch] font-display text-[clamp(3rem,5.2vw,6.4rem)] font-extrabold leading-[0.92] tracking-[-0.058em] text-tutesis-black">
                                 Asesoría para tesis y monográficos.
                                 <span className="mt-2 block underline decoration-tutesis-orange decoration-[0.12em] underline-offset-[0.08em]">Del caos a una ruta clara.</span>
                             </h1>
 
-                            <p className="mt-8 max-w-2xl text-lg leading-8 text-tutesis-black/70 md:text-xl md:leading-9">
+                            <p className="mt-8 max-w-3xl text-lg leading-8 text-tutesis-black/70 md:text-xl md:leading-9">
                                 Cuéntanos en qué etapa estás y recibe una orientación inicial para saber qué corregir primero, cómo organizarte y cuál debe ser tu siguiente paso.
                             </p>
 
@@ -359,7 +359,7 @@ const LandingPage: React.FC = () => {
                                 </a>
                             </div>
 
-                            <ul className="mt-10 grid max-w-2xl gap-x-8 gap-y-3 border-t border-tutesis-black/20 pt-6 text-sm text-tutesis-black/70 sm:grid-cols-2">
+                            <ul className="mt-10 grid max-w-4xl gap-x-7 gap-y-3 border-t border-tutesis-black/20 pt-6 text-sm text-tutesis-black/70 sm:grid-cols-2 2xl:grid-cols-4">
                                 <li className="flex items-center gap-2"><Check className="h-4 w-4 text-tutesis-orange" aria-hidden="true" /> Orientación personalizada</li>
                                 <li className="flex items-center gap-2"><Check className="h-4 w-4 text-tutesis-orange" aria-hidden="true" /> Apoyo metodológico</li>
                                 <li className="flex items-center gap-2"><Check className="h-4 w-4 text-tutesis-orange" aria-hidden="true" /> Revisión académica y APA</li>
@@ -367,71 +367,76 @@ const LandingPage: React.FC = () => {
                             </ul>
                         </HeroEntrance>
 
-                        <HeroEntrance className="relative lg:col-span-5 lg:pt-5" delay={0.12}>
-                            <div id="diagnostico" className="scroll-mt-28" />
-                            <div className="absolute -right-5 -top-6 hidden font-display text-[8rem] font-black leading-none text-brand-orange/10 lg:block" aria-hidden="true">01</div>
-                            <PaperStack3D>
-                            <div className="relative border border-tutesis-black/20 bg-tutesis-white p-5 shadow-[0_24px_70px_rgba(14,14,15,0.12)] sm:p-8">
-                                <div className="mb-8 flex items-start justify-between gap-6 border-b border-tutesis-black/15 pb-6">
-                                    <div>
-                                        <span className="text-[0.68rem] font-bold uppercase tracking-[0.2em] text-tutesis-black">Empieza aquí</span>
-                                        <h2 className="mt-2 font-display text-3xl font-extrabold tracking-[-0.035em] text-tutesis-black">Recibe tu diagnóstico inicial</h2>
+                        <HeroEntrance className="relative w-full xl:col-span-5 xl:flex xl:justify-end" delay={0.12}>
+                            <div className="relative w-full max-w-[640px]">
+                                <div id="diagnostico" className="scroll-mt-28" />
+                                <div className="absolute -right-4 -top-8 hidden font-display text-[9rem] font-black leading-none text-brand-orange/10 xl:block" aria-hidden="true">01</div>
+                                <PaperStack3D>
+                                    <div className="relative overflow-hidden rounded-2xl border border-tutesis-black/20 bg-tutesis-white shadow-[0_28px_80px_rgba(14,14,15,0.16)]">
+                                        <div className="bg-tutesis-black px-6 py-7 text-tutesis-white sm:px-8 sm:py-8">
+                                            <div className="flex items-start justify-between gap-6">
+                                                <div>
+                                                    <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.2em] text-tutesis-orange">Empieza aquí</span>
+                                                    <h2 className="mt-2 max-w-[15ch] font-display text-3xl font-extrabold tracking-[-0.035em] text-tutesis-white sm:text-4xl">Recibe tu diagnóstico inicial</h2>
+                                                </div>
+                                                <span className="font-display text-2xl font-extrabold text-tutesis-orange" aria-hidden="true">01</span>
+                                            </div>
+                                            <p className="mt-5 max-w-xl text-sm leading-6 text-tutesis-white/70">
+                                                Selecciona dos respuestas. Abriremos WhatsApp con tu contexto listo para orientarte desde el primer mensaje.
+                                            </p>
+                                        </div>
+
+                                        <form className="space-y-5 p-6 sm:p-8" onSubmit={handleDiagnosticoSubmit}>
+                                            <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
+                                                <div>
+                                                    <label htmlFor="hero-etapa" className="mb-2 block text-sm font-bold text-tutesis-black">¿En qué etapa estás?</label>
+                                                    <select
+                                                        id="hero-etapa"
+                                                        name="etapa"
+                                                        value={etapa}
+                                                        onChange={(event) => setEtapa(event.target.value)}
+                                                        className="min-h-12 w-full appearance-none rounded-md border border-tutesis-black/25 bg-tutesis-white px-4 py-3 text-base text-tutesis-black outline-none transition-colors focus:border-tutesis-orange focus:ring-2 focus:ring-tutesis-orange/25"
+                                                    >
+                                                        {ETAPAS.map((option) => <option key={option} value={option}>{option}</option>)}
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label htmlFor="hero-nivel" className="mb-2 block text-sm font-bold text-tutesis-black">Nivel académico</label>
+                                                    <select
+                                                        id="hero-nivel"
+                                                        name="nivel"
+                                                        value={nivel}
+                                                        onChange={(event) => setNivel(event.target.value)}
+                                                        className="min-h-12 w-full appearance-none rounded-md border border-tutesis-black/25 bg-tutesis-white px-4 py-3 text-base text-tutesis-black outline-none transition-colors focus:border-tutesis-orange focus:ring-2 focus:ring-tutesis-orange/25"
+                                                    >
+                                                        {NIVELES.map((option) => <option key={option} value={option}>{option}</option>)}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <LiveDiagnosticSummary etapa={etapa} nivel={nivel} />
+
+                                            <button
+                                                type="submit"
+                                                className="group flex min-h-12 w-full items-center justify-between rounded-md bg-tutesis-orange px-5 py-4 text-left text-sm font-extrabold text-tutesis-black transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-black focus-visible:ring-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
+                                            >
+                                                Recibir mi diagnóstico gratis
+                                                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                                            </button>
+                                        </form>
+
+                                        <p className="border-t border-tutesis-black/10 px-6 py-4 text-xs leading-5 text-tutesis-black/65 sm:px-8">
+                                            Sin compromiso. La conversación se abrirá en WhatsApp con tus respuestas incluidas.
+                                        </p>
                                     </div>
-                                    <span className="font-display text-xl font-extrabold text-tutesis-black/70" aria-hidden="true">01</span>
-                                </div>
-
-                                <p className="mb-7 max-w-md text-sm leading-6 text-tutesis-black/65">
-                                    Selecciona dos respuestas. Abriremos WhatsApp con tu contexto listo para darte una orientación más útil desde el primer mensaje.
-                                </p>
-
-                                <form className="space-y-5" onSubmit={handleDiagnosticoSubmit}>
-                                    <div>
-                                        <label htmlFor="hero-etapa" className="mb-2 block text-sm font-bold text-tutesis-black">¿En qué etapa estás?</label>
-                                        <select
-                                            id="hero-etapa"
-                                            name="etapa"
-                                            value={etapa}
-                                            onChange={(event) => setEtapa(event.target.value)}
-                                            className="min-h-12 w-full appearance-none rounded-md border border-tutesis-black/25 bg-tutesis-white px-4 py-3 text-base text-tutesis-black outline-none transition-colors focus:border-tutesis-orange focus:ring-2 focus:ring-tutesis-orange/25"
-                                        >
-                                            {ETAPAS.map((option) => <option key={option} value={option}>{option}</option>)}
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="hero-nivel" className="mb-2 block text-sm font-bold text-tutesis-black">Nivel académico</label>
-                                        <select
-                                            id="hero-nivel"
-                                            name="nivel"
-                                            value={nivel}
-                                            onChange={(event) => setNivel(event.target.value)}
-                                            className="min-h-12 w-full appearance-none rounded-md border border-tutesis-black/25 bg-tutesis-white px-4 py-3 text-base text-tutesis-black outline-none transition-colors focus:border-tutesis-orange focus:ring-2 focus:ring-tutesis-orange/25"
-                                        >
-                                            {NIVELES.map((option) => <option key={option} value={option}>{option}</option>)}
-                                        </select>
-                                    </div>
-
-                                    <LiveDiagnosticSummary etapa={etapa} nivel={nivel} />
-
-                                    <button
-                                        type="submit"
-                                        className="group flex min-h-12 w-full items-center justify-between rounded-md bg-tutesis-orange px-5 py-4 text-left text-sm font-extrabold text-tutesis-black transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-black focus-visible:ring-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
-                                    >
-                                        Recibir mi diagnóstico gratis
-                                        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                                    </button>
-                                </form>
-
-                                <p className="mt-5 text-xs leading-5 text-tutesis-black/65">
-                                    Sin compromiso. La conversación se abrirá en WhatsApp con tus respuestas incluidas.
-                                </p>
+                                </PaperStack3D>
                             </div>
-                            </PaperStack3D>
                         </HeroEntrance>
                     </div>
 
                     <div className="border-t border-tutesis-black/20 bg-tutesis-gold/15">
-                        <div className="mx-auto grid max-w-[1280px] grid-cols-2 px-5 sm:px-8 md:grid-cols-4 lg:px-10">
+                        <div className="mx-auto grid max-w-[1760px] grid-cols-2 px-5 sm:px-8 md:grid-cols-4 lg:px-12 xl:px-16 2xl:px-20">
                             {[
                                 ['Diagnóstico', 'Inicial y gratuito'],
                                 ['Contacto', 'Directo por WhatsApp'],
