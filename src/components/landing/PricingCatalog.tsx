@@ -16,7 +16,7 @@ type ServiceCategory = {
     note?: string;
 };
 
-const pricingCategories: ServiceCategory[] = [
+export const pricingCategories: ServiceCategory[] = [
     {
         id: 'grado',
         name: 'Tesis de Grado',
@@ -207,13 +207,6 @@ const pricingCategories: ServiceCategory[] = [
 import { buildWhatsAppUrl } from '../../config';
 
 const PricingCatalog: React.FC = () => {
-    const scrollToCategory = (id: string) => {
-        const elem = document.getElementById(id);
-        if (elem) {
-            elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    };
-
     const getPlanWhatsAppUrl = (planTitle: string, categoryName: string) => {
         const message = `Hola TuTesisRD, me interesa consultar y obtener una cotización formal para el "${planTitle}" en la categoría de "${categoryName}". ¿Podemos hablar al respecto?`;
         return buildWhatsAppUrl(message);
@@ -222,31 +215,34 @@ const PricingCatalog: React.FC = () => {
     const diagnosticUrl = buildWhatsAppUrl('Hola TuTesisRD, no sé cuál plan elegir para mi trabajo de grado. Deseo solicitar un diagnóstico gratuito.');
 
     return (
-        <section className="pt-6 md:pt-10 pb-12 md:pb-24 bg-background-light dark:bg-background-dark relative overflow-hidden transition-colors duration-300">
-            <div className="container mx-auto px-4 md:px-6 relative z-10">
-                <div className="text-center max-w-4xl mx-auto mb-10 md:mb-16">
-                    <span className="inline-block py-1 px-3 rounded-full bg-brand-orange/10 dark:bg-brand-orange/20 text-brand-orange font-bold uppercase tracking-[0.2em] text-xs md:text-sm mb-3 md:mb-4">Inversión Transparente</span>
-                    <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 md:mb-6 tracking-tight">
-                        Catálogo de <span className="text-brand-orange">Servicios</span>
+        <section className="pt-6 md:pt-10 pb-12 md:pb-24 bg-tutesis-white dark:bg-tutesis-black text-tutesis-black dark:text-tutesis-white relative overflow-hidden transition-colors duration-300">
+            <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10 relative z-10">
+                <div className="text-center max-w-4xl mx-auto mb-8 md:mb-12">
+                    <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange/15 text-tutesis-orange font-bold uppercase tracking-[0.2em] text-xs md:text-sm mb-3">
+                        Inversión Transparente
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-tutesis-black dark:text-tutesis-white mb-4 tracking-tight font-display">
+                        Catálogo de <span className="text-tutesis-orange">Servicios</span>
                     </h2>
-                    <p className="text-base md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed px-2 md:px-0">
+                    <p className="text-base md:text-xl text-tutesis-black/70 dark:text-tutesis-white/70 leading-relaxed">
                         Soluciones académicas transparentes. Elige el nivel de acompañamiento que mejor se adapte a tus necesidades.
                     </p>
                 </div>
 
-                {/* Categories Index Navigator (Anchors) */}
-                <nav aria-label="Categorías de servicios" className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12 md:mb-20 sticky top-20 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md py-3 border-b border-slate-200/50 dark:border-slate-800/50">
-                    {pricingCategories.map((category) => (
-                        <button
-                            key={category.id}
-                            type="button"
-                            onClick={() => scrollToCategory(category.id)}
-                            className="flex items-center gap-2 px-4 py-2.5 md:px-5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-brand-orange hover:text-white dark:hover:bg-brand-orange dark:hover:text-white shadow-sm border border-slate-200 dark:border-slate-800"
-                        >
-                            <span className="material-icons text-base md:text-lg">{category.icon}</span>
-                            <span className="whitespace-nowrap">{category.name}</span>
-                        </button>
-                    ))}
+                {/* Categories Index Navigator (Real href Anchors - Single Row Scroller on Mobile) */}
+                <nav aria-label="Categorías de servicios" className="sticky top-20 z-20 bg-tutesis-white/95 dark:bg-tutesis-black/95 backdrop-blur-md py-3 mb-10 border-b border-tutesis-black/15 dark:border-tutesis-white/20">
+                    <div className="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 py-1 px-1 no-scrollbar justify-start md:justify-center">
+                        {pricingCategories.map((category) => (
+                            <a
+                                key={category.id}
+                                href={`#${category.id}`}
+                                className="inline-flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-md font-bold text-xs md:text-sm transition-colors border border-tutesis-black/20 dark:border-tutesis-white/25 bg-tutesis-white dark:bg-tutesis-black text-tutesis-black dark:text-tutesis-white hover:bg-tutesis-orange hover:text-tutesis-black dark:hover:bg-tutesis-orange dark:hover:text-tutesis-black"
+                            >
+                                <span className="material-icons text-base">{category.icon}</span>
+                                <span>{category.name}</span>
+                            </a>
+                        ))}
+                    </div>
                 </nav>
 
                 {/* All 5 Categories Mounted Simultaneously in DOM */}
@@ -258,15 +254,15 @@ const PricingCatalog: React.FC = () => {
                             data-testid={`category-${category.id}`}
                             className="scroll-mt-28"
                         >
-                            <div className="flex items-center gap-3 mb-6 md:mb-8 pb-3 border-b border-slate-200 dark:border-slate-800">
-                                <span className="material-icons text-brand-orange text-2xl md:text-3xl">{category.icon}</span>
-                                <h3 className="text-xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{category.name}</h3>
+                            <div className="flex items-center gap-3 mb-6 md:mb-8 pb-3 border-b border-tutesis-black/20 dark:border-tutesis-white/20">
+                                <span className="material-icons text-tutesis-orange text-2xl md:text-3xl">{category.icon}</span>
+                                <h3 className="text-xl md:text-3xl font-extrabold text-tutesis-black dark:text-tutesis-white tracking-tight font-display">{category.name}</h3>
                             </div>
 
                             {category.note && (
-                                <div className="max-w-4xl mb-8 p-4 bg-orange-50 dark:bg-orange-900/10 border border-brand-orange/20 rounded-2xl flex items-start gap-3">
-                                    <span className="material-icons text-brand-orange shrink-0">info</span>
-                                    <p className="text-xs md:text-sm text-slate-700 dark:text-slate-300 font-medium">{category.note}</p>
+                                <div className="max-w-4xl mb-8 p-4 bg-tutesis-gold/15 border border-tutesis-orange/30 rounded-md flex items-start gap-3">
+                                    <span className="material-icons text-tutesis-orange shrink-0">info</span>
+                                    <p className="text-xs md:text-sm text-tutesis-black/80 dark:text-tutesis-white/80 font-medium">{category.note}</p>
                                 </div>
                             )}
 
@@ -274,40 +270,40 @@ const PricingCatalog: React.FC = () => {
                                 {category.plans.map((plan, idx) => (
                                     <div
                                         key={idx}
-                                        className={`bg-white dark:bg-surface-dark rounded-3xl p-6 md:p-8 flex flex-col hover:shadow-2xl transition-all h-full ${plan.isPremium
-                                            ? 'border-2 border-brand-orange shadow-glow relative transform md:scale-105 z-10'
-                                            : 'border border-slate-100 dark:border-slate-800 relative z-0'
+                                        className={`rounded-md p-6 md:p-8 flex flex-col transition-all h-full relative ${plan.isPremium
+                                            ? 'border-2 border-tutesis-orange bg-tutesis-gold/10 dark:bg-tutesis-gold/15'
+                                            : 'border border-tutesis-black/15 dark:border-tutesis-white/20 bg-tutesis-white dark:bg-tutesis-black'
                                             }`}
                                     >
-                                        {/* Neutral Badge replacing 'Más Popular' */}
+                                        {/* Neutral Badge */}
                                         {plan.isPremium && (
-                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-orange text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full whitespace-nowrap shadow-md">
+                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-tutesis-orange text-tutesis-black text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full whitespace-nowrap shadow-sm">
                                                 Incluye extras
                                             </div>
                                         )}
 
-                                        <h4 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{plan.title}</h4>
+                                        <h4 className="text-xl font-bold mb-2 text-tutesis-black dark:text-tutesis-white font-display">{plan.title}</h4>
                                         <div className="flex items-baseline gap-1 mb-8">
-                                            <span className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">{plan.price}</span>
+                                            <span className="text-2xl md:text-3xl font-black text-tutesis-black dark:text-tutesis-white">{plan.price}</span>
                                         </div>
 
                                         <ul className="space-y-4 mb-8 flex-grow">
                                             {plan.features.map((feature, fIdx) => (
-                                                <li key={fIdx} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                                    <span className="material-icons text-brand-orange text-lg shrink-0">check_circle</span>
+                                                <li key={fIdx} className="flex items-start gap-3 text-sm text-tutesis-black/75 dark:text-tutesis-white/75 leading-relaxed">
+                                                    <span className="material-icons text-tutesis-orange text-lg shrink-0">check_circle</span>
                                                     <span>{feature}</span>
                                                 </li>
                                             ))}
                                         </ul>
 
-                                        <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                                        <div className="pt-4 border-t border-tutesis-black/15 dark:border-tutesis-white/20">
                                             <a
                                                 href={getPlanWhatsAppUrl(plan.title, category.name)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className={`w-full flex justify-center py-4 rounded-xl font-bold transition-all text-center ${plan.isPremium
-                                                    ? 'bg-brand-orange text-white shadow-lg hover:bg-orange-600'
-                                                    : 'border border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white'
+                                                className={`w-full flex justify-center py-3.5 rounded-md font-bold transition-colors text-center text-sm ${plan.isPremium
+                                                    ? 'bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold'
+                                                    : 'border border-tutesis-orange text-tutesis-orange hover:bg-tutesis-orange hover:text-tutesis-black'
                                                     }`}
                                             >
                                                 Cotizar este plan
@@ -321,16 +317,16 @@ const PricingCatalog: React.FC = () => {
                 </div>
 
                 {/* Final Diagnostic CTA */}
-                <div className="mt-16 md:mt-24 text-center bg-slate-900 text-white rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                    <h3 className="text-2xl md:text-4xl font-extrabold mb-4">¿Dudas sobre cuál plan se adapta a tu etapa?</h3>
-                    <p className="text-slate-300 max-w-2xl mx-auto mb-8 text-base md:text-lg leading-relaxed">
+                <div className="mt-16 md:mt-24 text-center bg-tutesis-black text-tutesis-white rounded-md p-8 md:p-12 border border-tutesis-white/20 relative overflow-hidden">
+                    <h3 className="text-2xl md:text-4xl font-extrabold mb-4 font-display text-tutesis-white">¿Dudas sobre cuál plan se adapta a tu etapa?</h3>
+                    <p className="text-tutesis-white/75 max-w-2xl mx-auto mb-8 text-base md:text-lg leading-relaxed">
                         Revisamos la etapa exacta de tu trabajo de grado y te recomendamos el acompañamiento justo sin compromisos.
                     </p>
                     <a
                         href={diagnosticUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 bg-brand-orange text-white hover:bg-orange-600 font-extrabold text-base md:text-lg px-8 py-4 rounded-xl shadow-lg transition-transform hover:scale-105"
+                        className="inline-flex items-center gap-3 bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold font-extrabold text-base md:text-lg px-8 py-4 rounded-md shadow-md transition-colors"
                     >
                         <span className="material-icons">chat</span>
                         <span>No sé cuál elegir: solicitar diagnóstico</span>
