@@ -1,80 +1,98 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, BookOpen, Facebook, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { CONTACT, buildWhatsAppUrl } from '../../config';
 
 const Footer: React.FC = () => {
+    const contactUrl = buildWhatsAppUrl('Hola, quiero orientación sobre mi tesis.');
+
     return (
-        <footer id="contacto" className="bg-gray-900 text-gray-400 py-16">
-            <div className="container mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
-                    <div>
-                        <span className="text-2xl font-bold text-white block mb-4 flex items-center">
-                            <span className="material-icons mr-2 text-brand-orange">school</span>Tu Tesis RD
-                        </span>
-                        <p className="text-sm mb-6">Tu aliado académico número uno en República Dominicana. Calidad, confianza y resultados garantizados.</p>
+        <footer id="contacto" className="bg-tutesis-black text-tutesis-white/70">
+            <div className="mx-auto max-w-[1280px] px-5 py-16 sm:px-8 md:py-20 lg:px-10">
+                <div className="grid gap-14 border-b border-tutesis-white/20 pb-14 md:grid-cols-2 lg:grid-cols-12">
+                    <div className="lg:col-span-5">
+                        <Link to="/" className="inline-flex min-h-12 items-center gap-3 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange">
+                            <span className="flex h-10 w-10 items-center justify-center bg-tutesis-orange text-tutesis-black">
+                                <BookOpen className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+                            </span>
+                            <span className="font-serif text-2xl font-semibold tracking-[-0.03em] text-tutesis-white">Tu Tesis <span className="text-tutesis-orange">RD</span></span>
+                        </Link>
+                        <p className="mt-6 max-w-md text-base leading-7 text-tutesis-white/70">
+                            Acompañamiento metodológico y orientación clara para que puedas comprender, organizar y defender tu investigación.
+                        </p>
+                        <a
+                            href={contactUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group mt-8 inline-flex min-h-12 items-center gap-3 rounded-md bg-tutesis-orange px-5 text-sm font-extrabold text-tutesis-black transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black"
+                        >
+                            Iniciar una conversación
+                            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                        </a>
                     </div>
-                    <div>
-                        <h2 className="text-white font-bold text-lg mb-6">Contacto</h2>
-                        <ul className="space-y-4">
-                            <li className="flex items-start">
-                                <span className="material-icons mt-1 mr-3 text-brand-orange text-sm">location_on</span>
-                                <span>Higüey, La Altagracia, Rep. Dom.<br /><span className="text-xs text-gray-500">(Servicio a todo el país)</span></span>
+
+                    <div className="lg:col-span-3">
+                        <h2 className="text-xs font-extrabold uppercase tracking-[0.18em] text-tutesis-white">Contacto</h2>
+                        <ul className="mt-6 space-y-5 text-sm leading-6">
+                            <li className="flex items-start gap-3">
+                                <MapPin className="mt-1 h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" />
+                                <span>Higüey, La Altagracia<br /><span className="text-tutesis-white/50">Atención en línea en todo RD</span></span>
                             </li>
-                            <li className="flex items-center">
-                                <span className="material-icons mr-3 text-brand-orange text-sm">email</span>
-                                <a href="mailto:ttesisrd@gmail.com" className="hover:text-white transition">ttesisrd@gmail.com</a>
+                            <li>
+                                <a href={`mailto:${CONTACT.EMAIL}`} className="flex min-h-11 items-center gap-3 transition-colors hover:text-tutesis-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange">
+                                    <Mail className="h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" /> {CONTACT.EMAIL}
+                                </a>
                             </li>
-                            <li className="flex items-center">
-                                <span className="material-icons mr-3 text-brand-orange text-sm">chat</span>
-                                <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">WhatsApp: +1 (829) 751-3267</a>
+                            <li>
+                                <a href={contactUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center gap-3 transition-colors hover:text-tutesis-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange">
+                                    <MessageCircle className="h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" /> WhatsApp: +1 (829) 751-3267
+                                </a>
                             </li>
-                            <li className="flex items-center">
-                                <span className="material-icons mr-3 text-brand-orange text-sm">call</span>
-                                <a href="tel:+18094557280" className="hover:text-white transition">Llamadas: +1 (809) 455-7280</a>
+                            <li>
+                                <a href={`tel:${CONTACT.PHONE}`} className="flex min-h-11 items-center gap-3 transition-colors hover:text-tutesis-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange">
+                                    <Phone className="h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" /> Llamadas: +1 (809) 455-7280
+                                </a>
                             </li>
                         </ul>
                     </div>
-                    <div>
-                        <h2 className="text-white font-bold text-lg mb-6">Recursos</h2>
-                        <ul className="space-y-2">
-                            <li><Link to="/recursos/que-es-tesis" className="hover:text-brand-orange transition">¿Qué es una Tesis?</Link></li>
-                            <li><Link to="/recursos/como-hacer-tesis" className="hover:text-brand-orange transition">Guía Paso a Paso</Link></li>
-                            <li><Link to="/recursos/ejemplos-tesis" className="hover:text-brand-orange transition">Ejemplos y Plantillas</Link></li>
-                            <li><Link to="/herramientas/auditor" className="hover:text-brand-orange transition">Auditoría IA (Gratis)</Link></li>
+
+                    <div className="lg:col-span-2">
+                        <h2 className="text-xs font-extrabold uppercase tracking-[0.18em] text-tutesis-white">Explorar</h2>
+                        <ul className="mt-6 space-y-2 text-sm">
+                            <li><Link to="/servicios" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Servicios</Link></li>
+                            <li><Link to="/universidades" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Universidades</Link></li>
+                            <li><Link to="/herramientas" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Herramientas</Link></li>
+                            <li><Link to="/blog" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Blog</Link></li>
+                            <li><Link to="/nosotros" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Nosotros</Link></li>
                         </ul>
                     </div>
-                    <div>
-                        <h2 className="text-white font-bold text-lg mb-6">Enlaces Rápidos</h2>
-                        <ul className="space-y-2">
-                            <li><Link to="/" className="hover:text-brand-orange transition">Inicio</Link></li>
-                            <li><Link to="/servicios" className="hover:text-brand-orange transition">Servicios</Link></li>
-                            <li><Link to="/nosotros" className="hover:text-brand-orange transition">Nosotros</Link></li>
-                            <li><Link to="/blog" className="hover:text-brand-orange transition">Blog</Link></li>
-                            <li><Link to="/registro" className="hover:text-brand-orange transition text-brand-orange font-medium">Registrar Proyecto</Link></li>
-                            <li><Link to="/admin" className="text-gray-600 dark:text-gray-800 hover:text-gray-500 transition text-[10px] mt-4 block opacity-20 hover:opacity-100">Acceso Administrativo</Link></li>
+
+                    <div className="lg:col-span-2">
+                        <h2 className="text-xs font-extrabold uppercase tracking-[0.18em] text-tutesis-white">Recursos</h2>
+                        <ul className="mt-6 space-y-2 text-sm">
+                            <li><Link to="/recursos/que-es-tesis" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Qué es una tesis</Link></li>
+                            <li><Link to="/recursos/como-hacer-tesis" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Guía paso a paso</Link></li>
+                            <li><Link to="/recursos/ejemplos-tesis" className="flex min-h-11 items-center transition-colors hover:text-brand-orange">Ejemplos y repositorios</Link></li>
+                            <li><Link to="/registro" className="flex min-h-11 items-center font-bold text-tutesis-orange transition-colors hover:text-tutesis-white">Registrar proyecto</Link></li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="flex flex-col md:flex-row items-center gap-2 text-sm">
-                        <span className="text-gray-400">© {new Date().getFullYear()} TuTesisRD. Todos los derechos reservados.</span>
-                        <div className="flex items-center gap-4 mt-2 md:mt-0 md:ml-4 text-xs text-gray-500">
-                            <Link to="/politica-de-privacidad" className="hover:text-brand-orange transition">Política de Privacidad</Link>
-                            <span className="hidden md:inline">|</span>
-                            <Link to="/terminos-y-condiciones" className="hover:text-brand-orange transition">Términos y Condiciones</Link>
-                            <span className="hidden md:inline">|</span>
-                            <Link to="/eliminacion-de-datos" className="hover:text-brand-orange transition">Eliminación de Datos</Link>
-                        </div>
+                <div className="flex flex-col gap-6 pt-8 text-xs text-tutesis-white/50 md:flex-row md:items-center md:justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                        <span>© {new Date().getFullYear()} TuTesisRD.</span>
+                        <Link to="/politica-de-privacidad" className="inline-flex min-h-11 items-center hover:text-brand-orange">Privacidad</Link>
+                        <Link to="/terminos-y-condiciones" className="inline-flex min-h-11 items-center hover:text-brand-orange">Términos</Link>
+                        <Link to="/eliminacion-de-datos" className="inline-flex min-h-11 items-center hover:text-brand-orange">Eliminación de datos</Link>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <a href="https://instagram.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram de TuTesisRD">
-                            <span className="sr-only">Instagram</span><i className="fab fa-instagram text-xl" aria-hidden="true"></i>
+                    <div className="flex items-center gap-3">
+                        <a href={CONTACT.INSTAGRAM} target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center rounded-md border border-tutesis-white/20 transition-colors hover:border-tutesis-orange hover:text-tutesis-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange" aria-label="Instagram de TuTesisRD">
+                            <span className="sr-only">Instagram de TuTesisRD</span>
+                            <Instagram className="h-4 w-4" aria-hidden="true" />
                         </a>
-                        <a href="https://facebook.com/tutesisrd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Facebook de TuTesisRD">
-                            <span className="sr-only">Facebook</span><i className="fab fa-facebook text-xl" aria-hidden="true"></i>
-                        </a>
-                        <a href="javascript:void(0)" className="hover:text-white transition cursor-not-allowed opacity-50" aria-label="LinkedIn" aria-disabled="true">
-                            <span className="sr-only">LinkedIn (próximamente)</span><i className="fab fa-linkedin text-xl" aria-hidden="true"></i>
+                        <a href={CONTACT.FACEBOOK} target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center rounded-md border border-tutesis-white/20 transition-colors hover:border-tutesis-orange hover:text-tutesis-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange" aria-label="Facebook de TuTesisRD">
+                            <span className="sr-only">Facebook de TuTesisRD</span>
+                            <Facebook className="h-4 w-4" aria-hidden="true" />
                         </a>
                     </div>
                 </div>

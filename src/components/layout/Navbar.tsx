@@ -1,78 +1,118 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ArrowUpRight, BookOpen, Menu, MessageCircle, X } from 'lucide-react';
+import { buildWhatsAppUrl } from '../../config';
+
+const NAV_ITEMS = [
+    { to: '/', label: 'Inicio' },
+    { to: '/servicios', label: 'Servicios' },
+    { to: '/herramientas', label: 'Herramientas' },
+    { to: '/universidades', label: 'Universidades' },
+    { to: '/blog', label: 'Blog' }
+];
 
 const Navbar: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
+    const contactUrl = buildWhatsAppUrl('Hola, quiero orientación sobre mi tesis.');
 
-    // Helper to determine if link is active
     const isActive = (path: string) => location.pathname === path;
+    const closeMenu = () => setIsMobileMenuOpen(false);
 
     return (
-        <header className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-800 shadow-sm">
-            <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                <Link to="/" className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center group">
-                    <span className="material-icons mr-2 text-brand-orange group-hover:rotate-12 transition-transform duration-300" aria-hidden="true">school</span>
-                    TuTesis<span className="text-brand-orange">RD</span>
-                </Link>
-                {/* Mobile Menu Button */}
-                <button
-                    className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        <header className="fixed inset-x-0 top-0 z-50 border-b border-tutesis-black/15 bg-tutesis-white/95 backdrop-blur-sm dark:border-tutesis-white/20 dark:bg-tutesis-black/95">
+            <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-5 sm:px-8 lg:px-10">
+                <Link
+                    to="/"
+                    onClick={closeMenu}
+                    className="group inline-flex min-h-12 items-center gap-3 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-4"
+                    aria-label="Tu Tesis RD — Inicio"
                 >
-                    <span className="material-icons text-2xl text-slate-800 dark:text-white">menu</span>
-                </button>
-                {/* Desktop Nav */}
-                <nav className="hidden md:flex space-x-1 items-center font-medium text-sm">
-                    <Link to="/" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Inicio</Link>
-                    <Link to="/nosotros" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/nosotros') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Nosotros</Link>
-                    <Link to="/servicios" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/servicios') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Servicios</Link>
+                    <span className="flex h-9 w-9 items-center justify-center bg-tutesis-orange text-tutesis-black transition-colors group-hover:bg-tutesis-black group-hover:text-tutesis-white">
+                        <BookOpen className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+                    </span>
+                    <span className="font-serif text-xl font-semibold tracking-[-0.03em] text-tutesis-black dark:text-tutesis-white">Tu Tesis <span>RD</span></span>
+                </Link>
 
-                    {/* Recursos Dropdown */}
-                    <div className="relative group">
-                        <button className={`px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-1 ${location.pathname.includes('/recursos') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>
-                            Recursos <span className="material-icons text-sm">expand_more</span>
-                        </button>
-                        <div className="absolute top-full left-0 w-56 bg-white dark:bg-gray-900 shadow-xl rounded-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 p-2">
-                            <Link to="/recursos/que-es-tesis" className="block px-4 py-2 rounded-lg hover:bg-orange-50 dark:hover:bg-gray-800 text-slate-700 dark:text-slate-300 text-sm">Qué es una Tesis</Link>
-                            <Link to="/recursos/como-hacer-tesis" className="block px-4 py-2 rounded-lg hover:bg-orange-50 dark:hover:bg-gray-800 text-slate-700 dark:text-slate-300 text-sm">Cómo Hacer una Tesis</Link>
-                            <Link to="/recursos/ejemplos-tesis" className="block px-4 py-2 rounded-lg hover:bg-orange-50 dark:hover:bg-gray-800 text-slate-700 dark:text-slate-300 text-sm">Ejemplos y Repositorios</Link>
-                        </div>
-                    </div>
-
-                    <Link to="/herramientas" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/herramientas') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Herramientas</Link>
-                    <Link to="/universidades" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/universidades') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Universidades</Link>
-                    <Link to="/blog" className={`px-4 py-2 rounded-full transition-all duration-300 ${isActive('/blog') ? 'text-brand-orange bg-orange-50 dark:bg-gray-800' : 'text-slate-600 dark:text-slate-300 hover:text-brand-orange hover:bg-orange-50 dark:hover:bg-gray-800'}`}>Blog</Link>
-                    <Link to="/registro" className="ml-4 px-6 py-2.5 bg-brand-orange text-white rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
-                        <span className="material-icons text-lg">person_add</span> Registrarse
-                    </Link>
-                    <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" className="ml-2 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 font-bold">
-                        <i className="fab fa-whatsapp text-lg"></i> Contactar
-                    </a>
+                <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegación principal">
+                    {NAV_ITEMS.map((item) => (
+                        <Link
+                            key={item.to}
+                            to={item.to}
+                            className={`relative flex min-h-11 items-center px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange ${isActive(item.to) ? 'text-tutesis-black after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:bg-tutesis-orange dark:text-tutesis-white' : 'text-tutesis-black/65 hover:text-tutesis-black dark:text-tutesis-white/70 dark:hover:text-tutesis-white'}`}
+                            aria-current={isActive(item.to) ? 'page' : undefined}
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
                 </nav>
-            </div>
-            {/* Mobile Nav */}
-            <div className={`md:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 absolute w-full ${isMobileMenuOpen ? 'block' : 'hidden'} h-screen overflow-y-auto pb-20`}>
-                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Inicio</Link>
-                <Link to="/nosotros" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Nosotros</Link>
-                <Link to="/servicios" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Servicios</Link>
 
-                <div className="bg-gray-50/50 dark:bg-gray-900/50">
-                    <span className="block w-full text-left py-3 px-8 text-xs font-bold text-gray-400 uppercase tracking-wider">Recursos</span>
-                    <Link to="/recursos/que-es-tesis" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-3 px-10 font-medium text-slate-700 dark:text-slate-300 hover:text-brand-orange">Qué es una Tesis</Link>
-                    <Link to="/recursos/como-hacer-tesis" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-3 px-10 font-medium text-slate-700 dark:text-slate-300 hover:text-brand-orange">Cómo Hacer una Tesis</Link>
-                    <Link to="/recursos/ejemplos-tesis" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-3 px-10 font-medium text-slate-700 dark:text-slate-300 hover:text-brand-orange">Ejemplos y Repositorios</Link>
+                <div className="hidden items-center gap-2 lg:flex">
+                    <Link
+                        to="/registro"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-md px-4 text-sm font-bold text-tutesis-black transition-colors hover:bg-tutesis-gold/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange dark:text-tutesis-white"
+                    >
+                        Portal <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                    <a
+                        href={contactUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-md bg-tutesis-black px-4 text-sm font-bold text-tutesis-white transition-colors hover:bg-tutesis-orange hover:text-tutesis-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4"
+                    >
+                        <MessageCircle className="h-4 w-4" aria-hidden="true" /> Contactar
+                    </a>
                 </div>
 
-                <Link to="/herramientas" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Herramientas</Link>
-                <Link to="/universidades" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Universidades</Link>
-                <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-left py-4 px-8 font-medium text-slate-800 dark:text-slate-200 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">Blog</Link>
-                <Link to="/registro" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-white font-bold bg-brand-orange">
-                    <span className="material-icons mr-2">person_add</span> Registrarse Ahora
-                </Link>
-                <a href="https://wa.me/18297513267" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="block py-4 px-8 text-brand-orange font-bold bg-orange-50/50 dark:bg-orange-900/10">
-                    <i className="fab fa-whatsapp mr-2"></i> Contactar por WhatsApp
-                </a>
+                <button
+                    type="button"
+                    className="inline-flex h-12 w-12 items-center justify-center rounded-md border border-tutesis-black/25 text-tutesis-black transition-colors hover:border-tutesis-orange hover:bg-tutesis-gold/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange dark:border-tutesis-white/30 dark:text-tutesis-white lg:hidden"
+                    onClick={() => setIsMobileMenuOpen((open) => !open)}
+                    aria-expanded={isMobileMenuOpen}
+                    aria-controls="mobile-navigation"
+                    aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+                >
+                    {isMobileMenuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+                </button>
+            </div>
+
+            <div
+                id="mobile-navigation"
+                className={`border-t border-tutesis-black/15 bg-tutesis-white dark:border-tutesis-white/20 dark:bg-tutesis-black lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}
+            >
+                <nav className="mx-auto max-h-[calc(100vh-5rem)] max-w-[1280px] overflow-y-auto px-5 py-5 sm:px-8" aria-label="Navegación móvil">
+                    {NAV_ITEMS.map((item, index) => (
+                        <Link
+                            key={item.to}
+                            to={item.to}
+                            onClick={closeMenu}
+                            className={`flex min-h-14 items-center justify-between border-b border-tutesis-black/15 py-3 text-lg font-semibold dark:border-tutesis-white/20 ${isActive(item.to) ? 'text-tutesis-black dark:text-tutesis-white' : 'text-tutesis-black/75 dark:text-tutesis-white/75'}`}
+                            aria-current={isActive(item.to) ? 'page' : undefined}
+                        >
+                            <span><span className="mr-3 text-xs font-bold text-tutesis-orange">0{index + 1}</span>{item.label}</span>
+                            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                    ))}
+
+                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                        <Link
+                            to="/registro"
+                            onClick={closeMenu}
+                            className="inline-flex min-h-12 items-center justify-center rounded-md border border-tutesis-black px-5 text-sm font-bold text-tutesis-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange dark:border-tutesis-white dark:text-tutesis-white"
+                        >
+                            Entrar al portal
+                        </Link>
+                        <a
+                            href={contactUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={closeMenu}
+                            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-tutesis-black px-5 text-sm font-bold text-tutesis-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange"
+                        >
+                            <MessageCircle className="h-4 w-4" aria-hidden="true" /> Contactar
+                        </a>
+                    </div>
+                </nav>
             </div>
         </header>
     );
