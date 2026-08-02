@@ -435,7 +435,7 @@ const LandingPage: React.FC = () => {
                         </HeroEntrance>
                     </div>
 
-                    <div className="border-t border-tutesis-black/20 bg-tutesis-gold/15">
+                    <div data-testid="hero-trust-strip" className="border-t border-tutesis-black/30 bg-tutesis-orange text-tutesis-black">
                         <div className="mx-auto grid max-w-[1760px] grid-cols-2 px-5 sm:px-8 md:grid-cols-4 lg:px-12 xl:px-16 2xl:px-20">
                             {[
                                 ['Diagnóstico', 'Inicial y gratuito'],
@@ -443,8 +443,8 @@ const LandingPage: React.FC = () => {
                                 ['Cobertura', 'En línea en todo RD'],
                                 ['Presencial', 'Higüey, La Altagracia']
                             ].map(([label, value]) => (
-                                <div key={label} className="border-b border-tutesis-black/15 py-5 pr-4 odd:border-r odd:pr-5 even:pl-5 md:border-b-0 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0 md:last:pr-0">
-                                    <span className="block text-[0.65rem] font-extrabold uppercase tracking-[0.16em] text-tutesis-black/55">{label}</span>
+                                <div key={label} className="border-b border-tutesis-black/30 py-5 pr-4 odd:border-r odd:pr-5 even:pl-5 md:border-b-0 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0 md:last:pr-0">
+                                    <span className="block text-[0.65rem] font-extrabold uppercase tracking-[0.16em] text-tutesis-black/75">{label}</span>
                                     <strong className="mt-1 block text-sm text-tutesis-black">{value}</strong>
                                 </div>
                             ))}

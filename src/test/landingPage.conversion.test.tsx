@@ -175,6 +175,16 @@ describe('LandingPage conversion flow', () => {
         expect(paperStack.querySelector('[style*="translate3d"]')).toBeNull();
     });
 
+    it('uses the official orange with dark text in the hero trust strip', () => {
+        renderLandingPage();
+
+        const trustStrip = screen.getByTestId('hero-trust-strip');
+
+        expect(trustStrip).toHaveClass('bg-tutesis-orange', 'text-tutesis-black');
+        expect(trustStrip).not.toHaveClass('bg-tutesis-gold/15');
+        expect(trustStrip).not.toHaveClass('text-tutesis-white');
+    });
+
     it('renders named WhatsApp call-to-action links for the landing conversion path', () => {
         const { container } = renderLandingPage();
 
