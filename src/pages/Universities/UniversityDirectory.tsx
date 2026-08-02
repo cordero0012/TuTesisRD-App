@@ -22,7 +22,7 @@ const UniversityDirectory: React.FC = () => {
                 {/* Hero Section */}
                 <section className="bg-tutesis-black text-tutesis-white border-b border-tutesis-white/20 py-12 md:py-16 mb-12">
                     <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10 text-center max-w-4xl">
-                        <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange/20 text-tutesis-orange font-bold uppercase tracking-widest text-xs mb-4">
+                        <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange text-tutesis-black font-extrabold uppercase tracking-widest text-xs mb-4">
                             Normativas Académicas RD
                         </span>
                         <h1 className="font-display text-3xl md:text-5xl font-black mb-6 tracking-tight text-tutesis-white">
@@ -50,7 +50,7 @@ const UniversityDirectory: React.FC = () => {
                                     </div>
 
                                     <div>
-                                        <h2 className="font-display text-2xl font-black mb-1 group-hover:text-tutesis-orange transition-colors tracking-tight text-tutesis-black dark:text-tutesis-white">
+                                        <h2 className="font-display text-2xl font-black mb-1 group-hover:underline group-hover:decoration-tutesis-orange transition-colors tracking-tight text-tutesis-black dark:text-tutesis-white">
                                             {uni.shortName}
                                         </h2>
                                         <p className="text-xs md:text-sm text-tutesis-black/70 dark:text-tutesis-white/70 mb-4 line-clamp-2 min-h-10">
@@ -83,7 +83,7 @@ const UniversityDirectory: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="pt-4 border-t border-tutesis-black/15 dark:border-tutesis-white/20 flex items-center justify-between text-sm font-bold text-tutesis-black dark:text-tutesis-white group-hover:text-tutesis-orange transition-colors">
+                                    <div className="pt-4 border-t border-tutesis-black/15 dark:border-tutesis-white/20 flex items-center justify-between text-sm font-bold text-tutesis-black dark:text-tutesis-white group-hover:underline group-hover:decoration-tutesis-orange transition-colors">
                                         <span>Ver guía de {uni.shortName}</span>
                                         <span className="material-icons text-base">arrow_forward</span>
                                     </div>

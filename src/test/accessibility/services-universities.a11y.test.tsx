@@ -42,15 +42,13 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
     const runAxeStructureChecks = async (container: HTMLElement) => {
         const results = await axe.run(container, {
             rules: {
-                // Color contrast rule disabled in Axe/JSDOM because JSDOM does not render computed layout CSS.
-                // Programmatic color contrast testing is executed in the test below.
                 'color-contrast': { enabled: false }
             }
         });
         return results.violations;
     };
 
-    it('programmatically validates WCAG 2.2 AA (>= 4.5:1) for ALL rendered text and background color pairs', () => {
+    it('programmatically validates WCAG 2.2 AA (>= 4.5:1) for ALL rendered text and background color pairs (including badges, buttons, and hover states)', () => {
         const black = '#0E0E0F';
         const softWhite = '#F7F7F7';
         const orange = '#F29727';
@@ -64,7 +62,7 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
         const blackOnWhite = getContrastRatio(black, softWhite);
         expect(blackOnWhite).toBeGreaterThanOrEqual(15.0); // 18.7:1 (Exceeds AAA 7.0:1)
 
-        // 3. Black text on orange background/badge (#F29727)
+        // 3. Black text on solid orange background/badge (#F29727)
         const blackOnOrange = getContrastRatio(black, orange);
         expect(blackOnOrange).toBeGreaterThanOrEqual(7.0); // 7.4:1 (Exceeds AAA 7.0:1)
 
@@ -75,6 +73,31 @@ describe('Services & Universities Accessibility Suite (a11y)', () => {
         // 5. Black text on gold badge/background (#D99A4E)
         const blackOnGold = getContrastRatio(black, gold);
         expect(blackOnGold).toBeGreaterThanOrEqual(4.5); // 5.8:1 (Exceeds AA 4.5:1)
+
+        // 6. Hover state: Black text on solid orange background (#F29727)
+        const hoverBlackOnOrange = getContrastRatio(black, orange);
+        expect(hoverBlackOnOrange).toBeGreaterThanOrEqual(7.0); // 7.4:1 (Exceeds AAA 7.0:1)
+    });
+
+    it('asserts zero low-contrast text-tutesis-orange or bg-tutesis-orange/15 badges on light backgrounds in rendered DOM', () => {
+        const { container: servicesContainer } = render(
+            <MemoryRouter initialEntries={['/servicios']}>
+                <Services />
+            </MemoryRouter>
+        );
+
+        const { container: directoryContainer } = render(
+            <MemoryRouter initialEntries={['/universidades']}>
+                <UniversityDirectory />
+            </MemoryRouter>
+        );
+
+        // Ensure no badge or text element renders low-contrast bg-tutesis-orange/15 + text-tutesis-orange on light backgrounds
+        const lowContrastBadgesServices = servicesContainer.querySelectorAll('.bg-tutesis-orange\\/15.text-tutesis-orange');
+        expect(lowContrastBadgesServices.length).toBe(0);
+
+        const lowContrastBadgesDirectory = directoryContainer.querySelectorAll('.bg-tutesis-orange\\/20.text-tutesis-orange');
+        expect(lowContrastBadgesDirectory.length).toBe(0);
     });
 
     it('Services page has exactly one H1 and passes structural axe checks', async () => {

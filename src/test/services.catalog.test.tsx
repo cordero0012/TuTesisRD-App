@@ -55,7 +55,7 @@ describe('Services & PricingCatalog Inventory & Measurement Contract', () => {
 
         pricingCategories.forEach((cat) => {
             const catElem = screen.getByTestId(`category-${cat.id}`);
-            
+
             cat.plans.forEach((plan) => {
                 // Find title element for this specific plan inside category container
                 const titleHeading = Array.from(catElem.querySelectorAll('h4')).find(

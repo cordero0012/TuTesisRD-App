@@ -7,7 +7,7 @@ import UniversityTemplate from '../pages/Universities/UniversityTemplate';
 import universitiesData from '../data/universities.json';
 
 describe('University Directory & Detail Page Suite', () => {
-    it('renders all 9 canonical universities in UniversityDirectory with logos, program counts, AND visible program names', () => {
+    it('renders all 9 canonical universities in UniversityDirectory with exact hrefs, logos, program counts, and card-scoped program names', () => {
         const { container } = render(
             <MemoryRouter initialEntries={['/universidades']}>
                 <Routes>
@@ -19,15 +19,30 @@ describe('University Directory & Detail Page Suite', () => {
         const canonicalIds = ['uasd', 'pucmm', 'intec', 'unibe', 'oym', 'unphu', 'uapa', 'ucateci', 'unev'];
         expect(universitiesData.length).toBe(9);
 
+        // 1. Assert exact 9 href links in the directory match canonical IDs
+        const cardHrefs = Array.from(container.querySelectorAll('a[href^="/tesis/"]')).map((a) => a.getAttribute('href'));
+        const expectedHrefs = canonicalIds.map((id) => `/tesis/${id}`);
+        expect(cardHrefs).toEqual(expectedHrefs);
+
+        // 2. Assert each card specifically contains its own programs, logo, shortName, and style
         canonicalIds.forEach((id) => {
             const uni = universitiesData.find((u) => u.id === id);
             expect(uni).toBeDefined();
-            expect(screen.getByText(uni!.shortName)).toBeInTheDocument();
-            expect(screen.getByAltText(`Logo ${uni!.shortName}`)).toBeInTheDocument();
 
-            // Verify program names are visibly rendered on each card in directory
+            const cardLink = container.querySelector(`a[href="/tesis/${id}"]`);
+            expect(cardLink).not.toBeNull();
+
+            // Verify shortName inside card
+            expect(cardLink?.textContent).toContain(uni!.shortName);
+
+            // Verify logo alt inside card
+            const logoImg = cardLink?.querySelector('img');
+            expect(logoImg).not.toBeNull();
+            expect(logoImg?.getAttribute('alt')).toBe(`Logo ${uni!.shortName}`);
+
+            // Verify card-scoped programs: assert EVERY program in uni.programs is inside THIS card element
             uni!.programs.forEach((prog) => {
-                expect(container.textContent).toContain(prog);
+                expect(cardLink?.textContent).toContain(prog);
             });
         });
     });
