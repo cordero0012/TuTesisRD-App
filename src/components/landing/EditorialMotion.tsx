@@ -92,32 +92,23 @@ export const EditorialReveal: React.FC<MotionWrapperProps> = ({ children, classN
 };
 
 export const PaperStack3D: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { reducedMotion, rotateX, rotateY, onPointerMove, resetTilt } = usePointerTilt(2.6, 2.2);
-
     return (
-        <div
-            className="relative py-3 [perspective:1200px] sm:px-3 sm:py-5"
-            onPointerMove={onPointerMove}
-            onPointerLeave={resetTilt}
-        >
-            <motion.div
-                className="relative [transform-style:preserve-3d]"
-                style={reducedMotion ? undefined : { rotateX, rotateY, transformPerspective: 1200 }}
-            >
+        <div data-testid="diagnostic-paper-stack" className="relative py-3 sm:px-3 sm:py-5">
+            <div className="relative">
                 <div
                     aria-hidden="true"
                     className="absolute inset-1 hidden border border-tutesis-black/20 bg-tutesis-white shadow-[0_18px_50px_rgba(14,14,15,0.08)] sm:block"
-                    style={{ transform: 'translate3d(14px, 15px, -34px) rotate(2.1deg)' }}
+                    style={{ transform: 'translate(14px, 15px) rotate(2.1deg)' }}
                 />
                 <div
                     aria-hidden="true"
                     className="absolute inset-1 hidden border border-tutesis-orange/60 bg-tutesis-gold sm:block"
-                    style={{ transform: 'translate3d(-12px, 10px, -52px) rotate(-2.4deg)' }}
+                    style={{ transform: 'translate(-12px, 10px) rotate(-2.4deg)' }}
                 />
-                <div className="relative" style={{ transform: reducedMotion ? undefined : 'translateZ(32px)' }}>
+                <div data-testid="diagnostic-paper-content" className="relative">
                     {children}
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

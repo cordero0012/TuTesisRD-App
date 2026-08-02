@@ -5454,10 +5454,6 @@ h1,
   perspective: 1100px;
 }
 
-.\[perspective\:1200px\] {
-  perspective: 1200px;
-}
-
 .\[transform-style\:preserve-3d\] {
   transform-style: preserve-3d;
 }

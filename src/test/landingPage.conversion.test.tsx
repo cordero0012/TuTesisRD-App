@@ -163,6 +163,18 @@ describe('LandingPage conversion flow', () => {
         expect(screen.getByRole('button', { name: /recibir mi diagnóstico gratis/i })).toBeInTheDocument();
     });
 
+    it('keeps the diagnostic form text outside perspective and 3D transforms', () => {
+        renderLandingPage();
+
+        const paperStack = screen.getByTestId('diagnostic-paper-stack');
+        const paperContent = screen.getByTestId('diagnostic-paper-content');
+
+        expect(paperStack.className).not.toContain('perspective');
+        expect(paperContent).not.toHaveAttribute('style');
+        expect(paperStack.querySelector('[style*="translateZ"]')).toBeNull();
+        expect(paperStack.querySelector('[style*="translate3d"]')).toBeNull();
+    });
+
     it('renders named WhatsApp call-to-action links for the landing conversion path', () => {
         const { container } = renderLandingPage();
 
