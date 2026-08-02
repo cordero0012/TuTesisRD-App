@@ -8,6 +8,7 @@ import { RegisterStep2 } from '../../components/register/RegisterStep2';
 import { RegisterStep3 } from '../../components/register/RegisterStep3';
 import { RegisterMonitor } from '../../components/register/RegisterMonitor';
 import SEO from '../../components/SEO';
+import { createEventId } from '../../utils/analytics';
 
 interface RegisterWizardProps {
     initialMode?: RegisterMode;
@@ -151,7 +152,7 @@ const RegisterWizard: React.FC<RegisterWizardProps> = ({ initialMode }) => {
                         phone_number: formData.phone
                     }
                 });
-                (window as any).fbq?.('track', 'Lead');
+                (window as any).fbq?.('track', 'Lead', {}, { eventID: createEventId() });
             }
 
             // Success

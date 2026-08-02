@@ -90,6 +90,32 @@ export const initGA = () => {
 // "wa.me" — GTM matches on the href, so replacing an anchor with a button
 // silently stops the conversion. See AGENTS.md section 3.
 
+/**
+ * Generates an event ID for Meta deduplication.
+ *
+ * Meta collapses two events that share the same (event name, eventID) pair
+ * inside a 48h window. Passing one here means a single user action reported
+ * through two paths is counted once instead of twice.
+ *
+ * What this does NOT do: deduplicate against the events GTM already sends.
+ * The container derives its own eventID as
+ *   "bca3a99a-…-c150e8ff1b90_" + gtm.start + "." + gtm.uniqueEventId
+ * which comes from GTM's internal event counter and cannot be reproduced from
+ * here. Deduplicating against CAPI requires the same logical event to carry the
+ * same ID on both sides, so it has to be GTM that emits both — see
+ * ads-tu-tesis-rd/01_conexiones_medicion_verificadas.md.
+ */
+export const createEventId = (): string => {
+    try {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+    } catch {
+        // Fall through to the manual ID below.
+    }
+    return `ttrd-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+};
+
 // Log Page View
 export const logPageView = (_url: string) => {
     // GA4 page_view is NOT sent here on purpose.
@@ -107,7 +133,7 @@ export const logPageView = (_url: string) => {
     if (isInternalTraffic()) return;
 
     if (typeof window.fbq !== 'undefined' && META_PIXEL_ID) {
-        window.fbq('track', 'PageView');
+        window.fbq('track', 'PageView', {}, { eventID: createEventId() });
     }
 };
 
@@ -144,10 +170,12 @@ export const logEvent = (action: string, category: string, label: string, value?
             standardEvent = 'CompleteRegistration';
         }
 
+        const options = { eventID: createEventId() };
+
         if (standardEvent) {
-            window.fbq('track', standardEvent, params);
+            window.fbq('track', standardEvent, params, options);
         } else {
-            window.fbq('trackCustom', action, params);
+            window.fbq('trackCustom', action, params, options);
         }
     }
 

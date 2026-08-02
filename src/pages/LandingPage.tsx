@@ -5,6 +5,7 @@ import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 import { buildWhatsAppUrl } from '../config';
 import { saveHeroLead } from '../services/leads/heroLeadService';
+import { createEventId } from '../utils/analytics';
 
 const ETAPAS = [
     'Tengo la idea inicial / Anteproyecto',
@@ -59,7 +60,7 @@ const LandingPage: React.FC = () => {
             (window as any).fbq?.('track', 'Lead', {
                 content_name: 'Diagnostico Rapido',
                 content_category: nivel
-            });
+            }, { eventID: createEventId() });
         });
     };
 
