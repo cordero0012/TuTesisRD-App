@@ -1,5 +1,16 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import {
+    ArrowLeft,
+    BarChart3,
+    ChevronRight,
+    FileText,
+    Gavel,
+    GraduationCap,
+    Info,
+    MessageCircle,
+    MessagesSquare,
+} from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import SEO from '../../components/SEO';
@@ -37,16 +48,16 @@ const UniversityTemplate: React.FC = () => {
                 <SEO title="Universidad No Encontrada | TuTesisRD" description="La universidad que buscas no está registrada en nuestra base de datos activa." />
                 <Navbar />
                 <main className="pt-32 pb-20 max-w-md mx-auto">
-                    <span className="material-icons text-tutesis-orange text-5xl mb-4">school</span>
+                    <GraduationCap className="mx-auto mb-4 h-12 w-12 text-tutesis-orange" aria-hidden="true" />
                     <h1 className="font-display text-3xl font-black mb-4 text-tutesis-black dark:text-tutesis-white">Universidad no encontrada</h1>
                     <p className="text-tutesis-black/70 dark:text-tutesis-white/70 mb-8 leading-relaxed">
                         No encontramos información registrada para esta institución. Explora nuestro directorio general para consultar las universidades disponibles.
                     </p>
                     <Link
                         to="/universidades"
-                        className="inline-flex items-center justify-center gap-2 bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold font-bold px-6 py-3 rounded-md shadow-md transition-colors"
+                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-tutesis-orange px-6 py-3 font-bold text-tutesis-black shadow-md transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-white dark:focus-visible:ring-offset-tutesis-black"
                     >
-                        <span className="material-icons text-lg">arrow_back</span>
+                        <ArrowLeft className="h-5 w-5 shrink-0" aria-hidden="true" />
                         <span>Volver al Directorio de Universidades</span>
                     </Link>
                 </main>
@@ -70,10 +81,10 @@ const UniversityTemplate: React.FC = () => {
                 <div className="bg-tutesis-black/5 dark:bg-tutesis-white/5 border-b border-tutesis-black/15 dark:border-tutesis-white/20 py-3">
                     <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
                         <nav aria-label="Miga de pan" className="flex items-center gap-2 text-xs md:text-sm text-tutesis-black/70 dark:text-tutesis-white/70">
-                            <Link to="/" className="hover:underline hover:decoration-tutesis-orange hover:decoration-2 transition-colors text-tutesis-black dark:text-tutesis-white">Inicio</Link>
-                            <span className="material-icons text-xs text-tutesis-orange">chevron_right</span>
-                            <Link to="/universidades" className="hover:underline hover:decoration-tutesis-orange hover:decoration-2 transition-colors text-tutesis-black dark:text-tutesis-white">Universidades</Link>
-                            <span className="material-icons text-xs text-tutesis-orange">chevron_right</span>
+                            <Link to="/" className="inline-flex min-h-11 items-center text-tutesis-black transition-colors hover:underline hover:decoration-2 hover:decoration-tutesis-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange dark:text-tutesis-white">Inicio</Link>
+                            <ChevronRight className="h-3.5 w-3.5 shrink-0 text-tutesis-orange" aria-hidden="true" />
+                            <Link to="/universidades" className="inline-flex min-h-11 items-center text-tutesis-black transition-colors hover:underline hover:decoration-2 hover:decoration-tutesis-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange dark:text-tutesis-white">Universidades</Link>
+                            <ChevronRight className="h-3.5 w-3.5 shrink-0 text-tutesis-orange" aria-hidden="true" />
                             <span className="font-semibold text-tutesis-black dark:text-tutesis-white">{university.shortName}</span>
                         </nav>
                     </div>
@@ -99,16 +110,16 @@ const UniversityTemplate: React.FC = () => {
                                 href={whatsappUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-2 bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold font-extrabold text-base px-6 py-4 rounded-md shadow-md transition-colors"
+                                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-tutesis-orange px-6 py-4 text-base font-extrabold text-tutesis-black shadow-md transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black"
                             >
-                                <span className="material-icons">chat</span>
+                                <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
                                 <span>Cotizar mi Tesis en {university.shortName}</span>
                             </a>
                             <Link
                                 to="/herramientas/matriz"
-                                className="inline-flex items-center justify-center gap-2 border border-tutesis-white/30 bg-tutesis-black text-tutesis-white hover:bg-tutesis-white/10 font-bold text-base px-6 py-4 rounded-md transition-colors"
+                                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-tutesis-white/30 bg-tutesis-black px-6 py-4 text-base font-bold text-tutesis-white transition-colors hover:border-tutesis-white hover:bg-tutesis-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black"
                             >
-                                <span className="material-icons">assessment</span>
+                                <BarChart3 className="h-5 w-5 shrink-0" aria-hidden="true" />
                                 <span>Auditar Borrador con Matriz</span>
                             </Link>
                         </div>
@@ -128,13 +139,13 @@ const UniversityTemplate: React.FC = () => {
 
                     <div className="grid md:grid-cols-3 gap-6 mb-8">
                         <Card className="p-6 md:p-8 text-center bg-tutesis-white dark:bg-tutesis-black border border-tutesis-black/15 dark:border-tutesis-white/20 rounded-md">
-                            <span className="material-icons text-tutesis-orange text-4xl mb-3">gavel</span>
+                            <Gavel className="mx-auto mb-3 h-9 w-9 text-tutesis-orange" aria-hidden="true" />
                             <h3 className="font-display text-lg font-bold mb-2 text-tutesis-black dark:text-tutesis-white">Estilo de Citas Requerido</h3>
                             <p className="text-sm font-semibold text-tutesis-black/80 dark:text-tutesis-white/80">{university.regulations.style}</p>
                         </Card>
 
                         <Card className="p-6 md:p-8 text-center bg-tutesis-white dark:bg-tutesis-black border border-tutesis-black/15 dark:border-tutesis-white/20 rounded-md">
-                            <span className="material-icons text-tutesis-orange text-4xl mb-3">description</span>
+                            <FileText className="mx-auto mb-3 h-9 w-9 text-tutesis-orange" aria-hidden="true" />
                             <h3 className="font-display text-lg font-bold mb-2 text-tutesis-black dark:text-tutesis-white">Rango de Extensión</h3>
                             <p className="text-sm font-semibold text-tutesis-black/80 dark:text-tutesis-white/80">
                                 {university.regulations.minPages} a {university.regulations.maxPages} páginas
@@ -142,7 +153,7 @@ const UniversityTemplate: React.FC = () => {
                         </Card>
 
                         <Card className="p-6 md:p-8 text-center bg-tutesis-white dark:bg-tutesis-black border border-tutesis-black/15 dark:border-tutesis-white/20 rounded-md">
-                            <span className="material-icons text-tutesis-orange text-4xl mb-3">school</span>
+                            <GraduationCap className="mx-auto mb-3 h-9 w-9 text-tutesis-orange" aria-hidden="true" />
                             <h3 className="font-display text-lg font-bold mb-2 text-tutesis-black dark:text-tutesis-white">Programas Destacados</h3>
                             <p className="text-xs md:text-sm text-tutesis-black/70 dark:text-tutesis-white/70">
                                 {university.programs.join(', ')}
@@ -152,7 +163,7 @@ const UniversityTemplate: React.FC = () => {
 
                     {/* Disclaimer */}
                     <div className="p-4 bg-tutesis-gold/15 border border-tutesis-orange/30 rounded-md flex items-start gap-3 max-w-4xl mx-auto">
-                        <span className="material-icons text-tutesis-orange shrink-0">info</span>
+                        <Info className="h-5 w-5 shrink-0 text-tutesis-orange" aria-hidden="true" />
                         <p className="text-xs md:text-sm text-tutesis-black/80 dark:text-tutesis-white/80 font-medium leading-relaxed">
                             <strong>Nota institucional:</strong> Consulta siempre el manual o reglamento oficial vigente emitido por la {university.name} para verificar eventuales cambios en las guías metodológicas de tu facultad.
                         </p>
@@ -160,7 +171,7 @@ const UniversityTemplate: React.FC = () => {
                 </section>
 
                 {/* Tips & Guidance Section */}
-                <section id="consejos-y-cta" className="py-12 bg-tutesis-black/5 dark:bg-tutesis-white/5 border-y border-tutesis-black/15 dark:border-tutesis-white/20">
+                <section id="consejos-y-cta" className="scroll-mt-28 border-y border-tutesis-black/15 bg-tutesis-black/5 py-12 dark:border-tutesis-white/20 dark:bg-tutesis-white/5">
                     <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
                         <div className="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
                             <div>
@@ -182,7 +193,7 @@ const UniversityTemplate: React.FC = () => {
                             </div>
 
                             <div className="bg-tutesis-black text-tutesis-white rounded-md p-8 text-center border border-tutesis-white/20">
-                                <span className="material-icons text-tutesis-orange text-4xl mb-4">forum</span>
+                                <MessagesSquare className="mx-auto mb-4 h-10 w-10 text-tutesis-orange" aria-hidden="true" />
                                 <h3 className="font-display text-xl md:text-2xl font-bold mb-3 text-tutesis-white">¿Necesitas orientación con tu tema u objetivos?</h3>
                                 <p className="text-tutesis-white/75 text-xs md:text-sm mb-6 leading-relaxed">
                                     Te ayudamos a estructurar el problema de investigación y la metodología siguiendo los parámetros exigidos en la {university.shortName}.
@@ -191,9 +202,9 @@ const UniversityTemplate: React.FC = () => {
                                     href={whatsappUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center gap-2 bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold font-bold px-6 py-3.5 rounded-md w-full transition-colors"
+                                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-tutesis-orange px-6 py-3.5 font-bold text-tutesis-black transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black"
                                 >
-                                    <span className="material-icons">chat</span>
+                                    <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
                                     <span>Hablar con un asesor metodológico</span>
                                 </a>
                             </div>

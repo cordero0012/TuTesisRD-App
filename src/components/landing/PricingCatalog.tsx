@@ -1,4 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+    Award,
+    BookOpen,
+    CircleCheck,
+    GraduationCap,
+    Info,
+    Landmark,
+    MessageCircle,
+    Puzzle,
+    type LucideIcon,
+} from 'lucide-react';
 
 // --- DATA STRUCTURES ---
 type PricingPlan = {
@@ -206,6 +217,19 @@ export const pricingCategories: ServiceCategory[] = [
 
 import { buildWhatsAppUrl } from '../../config';
 
+const categoryIcons: Record<string, LucideIcon> = {
+    school: GraduationCap,
+    menu_book: BookOpen,
+    workspace_premium: Award,
+    account_balance: Landmark,
+    extension: Puzzle,
+};
+
+const ServiceIcon: React.FC<{ icon: string; className: string }> = ({ icon, className }) => {
+    const Icon = categoryIcons[icon] ?? GraduationCap;
+    return <Icon className={className} aria-hidden="true" />;
+};
+
 const PricingCatalog: React.FC = () => {
     const getPlanWhatsAppUrl = (planTitle: string, categoryName: string) => {
         const message = `Hola TuTesisRD, me interesa consultar y obtener una cotización formal para el "${planTitle}" en la categoría de "${categoryName}". ¿Podemos hablar al respecto?`;
@@ -217,11 +241,11 @@ const PricingCatalog: React.FC = () => {
     return (
         <section className="pt-6 md:pt-10 pb-12 md:pb-24 bg-tutesis-white dark:bg-tutesis-black text-tutesis-black dark:text-tutesis-white relative overflow-hidden transition-colors duration-300">
             <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10 relative z-10">
-                <div className="text-center max-w-4xl mx-auto mb-8 md:mb-12">
+                <div className="mx-auto mb-6 max-w-4xl text-center md:mb-12">
                     <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange text-tutesis-black font-extrabold uppercase tracking-[0.2em] text-xs md:text-sm mb-3">
                         Inversión Transparente
                     </span>
-                    <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-tutesis-black dark:text-tutesis-white mb-4 tracking-tight font-display">
+                    <h2 className="mb-3 font-display text-2xl font-black tracking-tight text-tutesis-black dark:text-tutesis-white sm:text-3xl md:mb-4 md:text-5xl">
                         Catálogo de <span className="underline decoration-tutesis-orange decoration-4 underline-offset-4 text-tutesis-black dark:text-tutesis-white">Servicios</span>
                     </h2>
                     <p className="text-base md:text-xl text-tutesis-black/70 dark:text-tutesis-white/70 leading-relaxed">
@@ -230,15 +254,15 @@ const PricingCatalog: React.FC = () => {
                 </div>
 
                 {/* Categories Index Navigator (Real href Anchors - Single Row Scroller on Mobile) */}
-                <nav aria-label="Categorías de servicios" className="sticky top-20 z-20 bg-tutesis-white/95 dark:bg-tutesis-black/95 backdrop-blur-md py-3 mb-10 border-b border-tutesis-black/15 dark:border-tutesis-white/20">
+                <nav aria-label="Categorías de servicios" className="sticky top-20 z-20 mb-8 border-b border-tutesis-black/15 bg-tutesis-white/95 py-3 backdrop-blur-md dark:border-tutesis-white/20 dark:bg-tutesis-black/95 md:mb-10">
                     <div className="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 py-1 px-1 no-scrollbar justify-start md:justify-center">
                         {pricingCategories.map((category) => (
                             <a
                                 key={category.id}
                                 href={`#${category.id}`}
-                                className="inline-flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-md font-bold text-xs md:text-sm transition-colors border border-tutesis-black/20 dark:border-tutesis-white/25 bg-tutesis-white dark:bg-tutesis-black text-tutesis-black dark:text-tutesis-white hover:bg-tutesis-orange hover:text-tutesis-black dark:hover:bg-tutesis-orange dark:hover:text-tutesis-black"
+                                className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border border-tutesis-black/20 bg-tutesis-white px-4 py-2.5 text-xs font-bold text-tutesis-black transition-colors hover:border-tutesis-orange hover:bg-tutesis-orange hover:text-tutesis-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-2 dark:border-tutesis-white/25 dark:bg-tutesis-black dark:text-tutesis-white dark:hover:border-tutesis-orange dark:hover:bg-tutesis-orange dark:hover:text-tutesis-black dark:focus-visible:ring-offset-tutesis-black md:text-sm"
                             >
-                                <span className="material-icons text-base">{category.icon}</span>
+                                <ServiceIcon icon={category.icon} className="h-4 w-4 shrink-0" />
                                 <span>{category.name}</span>
                             </a>
                         ))}
@@ -255,13 +279,13 @@ const PricingCatalog: React.FC = () => {
                             className="scroll-mt-28"
                         >
                             <div className="flex items-center gap-3 mb-6 md:mb-8 pb-3 border-b border-tutesis-black/20 dark:border-tutesis-white/20">
-                                <span className="material-icons text-tutesis-orange text-2xl md:text-3xl">{category.icon}</span>
+                                <ServiceIcon icon={category.icon} className="h-7 w-7 shrink-0 text-tutesis-orange md:h-8 md:w-8" />
                                 <h3 className="text-xl md:text-3xl font-extrabold text-tutesis-black dark:text-tutesis-white tracking-tight font-display">{category.name}</h3>
                             </div>
 
                             {category.note && (
                                 <div className="max-w-4xl mb-8 p-4 bg-tutesis-gold/15 border border-tutesis-orange/30 rounded-md flex items-start gap-3">
-                                    <span className="material-icons text-tutesis-orange shrink-0">info</span>
+                                    <Info className="h-5 w-5 shrink-0 text-tutesis-orange" aria-hidden="true" />
                                     <p className="text-xs md:text-sm text-tutesis-black/80 dark:text-tutesis-white/80 font-medium">{category.note}</p>
                                 </div>
                             )}
@@ -270,7 +294,7 @@ const PricingCatalog: React.FC = () => {
                                 {category.plans.map((plan, idx) => (
                                     <div
                                         key={idx}
-                                        className={`rounded-md p-6 md:p-8 flex flex-col transition-all h-full relative ${plan.isPremium
+                                        className={`relative flex h-full flex-col rounded-md p-6 md:p-8 ${plan.isPremium
                                             ? 'border-2 border-tutesis-orange bg-tutesis-gold/10 dark:bg-tutesis-gold/15'
                                             : 'border border-tutesis-black/15 dark:border-tutesis-white/20 bg-tutesis-white dark:bg-tutesis-black'
                                             }`}
@@ -290,7 +314,7 @@ const PricingCatalog: React.FC = () => {
                                         <ul className="space-y-4 mb-8 flex-grow">
                                             {plan.features.map((feature, fIdx) => (
                                                 <li key={fIdx} className="flex items-start gap-3 text-sm text-tutesis-black/75 dark:text-tutesis-white/75 leading-relaxed">
-                                                    <span className="material-icons text-tutesis-orange text-lg shrink-0">check_circle</span>
+                                                    <CircleCheck className="h-[18px] w-[18px] shrink-0 text-tutesis-orange" aria-hidden="true" />
                                                     <span>{feature}</span>
                                                 </li>
                                             ))}
@@ -301,7 +325,7 @@ const PricingCatalog: React.FC = () => {
                                                 href={getPlanWhatsAppUrl(plan.title, category.name)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className={`w-full flex justify-center py-3.5 rounded-md font-extrabold transition-colors text-center text-sm ${plan.isPremium
+                                                className={`flex min-h-12 w-full items-center justify-center rounded-md py-3.5 text-center text-sm font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-2 dark:focus-visible:ring-offset-tutesis-black ${plan.isPremium
                                                     ? 'bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold'
                                                     : 'border-2 border-tutesis-black text-tutesis-black dark:border-tutesis-white dark:text-tutesis-white hover:bg-tutesis-orange hover:text-tutesis-black hover:border-tutesis-orange dark:hover:bg-tutesis-orange dark:hover:text-tutesis-black dark:hover:border-tutesis-orange'
                                                     }`}
@@ -326,9 +350,9 @@ const PricingCatalog: React.FC = () => {
                         href={diagnosticUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 bg-tutesis-orange text-tutesis-black hover:bg-tutesis-gold font-extrabold text-base md:text-lg px-8 py-4 rounded-md shadow-md transition-colors"
+                        className="inline-flex min-h-12 items-center gap-3 rounded-md bg-tutesis-orange px-8 py-4 text-base font-extrabold text-tutesis-black shadow-md transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black md:text-lg"
                     >
-                        <span className="material-icons">chat</span>
+                        <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
                         <span>No sé cuál elegir: solicitar diagnóstico</span>
                     </a>
                 </div>
