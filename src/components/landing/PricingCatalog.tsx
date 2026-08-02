@@ -218,11 +218,11 @@ const PricingCatalog: React.FC = () => {
         <section className="pt-6 md:pt-10 pb-12 md:pb-24 bg-tutesis-white dark:bg-tutesis-black text-tutesis-black dark:text-tutesis-white relative overflow-hidden transition-colors duration-300">
             <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10 relative z-10">
                 <div className="text-center max-w-4xl mx-auto mb-8 md:mb-12">
-                    <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange/15 text-tutesis-orange font-bold uppercase tracking-[0.2em] text-xs md:text-sm mb-3">
+                    <span className="inline-block py-1 px-3 rounded-full bg-tutesis-orange text-tutesis-black font-extrabold uppercase tracking-[0.2em] text-xs md:text-sm mb-3">
                         Inversión Transparente
                     </span>
                     <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-tutesis-black dark:text-tutesis-white mb-4 tracking-tight font-display">
-                        Catálogo de <span className="text-tutesis-orange">Servicios</span>
+                        Catálogo de <span className="underline decoration-tutesis-orange decoration-4 underline-offset-4 text-tutesis-black dark:text-tutesis-white">Servicios</span>
                     </h2>
                     <p className="text-base md:text-xl text-tutesis-black/70 dark:text-tutesis-white/70 leading-relaxed">
                         Soluciones académicas transparentes. Elige el nivel de acompañamiento que mejor se adapte a tus necesidades.

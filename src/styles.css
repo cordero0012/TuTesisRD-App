@@ -3495,10 +3495,6 @@ h1,
   background-color: rgb(242 151 39 / 0.15);
 }
 
-.bg-tutesis-orange\/20 {
-  background-color: rgb(242 151 39 / 0.2);
-}
-
 .bg-tutesis-white {
   --tw-bg-opacity: 1;
   background-color: rgb(247 247 247 / var(--tw-bg-opacity, 1));
@@ -4926,6 +4922,10 @@ h1,
 
 .decoration-tutesis-orange {
   text-decoration-color: #F29727;
+}
+
+.decoration-4 {
+  text-decoration-thickness: 4px;
 }
 
 .decoration-\[0\.12em\] {
@@ -6463,14 +6463,17 @@ body {
   color: hsl(var(--primary));
 }
 
-.group:hover .group-hover\:text-tutesis-orange {
-  --tw-text-opacity: 1;
-  color: rgb(242 151 39 / var(--tw-text-opacity, 1));
-}
-
 .group:hover .group-hover\:text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.group:hover .group-hover\:underline {
+  text-decoration-line: underline;
+}
+
+.group:hover .group-hover\:decoration-tutesis-orange {
+  text-decoration-color: #F29727;
 }
 
 .group\/avatar:hover .group-hover\/avatar\:opacity-100 {
