@@ -78,11 +78,11 @@ export const MatrixInteractive: React.FC<MatrixInteractiveProps> = ({ matrix }) 
                                         <div>
                                             <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">Hallazgo Textual</h5>
                                             <div className="relative">
-                                                <span className="absolute -left-4 -top-2 text-4xl text-brand-orange/20 font-serif">"</span>
+                                                <span className="absolute -left-4 -top-2 font-display text-4xl text-brand-orange/20">"</span>
                                                 <p className="text-slate-600 dark:text-slate-300 italic font-medium leading-relaxed bg-white dark:bg-slate-900/50 p-6 rounded-3xl border border-slate-100 dark:border-white/5 shadow-sm">
                                                     {row.description || 'No se logró extraer contenido directo para esta dimensión.'}
                                                 </p>
-                                                <span className="absolute -right-2 -bottom-4 text-4xl text-brand-orange/20 font-serif">"</span>
+                                                <span className="absolute -right-2 -bottom-4 font-display text-4xl text-brand-orange/20">"</span>
                                             </div>
                                         </div>
                                     </div>
