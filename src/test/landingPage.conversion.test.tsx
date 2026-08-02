@@ -61,7 +61,7 @@ describe('LandingPage conversion flow', () => {
             screen.getByRole('combobox', { name: /nivel académico/i }),
             'Doctorado'
         );
-        await user.click(screen.getByRole('button', { name: /enviar y recibir diagnóstico gratis/i }));
+        await user.click(screen.getByRole('button', { name: /recibir mi diagnóstico gratis/i }));
 
         expect(window.open).toHaveBeenCalledWith(
             expect.stringContaining('https://wa.me/18297513267'),
@@ -84,7 +84,7 @@ describe('LandingPage conversion flow', () => {
 
         renderLandingPage();
 
-        await user.click(screen.getByRole('button', { name: /enviar y recibir diagnóstico gratis/i }));
+        await user.click(screen.getByRole('button', { name: /recibir mi diagnóstico gratis/i }));
 
         expect(window.open).toHaveBeenCalledTimes(1);
         expect(saveHeroLeadMock).toHaveBeenCalledWith({
@@ -119,7 +119,7 @@ describe('LandingPage conversion flow', () => {
             screen.getByRole('combobox', { name: /nivel académico/i }),
             'Maestría / Posgrado'
         );
-        await user.click(screen.getByRole('button', { name: /enviar y recibir diagnóstico gratis/i }));
+        await user.click(screen.getByRole('button', { name: /recibir mi diagnóstico gratis/i }));
 
         await waitFor(() => {
             expect((window as any).dataLayer).toContainEqual({
@@ -138,7 +138,7 @@ describe('LandingPage conversion flow', () => {
 
         renderLandingPage();
 
-        await user.click(screen.getByRole('button', { name: /enviar y recibir diagnóstico gratis/i }));
+        await user.click(screen.getByRole('button', { name: /recibir mi diagnóstico gratis/i }));
 
         await waitFor(() => {
             expect((window as any).fbq.mock.calls).toContainEqual(
@@ -157,10 +157,10 @@ describe('LandingPage conversion flow', () => {
     it('renders the hero diagnostic controls with accessible labels', () => {
         renderLandingPage();
 
-        expect(screen.getByRole('heading', { name: /diagnóstico rápido/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /recibe tu diagnóstico inicial/i })).toBeInTheDocument();
         expect(screen.getByRole('combobox', { name: /en qué etapa estás/i })).toBeInTheDocument();
         expect(screen.getByRole('combobox', { name: /nivel académico/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /enviar y recibir diagnóstico gratis/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /recibir mi diagnóstico gratis/i })).toBeInTheDocument();
     });
 
     it('renders named WhatsApp call-to-action links for the landing conversion path', () => {
@@ -172,10 +172,10 @@ describe('LandingPage conversion flow', () => {
         );
 
         [
-            /contactar/i,
-            /iniciar una conversación/i,
+            /diagnóstico gratis/i,
+            /solicitar diagnóstico gratuito/i,
             /whatsapp: \+1/i,
-            /hablar con miguel/i
+            /solicitar diagnóstico con miguel/i
         ].forEach((accessibleName) => {
             const matchingLinks = screen.getAllByRole('link', { name: accessibleName });
             expect(matchingLinks.length).toBeGreaterThan(0);

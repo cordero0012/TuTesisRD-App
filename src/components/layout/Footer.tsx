@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, BookOpen, Facebook, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { ArrowUpRight, Facebook, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { CONTACT, buildWhatsAppUrl } from '../../config';
 
 const Footer: React.FC = () => {
@@ -11,11 +11,15 @@ const Footer: React.FC = () => {
             <div className="mx-auto max-w-[1280px] px-5 py-16 sm:px-8 md:py-20 lg:px-10">
                 <div className="grid gap-14 border-b border-tutesis-white/20 pb-14 md:grid-cols-2 lg:grid-cols-12">
                     <div className="lg:col-span-5">
-                        <Link to="/" className="inline-flex min-h-12 items-center gap-3 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange">
-                            <span className="flex h-10 w-10 items-center justify-center bg-tutesis-orange text-tutesis-black">
-                                <BookOpen className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
-                            </span>
-                            <span className="font-serif text-2xl font-semibold tracking-[-0.03em] text-tutesis-white">Tu Tesis <span className="text-tutesis-orange">RD</span></span>
+                        <Link to="/" aria-label="Tu Tesis RD — Inicio" className="relative inline-flex h-20 w-48 items-center overflow-hidden rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange">
+                            <img
+                                src="/logos/Logo-TuTesis-Blanco.png"
+                                alt=""
+                                width="1000"
+                                height="1000"
+                                className="absolute left-1/2 top-1/2 w-60 max-w-none -translate-x-1/2 -translate-y-1/2"
+                            />
+                            <span className="sr-only">Tu Tesis RD — Inicio</span>
                         </Link>
                         <p className="mt-6 max-w-md text-base leading-7 text-tutesis-white/70">
                             Acompañamiento metodológico y orientación clara para que puedas comprender, organizar y defender tu investigación.
@@ -26,7 +30,7 @@ const Footer: React.FC = () => {
                             rel="noopener noreferrer"
                             className="group mt-8 inline-flex min-h-12 items-center gap-3 rounded-md bg-tutesis-orange px-5 text-sm font-extrabold text-tutesis-black transition-colors hover:bg-tutesis-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tutesis-orange focus-visible:ring-offset-4 focus-visible:ring-offset-tutesis-black"
                         >
-                            Iniciar una conversación
+                            Solicitar diagnóstico gratuito
                             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                         </a>
                     </div>
@@ -77,6 +81,10 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
                 </div>
+
+                <p className="border-b border-tutesis-white/15 py-6 text-xs leading-6 text-tutesis-white/45">
+                    El acompañamiento ofrecido es orientativo y formativo. No sustituye las decisiones del asesor, jurado o universidad, ni garantiza resultados académicos específicos.
+                </p>
 
                 <div className="flex flex-col gap-6 pt-8 text-xs text-tutesis-white/50 md:flex-row md:items-center md:justify-between">
                     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
