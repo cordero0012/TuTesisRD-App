@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { initGA, initWhatsAppTracking, logPageView } from '../utils/analytics';
+import { initGA, logPageView } from '../utils/analytics';
 
 export const useAnalytics = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Initialize GA on mount
+        // Initialize GA on mount. WhatsApp click tracking is owned by GTM —
+        // see the note in utils/analytics.ts.
         initGA();
-        initWhatsAppTracking();
     }, []);
 
     useEffect(() => {

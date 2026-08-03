@@ -28,6 +28,7 @@ import {
     PortraitDepth
 } from '../components/landing/EditorialMotion';
 import { CONTACT, buildWhatsAppUrl } from '../config';
+import { createEventId } from '../utils/analytics';
 import { saveHeroLead } from '../services/leads/heroLeadService';
 
 const ETAPAS = [
@@ -248,7 +249,7 @@ const LandingPage: React.FC = () => {
             (window as any).fbq?.('track', 'Lead', {
                 content_name: 'Diagnostico Rapido',
                 content_category: nivel
-            });
+            }, { eventID: createEventId() });
         });
     };
 
