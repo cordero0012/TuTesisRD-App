@@ -123,7 +123,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         if (action === 'create_lead_campaign') {
-            const dailyBudgetCents = Number(req.body?.dailyBudgetCents) || 145; // $1.45/día default — prueba secuencial Meta acordada 2026-08-04
+            // $2.00/día is Meta's real minimum per ad set (verified 2026-08-04 — $1.45
+            // was rejected with "Presupuesto demasiado bajo"). Default matches what was
+            // actually approved and used for the live Tu Tesis RD campaign that day.
+            const dailyBudgetCents = Number(req.body?.dailyBudgetCents) || 200;
             const campaignName = req.body?.campaignName || 'Tu Tesis RD | Leads | RD';
 
             // 1. Campaign — paused on creation, Miguel reviews before enabling.
@@ -132,6 +135,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 objective: 'OUTCOME_LEADS',
                 status: 'PAUSED',
                 special_ad_categories: [],
+                // Required as of 2026-08-04: Meta rejects campaign creation without this
+                // when the ad set (not the campaign) carries the budget.
+                is_adset_budget_sharing_enabled: false,
             });
 
             // 2. Ad set — optimizes for the existing 'Lead' pixel event (hero form),
@@ -149,6 +155,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     age_min: 18,
                     age_max: 45,
                     locales: [11], // Spanish
+                    // Required as of 2026-08-04. Kept at 0 (manual targeting only) because
+                    // enabling Advantage+ Audience (1) forces age_max to 65 — incompatible
+                    // with the 18-45 range agreed for this campaign.
+                    targeting_automation: { advantage_audience: 0 },
                 },
                 status: 'PAUSED',
             });
