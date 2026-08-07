@@ -29,7 +29,7 @@ import {
 } from '../components/landing/EditorialMotion';
 import { CONTACT, buildWhatsAppUrl } from '../config';
 import { saveHeroLead } from '../services/leads/heroLeadService';
-import { createEventId } from '../utils/analytics';
+import { createEventId, sendMetaCapiEvent } from '../utils/analytics';
 
 const ETAPAS = [
     'Tengo la idea inicial / Anteproyecto',
@@ -246,10 +246,15 @@ const LandingPage: React.FC = () => {
                 diagnostico_nivel: nivel,
                 lead_stored: stored
             });
-            (window as any).fbq?.('track', 'Lead', {
-                content_name: 'Diagnostico Rapido',
-                content_category: nivel
-            }, { eventID: createEventId() });
+            const leadEventId = createEventId();
+            const leadCustomData = { content_name: 'Diagnostico Rapido', content_category: nivel };
+
+            (window as any).fbq?.('track', 'Lead', leadCustomData, { eventID: leadEventId });
+
+            // Server-side mirror via Meta CAPI, same eventId for dedup — see
+            // sendMetaCapiEvent in utils/analytics.ts. Resilience layer, not
+            // the primary path: the client fbq() call above already fired.
+            sendMetaCapiEvent('Lead', leadEventId, leadCustomData);
         });
     };
 
