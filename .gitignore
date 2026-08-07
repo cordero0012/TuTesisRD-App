@@ -71,3 +71,20 @@ dist-ssr
 # Claude Code local settings — machine-specific, may capture credentials
 # in allowed-command entries. Never commit.
 .claude/settings.local.json
+
+# Knowledge graph output — build artifact. Rebuild with `graphify update .`
+graphify-out/
+src/graphify-out/
+
+# Lighthouse report output and the vendored skills checkout. Excluded so they do
+# not flood the knowledge graph (they were 94% of its nodes).
+.unlighthouse/
+temp_skills_repo/
+
+# Audit and advertising working files. The repository is PUBLIC: these describe
+# open vulnerabilities and ad-account data. Keep them local.
+audit-tu-tesis-rd/
+ads-tu-tesis-rd/
+
+# Lead scraper — carries a plaintext API token and scraped personal data.
+scripts/scrapers/

@@ -12,6 +12,12 @@ Dos reglas que no se negocian:
 - El repositorio de GitHub es **público**. No versiones `audit-tu-tesis-rd/`, `ads-tu-tesis-rd/` ni credenciales.
 - Los CTA de WhatsApp deben seguir siendo `<a href="...wa.me...">`. De eso depende toda la medición de conversiones (`AGENTS.md` §3).
 
+## Conexión Google Ads y Robot de Servicio
+- Clave de Cuenta de Servicio: `C:\Users\miang\.gemini\config\tutesisrd\google-credentials.json` (fuera del repo).
+- Robot invitado en Google Ads (`CID 686-939-3137`): `tutesisrd-ai-agent@fit-crow-492714-h5.iam.gserviceaccount.com` (nivel Estándar).
+- Proyecto Google Cloud: `fit-crow-492714-h5` (Proyecto `1052695851846`) con Google Ads API habilitada.
+- Informe completo de Trends y arquitectura: `ads-tu-tesis-rd/08_informe_trends_y_conexion_mcp.md`.
+
 ---
 
 ## graphify

@@ -116,6 +116,50 @@ export const createEventId = (): string => {
     return `ttrd-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
 };
 
+/**
+ * Reads a Meta-issued cookie (_fbp/_fbc) for the server-side CAPI call below.
+ * Both are set automatically by fbevents.js once the Pixel initializes.
+ */
+const readCookie = (name: string): string | undefined => {
+    if (typeof document === 'undefined') return undefined;
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : undefined;
+};
+
+/**
+ * Sends a server-side copy of a conversion to Meta's Conversions API via
+ * /api/meta-capi, reusing the same eventId as the client fbq() call so Meta
+ * dedupes them into one event instead of counting twice.
+ *
+ * Fire-and-forget on purpose: this is a resilience layer against ad blockers
+ * and browser tracking prevention stripping the client Pixel, not the
+ * primary path. A failure here must never block the conversion the user is
+ * actually completing (opening WhatsApp / submitting the form).
+ */
+export const sendMetaCapiEvent = (
+    eventName: string,
+    eventId: string,
+    customData?: Record<string, unknown>,
+): void => {
+    if (isInternalTraffic() || typeof fetch === 'undefined') return;
+
+    fetch('/api/meta-capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            eventName,
+            eventId,
+            eventSourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+            fbp: readCookie('_fbp'),
+            fbc: readCookie('_fbc'),
+            customData,
+        }),
+    }).catch(() => {
+        // Best-effort. The client fbq() call already fired; losing the
+        // server-side mirror degrades match quality, it doesn't lose the lead.
+    });
+};
+
 // Log Page View
 export const logPageView = (_url: string) => {
     // GA4 page_view is NOT sent here on purpose.
