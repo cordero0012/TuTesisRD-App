@@ -3,6 +3,43 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const GRAPH_API_VERSION = 'v21.0';
 
 /**
+ * Origins allowed to post conversions. This endpoint is only ever called by
+ * our own pages (see sendMetaCapiEvent in src/utils/analytics.ts), so a
+ * same-origin allowlist costs nothing and closes the drive-by case: without
+ * it, any page on the internet could fire `Lead` events at the pixel and
+ * teach Meta's optimizer to chase traffic that never converts.
+ *
+ * Browsers send `Origin` on every POST, including same-origin ones, so a
+ * legitimate call always carries it.
+ *
+ * What this does NOT stop: a determined attacker with curl, who can set any
+ * Origin header they like. Closing that properly needs a signed, short-lived
+ * token minted per page load — worth doing if this endpoint ever starts
+ * feeding bidding directly, overkill while it is a dedup mirror of a client
+ * Pixel event that already fired.
+ */
+const ALLOWED_ORIGINS = new Set(
+    [
+        'https://www.tutesisrd.online',
+        'https://tutesisrd.online',
+        // The deployment's own URL, so Vercel previews work without edits.
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    ].filter((origin): origin is string => Boolean(origin)),
+);
+
+/**
+ * Any localhost port, but never in production. `vercel dev` serves this
+ * function on :3000 while `vite` serves the app on :5173, and either can be
+ * remapped, so pinning one port just leaves a broken case behind.
+ */
+const LOCALHOST_ORIGIN = /^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/;
+
+const isAllowedOrigin = (origin: string): boolean => {
+    if (ALLOWED_ORIGINS.has(origin)) return true;
+    return process.env.VERCEL_ENV !== 'production' && LOCALHOST_ORIGIN.test(origin);
+};
+
+/**
  * Server-side mirror of the client Meta Pixel, using the same eventId the
  * client already generates (see src/utils/analytics.ts createEventId) so
  * Meta collapses both into a single event instead of double-counting.
@@ -20,6 +57,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Rejecting here loses the server-side mirror, never the lead itself: the
+    // client fbq() call fires before this request is even sent.
+    const origin = req.headers.origin;
+    if (!origin || !isAllowedOrigin(origin)) {
+        return res.status(403).json({ error: 'Origin not allowed' });
     }
 
     const PIXEL_ID = process.env.META_PIXEL_ID || process.env.VITE_META_PIXEL_ID;
