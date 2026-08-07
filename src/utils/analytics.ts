@@ -159,7 +159,6 @@ export const sendMetaCapiEvent = (
         // server-side mirror degrades match quality, it doesn't lose the lead.
     });
 };
-
 // Log Page View
 export const logPageView = (_url: string) => {
     // GA4 page_view is NOT sent here on purpose.

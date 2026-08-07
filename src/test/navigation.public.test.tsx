@@ -20,6 +20,21 @@ describe('Public Navigation & Contextual Links Suite', () => {
         expect(universidadesLink).not.toBeNull();
     });
 
+    it('renders the historical brand logo without a clipping container', () => {
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <Navbar />
+            </MemoryRouter>
+        );
+
+        const brandLink = screen.getByTestId('brand-logo-link');
+        const brandImage = brandLink.querySelector('img');
+
+        expect(brandLink).toHaveClass('overflow-visible');
+        expect(brandLink).not.toHaveClass('overflow-hidden');
+        expect(brandImage).toHaveAttribute('src', '/logos/Logo-TuTesis-Color.png');
+    });
+
     it('marks Universidades as active when path is /universidades or /tesis/uasd', () => {
         const { container, rerender } = render(
             <MemoryRouter initialEntries={['/universidades']}>
@@ -52,5 +67,15 @@ describe('Public Navigation & Contextual Links Suite', () => {
 
         expect(serviciosLinks.length).toBeGreaterThan(0);
         expect(universidadesLinks.length).toBeGreaterThan(0);
+    });
+
+    it('uses the expanded hero grid on wide displays', () => {
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <LandingPage />
+            </MemoryRouter>
+        );
+
+        expect(screen.getByTestId('landing-hero-layout')).toHaveClass('max-w-[1760px]');
     });
 });
