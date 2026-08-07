@@ -88,3 +88,17 @@ ads-tu-tesis-rd/
 
 # Lead scraper — carries a plaintext API token and scraped personal data.
 scripts/scrapers/
+
+# Agent tooling config — hardcodes absolute Windows paths to a local binary
+# (C:\users\miang\...), so committing it breaks every other machine and CI.
+# The rule above (!*.json) un-ignores these, hence the explicit entries.
+.claude/settings.json
+.codex/hooks.json
+
+# Agent run artifacts: screenshot evidence (13 MB of PNGs), scratch plans and
+# per-run progress state. The repository is PUBLIC and git keeps binaries in
+# history forever — these are local working files, not deliverables.
+.omx/screenshots/
+.omx/plans/
+.omx/state/landing-guide/
+.omx/state/landing-motion/
