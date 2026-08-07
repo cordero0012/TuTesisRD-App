@@ -1,0 +1,37 @@
+# What the CLI is allowed to upload.
+#
+# `vercel deploy` uploads the working directory, not the git tree, so anything
+# sitting locally ships unless it is listed here. Several directories in this
+# project are deliberately untracked because they carry credentials and client
+# data — without this file a manual deploy would push them to Vercel.
+
+# Audit notes describing open vulnerabilities, and ad-account data (92 MB).
+audit-tu-tesis-rd/
+ads-tu-tesis-rd/
+
+# Lead scraper: plaintext API token and scraped personal data.
+scripts/scrapers/
+
+# Local secrets. Real values belong in Vercel's environment variables.
+.env
+.env.*
+!.env.example
+
+# Agent tooling and run artifacts.
+.omx/
+.codex/
+.claude/
+.agent/
+temp_skills_repo/
+graphify-out/
+src/graphify-out/
+.unlighthouse/
+
+# Build inputs and reports that the deployment does not need.
+node_modules/
+_backup_legacy/
+web-para-subir/
+tutesisrd-dashboard/
+docs/
+*.log
+*.txt
