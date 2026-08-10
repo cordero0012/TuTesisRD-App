@@ -76,19 +76,24 @@ export const initGA = () => {
     }
 };
 
-// WhatsApp click tracking is NOT implemented here on purpose.
+// WhatsApp click tracking is split between GTM and this file, and the split
+// is deliberate. Read this before adding anything here.
 //
-// The GTM container (GTM-MSLMDDLR) already owns it: a Click - Just Links
-// trigger whose condition is `gtm.elementUrl` contains "wa.me", firing the
-// GA4 event `contact_whatsapp` to G-2XTMDMXZFC. Verified on 2026-08-02 by
-// decoding the public container.
+// GA4 side — owned by GTM, do NOT touch. The container (GTM-MSLMDDLR) has a
+// Click - Just Links trigger whose condition is `gtm.elementUrl` contains
+// "wa.me", firing the GA4 event `contact_whatsapp` to G-2XTMDMXZFC. Verified
+// 2026-08-02 and again 2026-08-10 by decoding the public container (predicate
+// `_cn(gtm.elementUrl, "wa.me")` + `_eq(event, gtm.linkClick)` -> tag 13).
+// Emitting a GA4 contact_whatsapp from here would double the primary
+// conversion of the business.
 //
-// A delegated listener here would fire a second contact_whatsapp on the same
-// click and double the primary conversion of the business.
+// Meta side — owned here, see initWhatsAppMetaTracking() below. GTM sends
+// nothing to Meta on this click, so before 2026-08-10 the WhatsApp click
+// reached GA4 and Google Ads but never reached Meta at all.
 //
-// This is why every WhatsApp CTA must stay an <a> whose href contains
-// "wa.me" — GTM matches on the href, so replacing an anchor with a button
-// silently stops the conversion. See AGENTS.md section 3.
+// Either way the CTA must stay an <a> whose href contains "wa.me": GTM
+// matches on the href and the listener below matches on the href, so
+// replacing an anchor with a button silently stops both. See AGENTS.md §3.
 
 /**
  * Generates an event ID for Meta deduplication.
@@ -159,6 +164,68 @@ export const sendMetaCapiEvent = (
         // server-side mirror degrades match quality, it doesn't lose the lead.
     });
 };
+
+/**
+ * Reports a WhatsApp CTA click to Meta as a `Lead`, and to Meta only.
+ *
+ * Why this exists. Auditing the account on 2026-08-10 showed the pixel
+ * (1304072538248053) had received exactly two event types since it was
+ * created: PageView and scroll. Zero Lead. Meanwhile the live ad set
+ * optimizes for OFFSITE_CONVERSIONS with custom_event_type LEAD on that same
+ * pixel — so Meta was being asked to find people likely to trigger an event it
+ * had never once observed, which leaves delivery permanently outside the
+ * learning phase and spends the budget on the cheapest available impressions.
+ *
+ * The cause was structural, not a bug: the business converts when someone
+ * clicks one of the `wa.me` CTAs, and that click only ever went to GA4 through
+ * GTM. The single code path that did emit a Meta Lead is the hero form, which
+ * almost nobody uses compared to the 11 WhatsApp anchors on the page.
+ *
+ * Deliberately NOT done here:
+ *   - No GA4 event. GTM already fires contact_whatsapp for this exact click;
+ *     a second one here would double the primary conversion metric.
+ *   - No logEvent() call, for the same reason — logEvent writes to both GA4
+ *     and Meta, and the GA4 half would be the duplicate.
+ *
+ * The fbq() call and the CAPI mirror share one eventId so Meta collapses them
+ * into a single Lead instead of counting the click twice.
+ */
+export const initWhatsAppMetaTracking = (): void => {
+    if (typeof document === 'undefined') return;
+
+    // The guard lives on the DOM, not in a module variable, on purpose: a
+    // module-scoped flag only protects against this module being *called*
+    // twice, not against it being *loaded* twice. Vite code-splitting can put
+    // a second copy of this module in another chunk, and each copy would bring
+    // its own flag set to false and attach its own listener — every WhatsApp
+    // click would then report two Leads to Meta. The document survives both.
+    const root = document.documentElement;
+    if (root.dataset.ttrdWaMetaTracking === 'on') return;
+    root.dataset.ttrdWaMetaTracking = 'on';
+
+    document.addEventListener('click', (event) => {
+        const target = event.target as Element | null;
+        const anchor = target?.closest?.('a[href*="wa.me"]');
+        if (!anchor) return;
+
+        if (isInternalTraffic() || !META_PIXEL_ID) return;
+
+        const eventId = createEventId();
+        const customData = {
+            content_name: 'whatsapp_cta',
+            content_category: 'contact',
+        };
+
+        if (typeof window.fbq !== 'undefined') {
+            window.fbq('track', 'Lead', customData, { eventID: eventId });
+        }
+
+        // Mirror server-side so an ad blocker stripping fbevents.js does not
+        // also cost us the conversion signal Meta optimizes on.
+        sendMetaCapiEvent('Lead', eventId, customData);
+    });
+};
+
 // Log Page View
 export const logPageView = (_url: string) => {
     // GA4 page_view is NOT sent here on purpose.

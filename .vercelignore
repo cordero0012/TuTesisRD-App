@@ -34,4 +34,12 @@ web-para-subir/
 tutesisrd-dashboard/
 docs/
 *.log
-*.txt
+
+# Build and error logs dropped at the repo root (build_log.txt, tsc_errors.txt,
+# test_output.txt…). Anchored to the root on purpose: an unanchored `*.txt`
+# also swallowed `public/robots.txt`, and because the SPA rewrite sends every
+# unmatched path to `/`, production answered /robots.txt with the HTML shell
+# instead of 404 — so the breakage was invisible. Keep the anchor, and keep the
+# guard below.
+/*.txt
+!public/robots.txt
