@@ -229,10 +229,18 @@ export interface UniversityLike {
     regulations: { style: string; minPages: number; maxPages: number };
 }
 
+/**
+ * Las páginas `/tesis/*` son el mejor activo medido del sitio: 9,17 % de CTR
+ * como bloque, frente al 0,30 % del contenido informacional. La descripción
+ * anterior salía a 103 caracteres en O&M —desaprovechaba media línea de SERP— y
+ * repetía el nombre largo de la universidad, que el título ya lleva. Esta usa el
+ * acrónimo (que es lo que se busca: `tesis uasd`, `tesis pucmm`) y deja las 9
+ * entre 129 y 149 caracteres.
+ */
 export const universityRouteMeta = (u: UniversityLike): RouteMeta => ({
     path: `/tesis/${u.id}`,
     title: `Tesis y Monográficos para ${u.shortName} | TuTesisRD`,
-    description: `Asesoría experta adaptada a la normativa de la ${u.name}. Estilo ${u.regulations.style}, ${u.regulations.minPages}-${u.regulations.maxPages} páginas.`,
+    description: `Asesoría de tesis y monográficos para ${u.shortName}: normativa vigente, formato ${u.regulations.style} y ${u.regulations.minPages}-${u.regulations.maxPages} páginas. Acompañamiento por etapas en RD.`,
     breadcrumbs: [
         HOME_CRUMB,
         { name: 'Universidades', path: '/universidades' },

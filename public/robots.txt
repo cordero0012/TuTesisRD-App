@@ -8,14 +8,6 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-# Plantilla Bootstrap de terceros que quedó dentro de public/ y se publica con
-# cada deploy: 17 páginas HTML rastreables, en inglés, sin canonical y bajo el
-# MISMO prefijo /blog/ que el blog real, lo que diluye su señal temática.
-# Ninguna tiene impresiones y nada del código las usa. Se bloquea para dejar de
-# gastar rastreo; lo correcto a continuación es borrar el directorio entero
-# (public/blog/devblog-v1.1/, 209 archivos, 3,3 MB) y quitar esta regla.
-Disallow: /blog/devblog-v1.1/
-
 # Las rutas de aplicación (/portal, /registro, /monitoreo, /exito, /design) NO se
 # bloquean aquí a propósito: ahora sirven `<meta name="robots" content="noindex">`
 # desde el HTML, y Google sólo puede obedecer ese noindex si se le deja rastrear
