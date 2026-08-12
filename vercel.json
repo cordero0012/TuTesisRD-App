@@ -12,7 +12,6 @@
             "permanent": true
         },
         {
-            "comment": "Plantilla Bootstrap de terceros retirada en cc453d4. Sin esta regla, el rewrite comodín de más abajo devolvería 200 con el <head> de la portada para sus 17 URLs: un soft 404 que además declara la home como canónica de cada una.",
             "source": "/blog/devblog-v1.1/:path*",
             "destination": "/blog",
             "permanent": true
