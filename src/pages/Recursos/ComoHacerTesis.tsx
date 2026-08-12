@@ -53,12 +53,7 @@ const ComoHacerTesis: React.FC = () => {
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             <SEO
-                title="Cómo Hacer una Tesis: Guía Metodológica Completa (2026)"
-                description="Aprende la metodología correcta para hacer tu tesis. Pasos desde el anteproyecto hasta la defensa, con citas APA y consejos académicos."
-                keywords={['cómo hacer una tesis', 'pasos tesis', 'metodología de la investigación', 'anteproyecto tesis', 'defensa de tesis']}
                 schema={howToSchema}
-                type="article"
-                publishedTime="2026-02-09"
                 author="TuTesisRD Académico"
             />
             <Navbar />

@@ -1,10 +1,31 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+import {
+    DEFAULT_DESCRIPTION,
+    DEFAULT_OG_IMAGE,
+    breadcrumbSchema,
+    canonicalFor,
+    staticRouteMeta,
+    withBrand,
+    type BreadcrumbItem,
+    type RouteMeta,
+} from '../seo/siteMeta';
 
 interface SEOProps {
-    title: string;
+    /**
+     * Sólo para rutas dinámicas (/tesis/:id, /blog/:id). Las rutas fijas viven
+     * en `STATIC_ROUTES` y no necesitan pasar nada: la tabla manda.
+     */
+    title?: string;
     description?: string;
     canonical?: string;
     schema?: object | object[];
+    /**
+     * @deprecated Ningún buscador usa `<meta name="keywords">` desde hace más de
+     * una década. Se acepta para no romper las llamadas existentes, pero ya no
+     * se emite ninguna etiqueta.
+     */
     keywords?: string[];
     ogImage?: string;
     publishedTime?: string;
@@ -13,68 +34,58 @@ interface SEOProps {
     type?: 'website' | 'article' | 'profile';
     /** Keeps the page out of the index. Use for private/app routes. */
     noIndex?: boolean;
+    /** Migas para rutas dinámicas (/tesis/:id, /blog/:id), que no están en la tabla. */
+    breadcrumbs?: BreadcrumbItem[];
 }
-
-const SITE_URL = "https://www.tutesisrd.online";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
-
-const normalizeCanonicalUrl = (canonical?: string) => {
-    const source = canonical || (typeof window !== 'undefined' ? window.location.pathname : '/');
-
-    try {
-        const url = new URL(source, SITE_URL);
-        url.protocol = 'https:';
-        url.hostname = 'www.tutesisrd.online';
-        url.search = '';
-        url.hash = '';
-
-        if (url.pathname !== '/') {
-            url.pathname = url.pathname.replace(/\/+$/, '');
-        }
-
-        return url.toString();
-    } catch {
-        return SITE_URL;
-    }
-};
 
 const SEO: React.FC<SEOProps> = ({
     title,
     description,
     canonical,
     schema,
-    keywords = [],
     ogImage,
     publishedTime,
     modifiedTime,
-    author = "TuTesisRD",
+    author = 'TuTesisRD',
     type = 'website',
-    noIndex = false
+    noIndex = false,
+    breadcrumbs,
 }) => {
-    // Several pages already carry the brand in their own title. Appending the
-    // suffix unconditionally produced titles like "… | TuTesisRD | TuTesisRD -
-    // Asesoría …" — over 100 characters, with the brand twice, truncated in
-    // search results. Only append when the brand isn't there already.
-    const fullTitle = /tutesisrd/i.test(title) ? title : `${title} | TuTesisRD`;
-    const defaultDescription = "Asesoría experta en tesis, anteproyectos y monográficos en República Dominicana. Más de 7 años ayudando a estudiantes a graduarse con éxito.";
-    const currentDescription = description || defaultDescription;
+    const { pathname } = useLocation();
 
-    // Default keywords if none provided
-    const defaultKeywords = [
-        'tesis',
-        'tesis de grado',
-        'tesis doctoral',
-        'anteproyecto de tesis',
-        'asesoría tesis',
-        'república dominicana',
-        'tesis RD',
-        'cómo hacer una tesis',
-        'ejemplos de tesis',
-        'qué es tesis'
-    ];
-    const allKeywords = keywords.length > 0 ? keywords : defaultKeywords;
+    /**
+     * `src/seo/siteMeta.ts` manda sobre las props.
+     *
+     * El mismo módulo alimenta a `scripts/prerender.mts`, que escribe el <head>
+     * real de cada URL durante el build. Si las props de la página pudieran
+     * ganar, el HTML servido y el DOM hidratado dirían cosas distintas sobre el
+     * canonical de la página — que es justo la incoherencia que dejó 19 de las
+     * 29 URLs del sitemap sin una sola impresión en 6 meses.
+     *
+     * Las rutas dinámicas (/tesis/:id, /blog/:id) no están en la tabla: ahí
+     * mandan las props, y las plantillas las construyen con `universityRouteMeta`
+     * y `blogRouteMeta`, que son del mismo módulo.
+     */
+    const tableMeta: RouteMeta | undefined = staticRouteMeta(pathname);
 
-    const canonicalUrl = normalizeCanonicalUrl(canonical);
+    const effectiveTitle = tableMeta?.title ?? title ?? 'TuTesisRD';
+    const effectiveDescription = tableMeta?.description ?? description ?? DEFAULT_DESCRIPTION;
+    const effectiveType = tableMeta?.type ?? type;
+    const effectiveNoIndex = tableMeta?.noIndex ?? noIndex;
+    const effectiveOgImage = tableMeta?.ogImage ?? ogImage ?? DEFAULT_OG_IMAGE;
+    const effectivePublished = tableMeta?.publishedTime ?? publishedTime;
+    const effectiveModified = tableMeta?.modifiedTime ?? modifiedTime;
+    const effectiveCrumbs = tableMeta?.breadcrumbs ?? breadcrumbs;
+
+    const fullTitle = withBrand(effectiveTitle);
+    const canonicalUrl = canonicalFor(tableMeta?.path ?? canonical ?? pathname);
+
+    if (import.meta.env.DEV && tableMeta && title && withBrand(title) !== fullTitle) {
+        console.warn(
+            `[SEO] ${pathname} pasa el título "${title}" pero manda la tabla: "${tableMeta.title}".\n` +
+                '      Edita src/seo/siteMeta.ts — es la fuente única que consumen el prerender y este componente.',
+        );
+    }
 
     useEffect(() => {
         document.title = fullTitle;
@@ -92,10 +103,9 @@ const SEO: React.FC<SEOProps> = ({
         };
 
         // Basic meta tags
-        updateMeta('description', currentDescription);
-        updateMeta('keywords', allKeywords.join(', '));
+        updateMeta('description', effectiveDescription);
         updateMeta('author', author);
-        updateMeta('robots', noIndex
+        updateMeta('robots', effectiveNoIndex
             ? 'noindex, nofollow'
             : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
 
@@ -106,22 +116,22 @@ const SEO: React.FC<SEOProps> = ({
 
         // Open Graph
         updateMeta('og:title', fullTitle, true);
-        updateMeta('og:description', currentDescription, true);
-        updateMeta('og:type', type, true);
+        updateMeta('og:description', effectiveDescription, true);
+        updateMeta('og:type', effectiveType, true);
         updateMeta('og:url', canonicalUrl, true);
-        updateMeta('og:image', ogImage || DEFAULT_OG_IMAGE, true);
+        updateMeta('og:image', effectiveOgImage, true);
         updateMeta('og:image:width', '1200', true);
         updateMeta('og:image:height', '630', true);
         updateMeta('og:locale', 'es_DO', true);
         updateMeta('og:site_name', 'TuTesisRD', true);
 
         // Article-specific tags
-        if (type === 'article') {
-            if (publishedTime) {
-                updateMeta('article:published_time', publishedTime, true);
+        if (effectiveType === 'article') {
+            if (effectivePublished) {
+                updateMeta('article:published_time', effectivePublished, true);
             }
-            if (modifiedTime) {
-                updateMeta('article:modified_time', modifiedTime, true);
+            if (effectiveModified) {
+                updateMeta('article:modified_time', effectiveModified, true);
             }
             updateMeta('article:author', author, true);
         }
@@ -129,8 +139,8 @@ const SEO: React.FC<SEOProps> = ({
         // Twitter Cards
         updateMeta('twitter:card', 'summary_large_image');
         updateMeta('twitter:title', fullTitle);
-        updateMeta('twitter:description', currentDescription);
-        updateMeta('twitter:image', ogImage || DEFAULT_OG_IMAGE);
+        updateMeta('twitter:description', effectiveDescription);
+        updateMeta('twitter:image', effectiveOgImage);
         updateMeta('twitter:site', '@tutesisrd');
 
         // Update canonical
@@ -142,22 +152,45 @@ const SEO: React.FC<SEOProps> = ({
         }
         linkCanonical.setAttribute('href', canonicalUrl);
 
-        // Structured Data (JSON-LD) - support multiple schemas
+        /**
+         * Structured Data. Las migas van siempre que la ruta las tenga: es el
+         * único tipo de resultado enriquecido realista para este sitio, y hoy
+         * "Aparición en búsquedas" de Search Console llega literalmente vacía.
+         *
+         * El prerender ya escribe estas migas en el HTML servido; volver a
+         * inyectarlas aquí en el mismo `<script id="ld-json">` las mantiene
+         * cuando el usuario navega dentro de la SPA y no hay recarga.
+         */
+        const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+        const allSchemas = effectiveCrumbs?.length
+            ? [breadcrumbSchema(effectiveCrumbs), ...pageSchemas]
+            : pageSchemas;
+
         let scriptSchema = document.querySelector('script[id="ld-json"]');
-        if (schema) {
+        if (allSchemas.length > 0) {
             if (!scriptSchema) {
                 scriptSchema = document.createElement('script');
                 scriptSchema.setAttribute('type', 'application/ld+json');
                 scriptSchema.setAttribute('id', 'ld-json');
                 document.head.appendChild(scriptSchema);
             }
-            // Handle both single schema and array of schemas
-            const schemaContent = Array.isArray(schema) ? schema : [schema];
-            scriptSchema.textContent = JSON.stringify(schemaContent.length === 1 ? schemaContent[0] : schemaContent);
+            scriptSchema.textContent = JSON.stringify(allSchemas.length === 1 ? allSchemas[0] : allSchemas);
         } else if (scriptSchema) {
             scriptSchema.remove();
         }
-    }, [fullTitle, currentDescription, canonicalUrl, schema, allKeywords, ogImage, publishedTime, modifiedTime, author, type, noIndex]);
+    }, [
+        fullTitle,
+        effectiveDescription,
+        canonicalUrl,
+        schema,
+        effectiveCrumbs,
+        effectiveOgImage,
+        effectivePublished,
+        effectiveModified,
+        author,
+        effectiveType,
+        effectiveNoIndex,
+    ]);
 
     return null;
 };

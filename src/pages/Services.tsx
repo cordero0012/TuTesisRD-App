@@ -8,10 +8,7 @@ import PricingCatalog from '../components/landing/PricingCatalog';
 const Services: React.FC = () => {
     return (
         <div className="min-h-screen bg-tutesis-white dark:bg-tutesis-black font-sans text-tutesis-black dark:text-tutesis-white transition-colors duration-200">
-            <SEO
-                title="Servicios y Precios de Asesoría Académica | Tu Tesis RD"
-                description="Conoce nuestro catálogo transparente de servicios para tesis de grado, monográficos, maestrías y doctorados en República Dominicana."
-            />
+            <SEO />
             <Navbar />
 
             <main className="pt-28 pb-10">

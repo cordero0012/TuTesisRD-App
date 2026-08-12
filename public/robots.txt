@@ -1,20 +1,27 @@
 # robots.txt for TuTesisRD
-# Optimized for SEO - Allow all search engines
 
 User-agent: *
 Allow: /
 
-# Block sensitive areas (paths must match the real routes in src/App.tsx)
+# Sólo lo que nunca debe ser rastreado. Un Disallow impide RASTREAR, no INDEXAR:
+# una URL bloqueada aquí puede aparecer igual en los resultados si algo la enlaza.
 Disallow: /admin
 Disallow: /api/
-Disallow: /portal
-Disallow: /registro
-Disallow: /monitoreo
-Disallow: /exito
-Disallow: /design
 
-# Sitemap location
+# Plantilla Bootstrap de terceros que quedó dentro de public/ y se publica con
+# cada deploy: 17 páginas HTML rastreables, en inglés, sin canonical y bajo el
+# MISMO prefijo /blog/ que el blog real, lo que diluye su señal temática.
+# Ninguna tiene impresiones y nada del código las usa. Se bloquea para dejar de
+# gastar rastreo; lo correcto a continuación es borrar el directorio entero
+# (public/blog/devblog-v1.1/, 209 archivos, 3,3 MB) y quitar esta regla.
+Disallow: /blog/devblog-v1.1/
+
+# Las rutas de aplicación (/portal, /registro, /monitoreo, /exito, /design) NO se
+# bloquean aquí a propósito: ahora sirven `<meta name="robots" content="noindex">`
+# desde el HTML, y Google sólo puede obedecer ese noindex si se le deja rastrear
+# la página para leerlo. Bloquearlas era justamente lo que mantenía /monitoreo
+# indexado en posición 4 pese al Disallow.
+# Ver STATIC_ROUTES en src/seo/siteMeta.ts.
+
+# Sitemap (lo genera scripts/prerender.mts a partir de src/seo/siteMeta.ts)
 Sitemap: https://www.tutesisrd.online/sitemap.xml
-
-# Crawl-delay (optional, for servers with limited resources)
-# Crawl-delay: 10

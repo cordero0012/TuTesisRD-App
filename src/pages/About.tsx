@@ -10,10 +10,7 @@ const About: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-tutesis-white dark:bg-tutesis-black font-sans text-tutesis-black dark:text-tutesis-white transition-colors duration-200">
-            <SEO
-                title="Sobre Nosotros"
-                description="Conoce a Miguel Ángel Cordero y al equipo de TuTesisRD. Expertos con más de 7 años de experiencia en asesoría académica."
-            />
+            <SEO />
             <Navbar />
 
             <section className="pt-28 pb-16 md:pt-36 md:pb-24">

@@ -6,10 +6,7 @@ import SEO from '../../components/SEO';
 const DataDeletion: React.FC = () => {
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
-            <SEO
-                title="Instrucciones para la Eliminación de Datos - TuTesisRD"
-                description="Instrucciones sobre cómo solicitar la eliminación de sus datos personales de TuTesisRD según las políticas de privacidad y de Facebook/Meta."
-            />
+            <SEO />
             <Navbar />
 
             <section className="pt-32 pb-20">

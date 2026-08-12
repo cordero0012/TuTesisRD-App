@@ -6,10 +6,7 @@ import SEO from '../../components/SEO';
 const PrivacyPolicy: React.FC = () => {
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
-            <SEO
-                title="Política de Privacidad - TuTesisRD"
-                description="Política de privacidad y protección de datos personales de TuTesisRD."
-            />
+            <SEO />
             <Navbar />
 
             <section className="pt-32 pb-20">

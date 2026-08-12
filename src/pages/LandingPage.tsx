@@ -316,17 +316,7 @@ const LandingPage: React.FC = () => {
     return (
         <div className="min-h-screen overflow-x-clip bg-tutesis-white font-sans text-tutesis-black selection:bg-tutesis-orange/30">
             <SEO
-                title="Asesoría metodológica para tesis en República Dominicana | TuTesisRD"
-                description="Ordena tu tesis con un diagnóstico claro, revisión metodológica y acompañamiento por etapas. Atención en línea en República Dominicana y presencial en Higüey."
-                keywords={[
-                    'asesoría de tesis República Dominicana',
-                    'metodología de investigación',
-                    'revisión tesis APA 7',
-                    'anteproyecto de tesis',
-                    'preparación defensa de tesis'
-                ]}
                 schema={[organizationSchema, serviceSchema, faqSchema]}
-                ogImage="https://www.tutesisrd.online/og-image.png"
             />
             <Navbar />
             <PageScrollProgress />

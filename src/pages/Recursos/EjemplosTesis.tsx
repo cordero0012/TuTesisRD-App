@@ -68,12 +68,7 @@ const EjemplosTesis: React.FC = () => {
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
             <SEO
-                title="Ejemplos de Tesis y Repositorios Académicos RD (2026)"
-                description="Accede a los mejores ejemplos de tesis de grado y maestría en República Dominicana. Enlaces a repositorios de UASD, PUCMM, INTEC y más."
-                keywords={['ejemplos de tesis', 'repositorio tesis uasd', 'tesis pucmm', 'estructuras de tesis', 'modelos de tesis']}
                 schema={repoSchema}
-                type="article"
-                publishedTime="2026-02-09"
                 author="TuTesisRD Académico"
             />
             <Navbar />

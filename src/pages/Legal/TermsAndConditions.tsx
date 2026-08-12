@@ -6,10 +6,7 @@ import SEO from '../../components/SEO';
 const TermsAndConditions: React.FC = () => {
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-slate-800 dark:text-white">
-            <SEO
-                title="Términos y Condiciones - TuTesisRD"
-                description="Términos y condiciones de uso de los servicios de TuTesisRD."
-            />
+            <SEO />
             <Navbar />
 
             <section className="pt-32 pb-20">

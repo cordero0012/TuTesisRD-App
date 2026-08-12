@@ -14,6 +14,7 @@ import {
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import SEO from '../../components/SEO';
+import { universityRouteMeta } from '../../seo/siteMeta';
 import { Card } from '../../components/ui/Card';
 import universitiesData from '../../data/universities.json';
 import { buildWhatsAppUrl } from '../../config';
@@ -68,11 +69,16 @@ const UniversityTemplate: React.FC = () => {
 
     const whatsappUrl = buildWhatsAppUrl(`Hola TuTesisRD, deseo cotización y asesoría académica ajustada a la normativa de la ${university.shortName}.`);
 
+    // El mismo builder que usa `scripts/prerender.mts` para escribir el <head>
+    // servido, así que HTML e hidratación no pueden decir cosas distintas.
+    const universityMeta = universityRouteMeta(university);
+
     return (
         <div className="min-h-screen bg-tutesis-white dark:bg-tutesis-black font-sans text-tutesis-black dark:text-tutesis-white transition-colors duration-300">
             <SEO
-                title={`Tesis y Monográficos para ${university.shortName} | TuTesisRD`}
-                description={`Asesoría experta adaptada a la normativa de la ${university.name}. Estilo ${university.regulations.style}, ${university.regulations.minPages}-${university.regulations.maxPages} páginas.`}
+                title={universityMeta.title}
+                description={universityMeta.description}
+                breadcrumbs={universityMeta.breadcrumbs}
             />
             <Navbar />
 

@@ -17,12 +17,7 @@ export const AuditPage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-white pt-28 px-8 pb-12">
-            <SEO
-                title="Herramientas de Análisis de Tesis"
-                description="Analiza tu tesis gratis: auditoría de documento con IA y matriz de consistencia. Detecta errores de formato, coherencia y normas APA antes de entregar."
-                canonical="/herramientas"
-                keywords={['analizar tesis', 'auditoría de tesis', 'revisar tesis online', 'matriz de consistencia', 'herramienta tesis gratis']}
-            />
+            <SEO />
             <Navbar />
             <div className="max-w-6xl mx-auto space-y-12">
                 {/* Header Section with Back Button */}

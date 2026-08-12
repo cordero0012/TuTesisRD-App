@@ -11,7 +11,14 @@ export const CONTACT = {
     /** Landline declared in schema.org and the footer. */
     PHONE: "+18094557280",
     EMAIL: "ttesisrd@gmail.com",
-    INSTAGRAM: "https://www.instagram.com/tutesisrd/",
+    /**
+     * El handle real lleva punto. El icono del footer apuntaba a
+     * `instagram.com/tutesisrd/`, que no es la cuenta de la marca; la verificada
+     * en Search Console —y la que acumula las publicaciones— es `tutesis.rd`.
+     * El mismo error estaba en el `sameAs` del JSON-LD de index.html, y un
+     * `sameAs` equivocado impide a Google consolidar la entidad de marca.
+     */
+    INSTAGRAM: "https://www.instagram.com/tutesis.rd/",
     FACEBOOK: "https://www.facebook.com/tutesisrd"
 } as const;
 

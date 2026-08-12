@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx tailwindcss -i ./src/input.css -o ./src/styles.css && npx vite build && node -e \"const fs = require('fs'); fs.copyFileSync('dist/index.html', 'dist/404.html');\"",
+    "build": "npx tailwindcss -i ./src/input.css -o ./src/styles.css && npx vite build && npm run prerender",
+    "prerender": "npx tsx scripts/prerender.mts",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",

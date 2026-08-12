@@ -21,28 +21,35 @@
     <link rel="manifest" href="/manifest.json?v=3" />
     <link rel="shortcut icon" href="/favicon.ico?v=3" />
 
-    <!-- Primary Meta Tags -->
-    <title>Asesoría metodológica para tesis en República Dominicana | TuTesisRD</title>
-    <meta name="title" content="Asesoría metodológica para tesis en República Dominicana | TuTesisRD" />
-    <meta name="description"
-        content="Ordena tu tesis con un diagnóstico claro, revisión metodológica y acompañamiento por etapas. Atención en línea en República Dominicana y presencial en Higüey." />
-    <meta name="keywords"
-        content="tesis república dominicana, asesoría tesis RD, anteproyecto dominicana, monográfico RD, tesis universitaria, consultoría académica, ayuda tesis, tutesisrd, gestión de tesis, tesis doctoral dominicana, proyecto de grado" />
     <meta name="author" content="TuTesisRD" />
-    <meta name="robots" content="index, follow" />
     <meta name="language" content="Spanish" />
-    <meta name="revisit-after" content="7 days" />
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.tutesisrd.online" />
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#F29727" />
     <meta name="msapplication-TileColor" content="#F29727" />
 
-    <!-- Open Graph / Facebook -->
+    <!--
+      ==================== SEO:START ====================
+      `scripts/prerender.mts` reemplaza esta región entera, por cada ruta, durante
+      el build, a partir de `src/seo/siteMeta.ts`.
+
+      Lo que sigue es el <head> de la HOME, y es también el que reciben las rutas
+      desconocidas que caen en el rewrite comodín de vercel.json.
+
+      No edites estos valores a mano: edita `src/seo/siteMeta.ts`, que es la
+      fuente única que consumen tanto el prerender como `src/components/SEO.tsx`.
+
+      Los dos marcadores deben aparecer UNA sola vez en el archivo: el script los
+      localiza por texto, y mencionarlos aquí otra vez rompería el recorte.
+    -->
+    <title>Asesoría metodológica para tesis en República Dominicana | TuTesisRD</title>
+    <meta name="description"
+        content="Ordena tu tesis con un diagnóstico claro, revisión metodológica y acompañamiento por etapas. Atención en línea en República Dominicana y presencial en Higüey." />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://www.tutesisrd.online/" />
+
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.tutesisrd.online" />
+    <meta property="og:url" content="https://www.tutesisrd.online/" />
     <meta property="og:title" content="Asesoría metodológica para tesis en República Dominicana | TuTesisRD" />
     <meta property="og:description"
         content="Ordena tu tesis con un diagnóstico claro, revisión metodológica y acompañamiento por etapas. Atención en línea en República Dominicana y presencial en Higüey." />
@@ -53,20 +60,20 @@
     <meta property="og:locale" content="es_DO" />
     <meta property="og:site_name" content="TuTesisRD" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://www.tutesisrd.online" />
     <meta name="twitter:title" content="Asesoría metodológica para tesis en República Dominicana | TuTesisRD" />
     <meta name="twitter:description"
         content="Ordena tu tesis con un diagnóstico claro, revisión metodológica y acompañamiento por etapas. Atención en línea en República Dominicana y presencial en Higüey." />
     <meta name="twitter:image" content="https://www.tutesisrd.online/og-image.png" />
     <meta name="twitter:image:alt" content="TuTesisRD - Plataforma de Gestión de Tesis" />
+    <!-- ==================== SEO:END ==================== -->
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "EducationalOrganization",
+      "@id": "https://www.tutesisrd.online/#organization",
       "name": "TuTesisRD",
       "alternateName": "Tu Tesis RD",
       "url": "https://www.tutesisrd.online",
@@ -84,11 +91,11 @@
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": "18.4861",
-        "longitude": "-69.9312"
+        "latitude": "18.6157",
+        "longitude": "-68.7076"
       },
       "sameAs": [
-        "https://www.instagram.com/tutesisrd/",
+        "https://www.instagram.com/tutesis.rd/",
         "https://www.facebook.com/tutesisrd"
       ],
       "contactPoint": {
@@ -105,6 +112,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://www.tutesisrd.online/#website",
+      "publisher": { "@id": "https://www.tutesisrd.online/#organization" },
       "name": "TuTesisRD",
       "url": "https://www.tutesisrd.online",
       "description": "Orientación metodológica y recursos para proyectos de tesis en República Dominicana."

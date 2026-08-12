@@ -21,28 +21,16 @@ const QueEsTesis: React.FC = () => {
         }
     ];
 
-    const faqSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqData.map(item => ({
-            "@type": "Question",
-            "name": item.question,
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": item.answer
-            }
-        }))
-    };
-
     return (
         <div className="font-sans text-gray-800 bg-background-light dark:bg-background-dark dark:text-gray-100 transition-colors duration-200">
+            {/*
+              El título, la descripción y las migas salen de `src/seo/siteMeta.ts`.
+              Aquí NO se pasa un `schema` de FAQ: <FAQSection> ya inyecta su
+              propio FAQPage a partir de `faqData`, y pasarlo también dejaba el
+              mismo bloque JSON-LD duplicado en la página.
+            */}
             <SEO
-                title="Qué es una Tesis: Definición, Tipos y Características (2026)"
-                description="Descubre qué es una tesis, sus características principales y la diferencia entre tesis de grado y doctoral. Explicación académica con referencias APA 7."
-                keywords={['qué es una tesis', 'definición de tesis', 'tipos de tesis', 'tesis de grado', 'tesis doctoral', 'características de una tesis']}
-                schema={faqSchema}
-                type="article"
-                publishedTime="2026-02-09"
+                title="Qué es una Tesis: Definición, Tipos y Ejemplos"
                 author="TuTesisRD Académico"
             />
             <Navbar />
@@ -120,6 +108,19 @@ const QueEsTesis: React.FC = () => {
 
                     <FAQSection questions={faqData} title="Preguntas Frecuentes sobre Tesis" />
 
+                    {/*
+                      Esta es, con diferencia, la página más vista del sitio: 1.998
+                      impresiones en 6 meses frente a las 327 de todas las páginas
+                      de universidad juntas. Hasta ahora su único enlace de salida
+                      iba a /recursos/como-hacer-tesis, que tiene CERO impresiones:
+                      el tráfico entraba y moría ahí.
+
+                      Los enlaces a normativa por universidad y a servicios son los
+                      destinos con valor comercial —las páginas /tesis/* convierten
+                      al 9,17 % frente al 0,30 % de esta—, y sólo aplican al lector
+                      dominicano, que es el que compra: la mitad de las impresiones
+                      de esta página vienen de países donde no se opera.
+                    */}
                     <div className="bg-brand-orange/5 rounded-2xl p-8 mt-12 text-center">
                         <h2 className="text-2xl font-bold mb-4">¿Listo para empezar tu tesis?</h2>
                         <p className="mb-6">
@@ -128,6 +129,17 @@ const QueEsTesis: React.FC = () => {
                         <Link to="/recursos/como-hacer-tesis" className="inline-block bg-brand-orange hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-md">
                             Ver Guía Paso a Paso
                         </Link>
+                        <p className="mt-6 text-sm text-gray-600 dark:text-gray-300">
+                            ¿Estudias en República Dominicana? Consulta la{' '}
+                            <Link to="/universidades" className="font-semibold text-brand-orange underline underline-offset-2 hover:text-orange-700">
+                                normativa de tesis de tu universidad
+                            </Link>{' '}
+                            —UASD, PUCMM, INTEC, O&amp;M y más— o revisa los{' '}
+                            <Link to="/servicios" className="font-semibold text-brand-orange underline underline-offset-2 hover:text-orange-700">
+                                servicios de asesoría
+                            </Link>
+                            .
+                        </p>
                     </div>
 
                     <div className="mt-12 text-sm text-gray-500 dark:text-gray-400 border-t pt-4">

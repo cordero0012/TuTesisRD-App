@@ -13,10 +13,7 @@ const UniversityDirectory: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-tutesis-white dark:bg-tutesis-black font-sans text-tutesis-black dark:text-tutesis-white transition-colors duration-300">
-            <SEO
-                title="Directorio de Universidades RD | TuTesisRD"
-                description="Guías metodológicas y normativas específicas para UASD, PUCMM, INTEC, UNIBE, O&M, UNPHU, UAPA, UCATECI y UNEV."
-            />
+            <SEO />
             <Navbar />
 
             <main className="pt-28 pb-20">

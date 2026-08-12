@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { blogRouteMeta } from '../seo/siteMeta';
 import blogData from '../data/blogPosts.json';
 import { logEvent } from '../utils/analytics';
 import BlogLayout from '../components/blog/BlogLayout';
@@ -24,6 +25,11 @@ const BlogPostTemplate: React.FC = () => {
     };
 
     const imageUrl = `${import.meta.env.BASE_URL}blog/${post.image}`;
+
+    // Mismo builder que usa `scripts/prerender.mts`. `post.title` sigue siendo el
+    // H1 visible; `post.seoTitle` es el que va a la SERP, porque varios H1 pasan
+    // de 100 caracteres y Google corta en ~60.
+    const postMeta = blogRouteMeta(post);
 
     // Default Author Data (mocked for now as it's not in JSON)
     const AUTHOR_DATA = {
@@ -51,8 +57,12 @@ const BlogPostTemplate: React.FC = () => {
         <div className="font-sans text-slate-800 dark:text-white">
             <ReadingProgressBar />
             <SEO
-                title={post.title}
-                description={post.excerpt}
+                title={postMeta.title}
+                description={postMeta.description}
+                type="article"
+                ogImage={postMeta.ogImage}
+                publishedTime={postMeta.publishedTime}
+                breadcrumbs={postMeta.breadcrumbs}
                 schema={{
                     "@context": "https://schema.org",
                     "@type": post.schemaType || "BlogPosting",
