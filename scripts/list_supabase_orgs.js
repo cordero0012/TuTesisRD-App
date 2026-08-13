@@ -1,6 +1,25 @@
+/**
+ * Lista las organizaciones de Supabase a las que da acceso un token.
+ *
+ * Uso:
+ *   SUPABASE_ACCESS_TOKEN=sbp_... node scripts/list_supabase_orgs.js
+ *
+ * El token va SIEMPRE por entorno, nunca escrito aquí. Este archivo llevaba uno
+ * a mano desde el commit d106171 (2026-01-15) y este repositorio es PÚBLICO, así
+ * que ese token estuvo expuesto en GitHub unos siete meses. Quitarlo de aquí no
+ * lo borra del historial: la única forma de neutralizarlo es revocarlo en
+ * https://supabase.com/dashboard/account/tokens. Ver AGENTS.md §5.
+ */
+
 const https = require('https');
 
-const token = 'sbp_fdefde65fc39c192ee9e3edb7b07a9f3e3d24ef5';
+const token = process.env.SUPABASE_ACCESS_TOKEN;
+
+if (!token) {
+    console.error('Falta SUPABASE_ACCESS_TOKEN en el entorno.');
+    console.error('Uso: SUPABASE_ACCESS_TOKEN=sbp_... node scripts/list_supabase_orgs.js');
+    process.exit(1);
+}
 
 const options = {
     hostname: 'api.supabase.com',
@@ -33,8 +52,9 @@ const req = https.request(options, (res) => {
                 console.log("Raw Body:", data);
             }
         } else {
+            // El cuerpo de un error de la API de Supabase no repite el token,
+            // pero no lo volcamos entero por si acaso.
             console.error(`Request failed with status: ${res.statusCode}`);
-            console.error("Body:", data);
         }
     });
 });
