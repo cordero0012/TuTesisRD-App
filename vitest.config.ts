@@ -8,6 +8,15 @@ export default defineConfig({
         globals: true,
         environment: 'jsdom',
         setupFiles: ['./src/test/setup.ts'],
+        /**
+         * Los 5 s por defecto se quedaban cortos. Un `axe.run()` sobre la
+         * landing tarda ~2-3 s con la máquina libre, y con la suite entera en
+         * paralelo se pasaba del límite: vitest abortaba el test pero no podía
+         * abortar el `axe.run()` de dentro, y como `axe-core` es un singleton,
+         * los tests siguientes fallaban con «Axe is already running». La cola de
+         * `src/test/setup.ts` corta esa cascada; este margen evita que se dispare.
+         */
+        testTimeout: 20000,
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],

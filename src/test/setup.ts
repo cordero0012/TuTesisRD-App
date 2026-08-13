@@ -10,11 +10,38 @@ expect.extend(matchers);
 // Extend Vitest's expect with axe matchers
 expect.extend(toHaveNoViolations);
 
+/**
+ * `axe-core` es un SINGLETON: una segunda llamada mientras la primera sigue en
+ * marcha lanza «Axe is already running».
+ *
+ * Eso convertía estos tests en intermitentes, y el mecanismo no era el que
+ * parecía. Con la suite completa en paralelo, la CPU va justa y un `axe.run()`
+ * pasa de ~1 s a más de 5 s, o sea por encima del `testTimeout` por defecto.
+ * Vitest aborta ESE test, pero no puede abortar el `axe.run()` que quedó
+ * corriendo por dentro: el siguiente test lo encuentra ocupado y falla, y el
+ * siguiente también. De ahí que fallaran en cascada (3, 1, 3 fallos según la
+ * pasada) y que en aislado pasaran siempre.
+ *
+ * Esta cola encadena las llamadas, así que una ejecución huérfana retrasa a la
+ * siguiente en vez de tumbarla. El `catch` es lo que corta la cascada: si la
+ * anterior terminó en error, la siguiente arranca igual.
+ */
+let axeQueue: Promise<unknown> = Promise.resolve();
+
+export const runAxe = <T>(start: () => Promise<T>): Promise<T> => {
+    const result = axeQueue.then(start, start);
+    // La cola no debe rechazar nunca, o encadenaría el fallo a todo lo que venga.
+    axeQueue = result.catch(() => undefined);
+    return result;
+};
+
 // Export axe for use in tests — disable color-contrast in jsdom (no real CSS)
 export const axe = (container: Element) =>
-    axeCore(container, {
-        rules: { 'color-contrast': { enabled: false } },
-    });
+    runAxe(() =>
+        axeCore(container, {
+            rules: { 'color-contrast': { enabled: false } },
+        }),
+    );
 
 // Cleanup after each test
 afterEach(() => {

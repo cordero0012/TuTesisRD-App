@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 import axe from 'axe-core';
+import { runAxe } from '../setup';
 import Services from '../../pages/Services';
 import UniversityDirectory from '../../pages/Universities/UniversityDirectory';
 import UniversityTemplate from '../../pages/Universities/UniversityTemplate';
@@ -39,12 +40,16 @@ function getContrastRatio(hex1: string, hex2: string): number {
 }
 
 describe('Services & Universities Accessibility Suite (a11y)', () => {
+    // Por la cola compartida de `../setup`: `axe-core` es un singleton y estas
+    // llamadas se pisaban entre sí cuando una agotaba el timeout del test.
     const runAxeStructureChecks = async (container: HTMLElement) => {
-        const results = await axe.run(container, {
-            rules: {
-                'color-contrast': { enabled: false }
-            }
-        });
+        const results = await runAxe(() =>
+            axe.run(container, {
+                rules: {
+                    'color-contrast': { enabled: false }
+                }
+            })
+        );
         return results.violations;
     };
 
