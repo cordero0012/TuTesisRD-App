@@ -4,6 +4,7 @@ import SEO from '../components/SEO';
 import { blogRouteMeta } from '../seo/siteMeta';
 import blogData from '../data/blogPosts.json';
 import { logEvent } from '../utils/analytics';
+import { buildWhatsAppUrl } from '../config';
 import BlogLayout from '../components/blog/BlogLayout';
 import ArticleLayout from '../components/blog/premium/ArticleLayout';
 import CitationBox from '../components/blog/premium/CitationBox';
@@ -172,7 +173,7 @@ const BlogPostTemplate: React.FC = () => {
                                         </Link>
 
                                         <a
-                                            href="https://wa.me/18297513267"
+                                            href={buildWhatsAppUrl('Hola, leí un artículo del blog y quiero orientación sobre mi tesis.')}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex items-center justify-center w-full bg-white/10 hover:bg-white/20 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-colors backdrop-blur-sm border border-white/10"

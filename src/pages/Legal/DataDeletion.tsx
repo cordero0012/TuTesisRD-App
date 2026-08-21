@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import SEO from '../../components/SEO';
+import { buildWhatsAppUrl } from '../../config';
 
 const DataDeletion: React.FC = () => {
     return (
@@ -37,7 +38,7 @@ const DataDeletion: React.FC = () => {
                             <p>Si se registró en nuestra plataforma, agendó una cita o tiene un expediente con nosotros, y desea que la totalidad de su historial, progreso y datos de usuario sean borrados permanentemente:</p>
                             <ul>
                                 <li><strong>Opción 1:</strong> Envíe un correo electrónico a <strong>ttesisrd@gmail.com</strong> detallando su solicitud, con el asunto: <em>"Solicitud de Eliminación de Datos - [Su Nombre]"</em>.</li>
-                                <li><strong>Opción 2:</strong> Escríbanos directamente a nuestra línea de atención vía <a href="https://wa.me/18297513267" target="_blank" rel="noreferrer">WhatsApp</a> indicando que requiere la baja de sus datos del sistema.</li>
+                                <li><strong>Opción 2:</strong> Escríbanos directamente a nuestra línea de atención vía <a href={buildWhatsAppUrl('Hola, solicito la eliminación de mis datos del sistema.')} target="_blank" rel="noreferrer">WhatsApp</a> indicando que requiere la baja de sus datos del sistema.</li>
                             </ul>
                             
                             <p>Una vez procesada su solicitud, procederemos a borrar la información alojada en nuestras bases de datos en un plazo no mayor a 14 días laborables. Recibirá una confirmación vía correo electrónico o WhatsApp una vez que el proceso haya concluido exitosamente.</p>
