@@ -12,6 +12,11 @@
             "permanent": true
         },
         {
+            "source": "/blog-monografico",
+            "destination": "/blog",
+            "permanent": true
+        },
+        {
             "source": "/blog/devblog-v1.1/:path*",
             "destination": "/blog",
             "permanent": true
@@ -53,7 +58,11 @@
             "destination": "/api/$1"
         },
         {
-            "source": "/(.*)",
+            "source": "/admin",
+            "destination": "/"
+        },
+        {
+            "source": "/admin/:path*",
             "destination": "/"
         }
     ]
