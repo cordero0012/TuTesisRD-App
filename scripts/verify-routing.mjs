@@ -153,8 +153,15 @@ if (process.argv.includes('--serve')) {
     '/sitemap.xml',
   ];
 
-  // 404: basura inventada y los sondeos tipicos de bots, que hasta el
-  // 2026-08-21 se servian como la portada declarandose `index, follow`.
+  // 404: basura inventada, que hasta el 2026-08-21 se servia como la portada
+  // declarandose `index, follow` y canonica de la home.
+  //
+  // Sondeos tipicos de bots (/wp-admin, /index.php, /.env) los comprobaba este
+  // script y aqui daban 404, pero medido en produccion devuelven **403** con
+  // `X-Vercel-Mitigated: deny`: el firewall de Vercel los corta en el edge
+  // ANTES de que se evalue vercel.json, asi que nunca llegan a este enrutado.
+  // Se dejan fuera para que la comprobacion local no prometa algo que la
+  // produccion no cumple -- 403 ahi no es un fallo, es un corte mas temprano.
   const debenSer404 = [
     '/ruta-que-no-existe-xyz',
     '/blog/no-existe-abc',
@@ -162,9 +169,8 @@ if (process.argv.includes('--serve')) {
     '/recursos/inventado',
     '/portal/inventado',
     '/herramientas/inventado',
-    '/wp-admin',
-    '/index.php',
-    '/.env',
+    '/blog/categoria/inventada',
+    '/servicios/inventado',
   ];
 
   const debenRedirigir = (cfg.redirects || [])
